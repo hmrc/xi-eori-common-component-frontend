@@ -1,7 +1,14 @@
 
-# xi-eori-common-component-frontend
+# XI EORI Common Component Frontend
 
-This is a placeholder README.md for a new repository
+This provides frontend services for the ECC (XI EORI Common Component).
+
+## Running Locally
+To run using default port number:
+`sbt run`
+
+To run all tests:
+`./precheck.sh`
 
 ### License
 
