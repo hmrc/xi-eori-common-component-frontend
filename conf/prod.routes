@@ -1,5 +1,5 @@
 # Add all the application routes to the app.routes file
-->         /xi-eori-common-component-frontend              app.Routes
+->         /xi-customs-registration-services              app.Routes
 ->         /                          health.Routes
 
 GET        /admin/metrics             com.kenshoo.play.metrics.MetricsController.metrics
