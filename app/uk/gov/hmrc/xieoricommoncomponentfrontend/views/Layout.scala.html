@@ -24,8 +24,14 @@
 )
 @(pageTitle: Option[String] = None)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
 
+@serviceUrl = @{
+ "/xi-customs-registration-services"
+}
+
 @hmrcLayout(
     pageTitle = pageTitle,
     nonce = CSPNonce.get,
-    isWelshTranslationAvailable = appConfig.welshLanguageSupportEnabled
+    isWelshTranslationAvailable = appConfig.welshLanguageSupportEnabled,
+    serviceUrl = Some(serviceUrl),
+    serviceName = Some(messages("service.name"))
 )(contentBlock)
