@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
+package controllers
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.http.Status
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.api.inject.guice.GuiceApplicationBuilder
+import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.LogoutController
 
-class HelloWorldControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {
+class LogoutControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
@@ -34,18 +35,17 @@ class HelloWorldControllerSpec extends AnyWordSpec with Matchers with GuiceOneAp
 
   private val fakeRequest = FakeRequest("GET", "/")
 
-  private val controller = app.injector.instanceOf[HelloWorldController]
+  private val controller = app.injector.instanceOf[LogoutController]
 
   "GET /" should {
     "return 200" in {
-      val result = controller.helloWorld(fakeRequest)
-      status(result) shouldBe Status.OK
+      val result = controller.logout(fakeRequest)
+      status(result) shouldBe Status.SEE_OTHER
     }
 
     "return HTML" in {
-      val result = controller.helloWorld(fakeRequest)
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
+      val result = controller.logout(fakeRequest)
+      redirectLocation(result) shouldBe Some("http://localhost:6755/xi-customs-registration-services")
     }
   }
 }

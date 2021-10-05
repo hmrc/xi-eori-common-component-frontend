@@ -1,3 +1,4 @@
+import play.sbt.routes.RoutesKeys
 import uk.gov.hmrc.DefaultBuildSettings.{integrationTestSettings, targetJvm}
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
@@ -16,6 +17,8 @@ lazy val scoverageSettings = {
       "Reverse.*",
       "uk\\.gov\\.hmrc\\.xieoricommoncomponentfrontend\\.views.*",
       "uk\\.gov\\.hmrc\\.xieoricommoncomponentfrontend\\.config.*",
+      "uk\\.gov\\.hmrc\\.xieoricommoncomponentfrontend\\.models.*",
+      "uk\\.gov\\.hmrc\\.xieoricommoncomponentfrontend\\.util.*",
       "logger.*\\(.*\\)",
       ".*(AuthService|BuildInfo|Routes|TestOnly).*").mkString(";"),
     ScoverageKeys.coverageMinimum := 85,
@@ -25,10 +28,14 @@ lazy val scoverageSettings = {
   )
 }
 
+lazy val playSettings: Seq[Setting[_]] = Seq(
+  routesImport ++= Seq("uk.gov.hmrc.xieoricommoncomponentfrontend.domain._"),
+  RoutesKeys.routesImport += "uk.gov.hmrc.xieoricommoncomponentfrontend.models._"
+)
 
 
 lazy val twirlSettings: Seq[Setting[_]] = Seq(
-  TwirlKeys.templateImports ++= Seq("uk.gov.hmrc.xieoricommoncomponentfrontend.views.html._")
+  TwirlKeys.templateImports ++= Seq("uk.gov.hmrc.xieoricommoncomponentfrontend.views.html._", "uk.gov.hmrc.xieoricommoncomponentfrontend.domain._")
 )
 
 lazy val microservice = Project(appName, file("."))
@@ -54,4 +61,5 @@ lazy val microservice = Project(appName, file("."))
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(scoverageSettings)
   .settings(twirlSettings)
+  .settings(playSettings)
   .settings(PlayKeys.playDefaultPort := 6755)

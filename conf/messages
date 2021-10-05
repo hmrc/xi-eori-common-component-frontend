@@ -1,2 +1,23 @@
 service.name = Get an XI EORI
 service.text = This is your new service
+
+ecc.sign.out=Sign out
+
+ecc.enrolment.already.exists.title=There is a problem
+ecc.enrolment.already.exists.heading=There is a problem
+ecc.enrolment.already.exists.para1=Our records show that this Government Gateway user ID has already been used to subscribe to {0}.
+ecc.enrolment.already.exists.for-group.para1=Your organisation is already subscribed to {0}. Ask a team member for access.
+
+
+ecc.you-cant-use-service-agent.para1=You signed in to Government Gateway with an agent services account.
+ecc.you-cant-use-service-agent.para2=You need to sign in with the Government Gateway for the organisation or individual that is applying for access to {0}.
+ecc.you-cant-use-service-standard-organisation.para1=You signed in to Government Gateway as a standard user. To apply for access to {0} you must be an administrator user.
+ecc.you-cant-use-service-standard-organisation.para2=Please log in as an administrator or contact the person who set up your Government Gateway.
+
+ecc.you-cant-use-service.heading=You cannot use this service
+
+#server errors
+ecc.server-errors.401.title=Service unavailable
+ecc.server-errors.401.heading=Service unavailable
+ecc.server-errors.401.message1=You may not have access to this service.
+ecc.server-errors.401.message2=It is currently only available by invitation.

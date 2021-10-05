@@ -18,11 +18,22 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.config
 
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
-class AppConfig @Inject() (config: Configuration) {
+class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig) {
 
   val welshLanguageSupportEnabled: Boolean =
     config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)
+
+  lazy val loginContinueUrl: String = config.get[String]("external-urls.loginContinue")
+  lazy val loginUrl: String         = config.get[String]("external-urls.login")
+  lazy val signOutUrl: String       = config.get[String]("external-urls.signOut")
+  lazy val appName                  = config.get[String]("appName")
+
+  val enrolmentStoreProxyBaseUrl: String = servicesConfig.baseUrl("enrolment-store-proxy")
+
+  val enrolmentStoreProxyServiceContext: String =
+    config.get[String]("microservice.services.enrolment-store-proxy.context")
 
 }
