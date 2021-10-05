@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package integration
-
-import org.mockito.scalatest.MockitoSugar
 import org.scalatest.concurrent.ScalaFutures
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
 import play.mvc.Http.Status._
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.EnrolmentStoreProxyConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, EnrolmentStoreProxyResponse}
-import util.externalservices.EnrolmentStoreProxyService
-import util.externalservices.ExternalServicesConfig._
+import externalservices.EnrolmentStoreProxyService
+import externalservices.ExternalServicesConfig._
 
-class EnrolmentStoreProxyConnectorSpec extends IntegrationTestsSpec with ScalaFutures with MockitoSugar {
+
+class EnrolmentStoreProxyConnectorSpec extends IntegrationTestsSpec with ScalaFutures  {
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
@@ -38,7 +36,9 @@ class EnrolmentStoreProxyConnectorSpec extends IntegrationTestsSpec with ScalaFu
         "microservice.services.enrolment-store-proxy.context" -> "enrolment-store-proxy",
         "auditing.enabled"                                    -> false,
         "auditing.consumer.baseUri.host"                      -> Host,
-        "auditing.consumer.baseUri.port"                      -> Port
+        "auditing.consumer.baseUri.port"                      -> Port,
+        "metrics.jvm" -> false,
+        "metrics.enabled" -> false
       )
     )
     .build()

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package util.externalservices
+package externalservices
 
 object ExternalServicesConfig {
   val Port: Int              = sys.env.getOrElse("WIREMOCK_SERVICE_LOCATOR_PORT", "11111").toInt

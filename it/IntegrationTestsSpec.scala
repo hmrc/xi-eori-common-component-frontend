@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package integration
-
 import org.scalatest.concurrent.{Eventually, IntegrationPatience}
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll}
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import util.WireMockRunner
+
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}

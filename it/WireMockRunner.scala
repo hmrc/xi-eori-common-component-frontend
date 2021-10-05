@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package util
-
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.common.ConsoleNotifier
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
-import util.externalservices.ExternalServicesConfig._
+import externalservices.ExternalServicesConfig._
 
 trait WireMockRunner {
 
