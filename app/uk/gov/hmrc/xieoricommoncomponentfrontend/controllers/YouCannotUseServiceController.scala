@@ -23,10 +23,9 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.affinityGroup
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthProviders, AuthorisedFunctions}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{AuthRedirectSupport, EnrolmentExtractor}
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.Service
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html._
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class YouCannotUseServiceController @Inject() (

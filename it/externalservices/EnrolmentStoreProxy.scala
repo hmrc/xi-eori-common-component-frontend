@@ -22,7 +22,7 @@ import play.mvc.Http.HeaderNames.CONTENT_TYPE
 import play.mvc.Http.MimeTypes.JSON
 import play.mvc.Http.Status._
 
-object EnrolmentStoreProxyService {
+object EnrolmentStoreProxy {
 
   private val responseWithOk: JsValue =
     Json.parse {

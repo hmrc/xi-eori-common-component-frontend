@@ -16,13 +16,13 @@
 
 package controllers.auth
 
-import util.UnitSpec
+import util.ControllerSpec
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.EnrolmentExtractor
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.Service
 
-class EnrolmentExtractorSpec extends UnitSpec {
+class EnrolmentExtractorSpec extends ControllerSpec {
 
   private val eori = Eori("GB123456789012")
   private val utr  = Utr("1111111111K")

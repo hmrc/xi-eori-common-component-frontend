@@ -19,14 +19,15 @@ import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
 import play.mvc.Http.Status._
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.EnrolmentStoreProxyConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, EnrolmentStoreProxyResponse}
-import externalservices.EnrolmentStoreProxyService
-import externalservices.ExternalServicesConfig._
+import externalservices.EnrolmentStoreProxy
+import externalservices.ExternalServiceConfig._
+import play.api.test.Helpers.status
 
 
-class EnrolmentStoreProxyConnectorSpec extends IntegrationTestsSpec with ScalaFutures  {
+class EnrolmentStoreProxyConnectorSpec extends IntegrationTestSpec with ScalaFutures  {
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
@@ -96,23 +97,23 @@ class EnrolmentStoreProxyConnectorSpec extends IntegrationTestsSpec with ScalaFu
 
   "EnrolmentStoreProxy" should {
     "return successful response with OK status when Enrolment Store Proxy returns 200" in {
-      EnrolmentStoreProxyService.returnEnrolmentStoreProxyResponseOk("2e4589d9-484c-468a-8099-02a06fb1cd8c")
+      EnrolmentStoreProxy.returnEnrolmentStoreProxyResponseOk("2e4589d9-484c-468a-8099-02a06fb1cd8c")
       await(enrolmentStoreProxyConnector.getEnrolmentByGroupId(groupId)) must be(
         responseWithOk.as[EnrolmentStoreProxyResponse]
       )
     }
 
     "return No Content status when no data is returned in response" in {
-      EnrolmentStoreProxyService.stubTheEnrolmentStoreProxyResponse(expectedGetUrl, "", NO_CONTENT)
+      EnrolmentStoreProxy.stubTheEnrolmentStoreProxyResponse(expectedGetUrl, "", NO_CONTENT)
       enrolmentStoreProxyConnector.getEnrolmentByGroupId(groupId).futureValue mustBe EnrolmentStoreProxyResponse(
         enrolments = List.empty[EnrolmentResponse]
       )
     }
 
-    /*   "fail when Service unavailable" in {
-      EnrolmentStoreProxyService.stubTheEnrolmentStoreProxyResponse(
+ /*      "fail when Service unavailable" in {
+      EnrolmentStoreProxy.stubTheEnrolmentStoreProxyResponse(
         expectedGetUrl,
-        responseWithOk.toString(),
+        "",
         SERVICE_UNAVAILABLE
       )
 
@@ -124,9 +125,9 @@ class EnrolmentStoreProxyConnectorSpec extends IntegrationTestsSpec with ScalaFu
     }
 
     "http exception when 4xx status code is received" in {
-      EnrolmentStoreProxyService.stubTheEnrolmentStoreProxyResponse(
+      EnrolmentStoreProxy.stubTheEnrolmentStoreProxyResponse(
         expectedGetUrl,
-        responseWithOk.toString(),
+        "",
         BAD_REQUEST
       )
 
@@ -134,6 +135,8 @@ class EnrolmentStoreProxyConnectorSpec extends IntegrationTestsSpec with ScalaFu
         await(enrolmentStoreProxyConnector.getEnrolmentByGroupId(groupId))
       }
       caught.getMessage must startWith("Enrolment Store Proxy Status : 400")
+
+
     }*/
   }
 }

@@ -17,43 +17,26 @@
 package controllers
 
 import common.pages.RegistrationPage
+import play.api.Application
 import play.api.test.Helpers._
-import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.YouCannotUseServiceController
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{unauthorized, you_cant_use_service}
 import util.ControllerSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.{AuthActionMock, SessionBuilder}
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class YouCannotUseServiceControllerSpec extends ControllerSpec with AuthActionMock {
 
-  private val youCannotUseServiceView = instanceOf[you_cant_use_service]
-  private val unAuthorizedView        = instanceOf[unauthorized]
-  private val mockAuthConnector       = mock[AuthConnector]
-
-  val controller =
-    new YouCannotUseServiceController(
-      configuration,
-      environment,
-      mockAuthConnector,
-      youCannotUseServiceView,
-      unAuthorizedView,
-      mcc
-    )
-
   val paragraphXpath = "//*[@id='para1']"
-
   "YouCannotUseThisService controller" should {
 
     "redirect to the you cannot use this service page" in {
       running(application) {
 
         withAuthorisedUser(defaultUserId, mockAuthConnector)
-
-        val result =
-          await(controller.page().apply(SessionBuilder.buildRequestWithSessionAndPath("/atar/", defaultUserId)))
-
+        val request = SessionBuilder.buildRequestWithSessionAndPath(
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.YouCannotUseServiceController.page().url,
+          defaultUserId
+        )
+        val result = route(application, request).get
         status(result) shouldBe UNAUTHORIZED
 
         val page = RegistrationPage(contentAsString(result))
@@ -66,12 +49,11 @@ class YouCannotUseServiceControllerSpec extends ControllerSpec with AuthActionMo
 
     "redirect to the unauthorized page if the user is not authorized" in {
       running(application) {
-
-        val result =
-          await(
-            controller.unauthorisedPage().apply(SessionBuilder.buildRequestWithSessionAndPath("/atar/", defaultUserId))
-          )
-
+        val request = SessionBuilder.buildRequestWithSessionAndPath(
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.YouCannotUseServiceController.unauthorisedPage().url,
+          defaultUserId
+        )
+        val result = route(application, request).get
         status(result) shouldBe UNAUTHORIZED
 
         val page = RegistrationPage(contentAsString(result))

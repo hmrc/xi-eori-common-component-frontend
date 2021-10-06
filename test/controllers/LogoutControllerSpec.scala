@@ -17,35 +17,43 @@
 package controllers
 
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.Application
-import play.api.http.Status
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.LogoutController
+import util.builders.SessionBuilder
 
-class LogoutControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {
+import java.util.UUID
 
-  override def fakeApplication(): Application =
+class LogoutControllerSpec extends AnyWordSpecLike with Matchers {
+  val defaultUserId: String = s"user-${UUID.randomUUID}"
+
+  val application: Application =
     new GuiceApplicationBuilder()
       .configure("metrics.jvm" -> false, "metrics.enabled" -> false)
       .build()
 
-  private val fakeRequest = FakeRequest("GET", "/")
+  "LogoutController" should {
+    "return 303 when logout button is clicked" in {
 
-  private val controller = app.injector.instanceOf[LogoutController]
+      val request = SessionBuilder.buildRequestWithSessionAndPath(
+        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.logout().url,
+        defaultUserId
+      )
+      val result = route(application, request).get
+      status(result) shouldBe SEE_OTHER
 
-  "GET /" should {
-    "return 200" in {
-      val result = controller.logout(fakeRequest)
-      status(result) shouldBe Status.SEE_OTHER
     }
 
-    "return HTML" in {
-      val result = controller.logout(fakeRequest)
+    "redirect to start page when user logout" in {
+
+      val request = SessionBuilder.buildRequestWithSessionAndPath(
+        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.logout().url,
+        defaultUserId
+      )
+      val result = route(application, request).get
       redirectLocation(result) shouldBe Some("http://localhost:6755/xi-customs-registration-services")
+
     }
   }
 }

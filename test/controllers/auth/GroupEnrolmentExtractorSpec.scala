@@ -16,18 +16,17 @@
 
 package controllers.auth
 
-import util.UnitSpec
-import org.mockito.scalatest.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.concurrent.ScalaFutures
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.EnrolmentResponse
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.EnrolmentStoreProxyService
+import util.ControllerSpec
 
 import scala.concurrent.Future
 
-class GroupEnrolmentExtractorSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach with ScalaFutures {
+class GroupEnrolmentExtractorSpec extends ControllerSpec with BeforeAndAfterEach {
 
   private val enrolmentStoreProxyService = mock[EnrolmentStoreProxyService]
 
@@ -52,9 +51,9 @@ class GroupEnrolmentExtractorSpec extends UnitSpec with MockitoSugar with Before
         when(enrolmentStoreProxyService.enrolmentsForGroup(any)(any))
           .thenReturn(Future.successful(List(enrolmentResponse)))
 
-        val result = groupEnrolmentExtractor.groupIdEnrolments("groupId")(hc)
+        val result = await(groupEnrolmentExtractor.groupIdEnrolments("groupId")(hc))
 
-        result.futureValue shouldBe List(enrolmentResponse)
+        result shouldBe List(enrolmentResponse)
       }
     }
   }

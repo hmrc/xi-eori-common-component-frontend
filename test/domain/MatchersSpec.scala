@@ -18,9 +18,9 @@ package domain
 
 import play.api.libs.json.{JsSuccess, JsValue, Json}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain._
-import util.UnitSpec
+import util.ControllerSpec
 
-class MatchersSpec extends UnitSpec {
+class MatchersSpec extends ControllerSpec {
 
   val id           = java.util.UUID.randomUUID.toString
   val UTR          = Utr(id)

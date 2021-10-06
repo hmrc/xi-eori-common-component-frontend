@@ -20,7 +20,6 @@ import play.api.mvc.{AnyContent, Request, Result}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.auth.core.NoActiveSession
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.ServiceName.service
 
 trait AuthRedirectSupport extends AuthRedirects {
 
@@ -28,7 +27,7 @@ trait AuthRedirectSupport extends AuthRedirects {
   override val env: Environment
 
   private def continueUrl(implicit request: Request[AnyContent]) = {
-    val baseUrl = config.get[String]("external-url.loginContinue")
+    val baseUrl = config.get[String]("external-urls.loginContinue")
 
     s"$baseUrl/register"
   }

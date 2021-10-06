@@ -16,25 +16,32 @@
 
 package services
 
-import util.UnitSpec
 import org.mockito.ArgumentMatchers.{eq => meq}
-import org.mockito.scalatest.MockitoSugar
 import org.scalatest.BeforeAndAfter
-import org.scalatest.concurrent.ScalaFutures
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.{inject, Application}
+import play.api.test.Helpers.{await, defaultAwaitTimeout, running}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.EnrolmentStoreProxyConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.EnrolmentStoreProxyService
+import util.ControllerSpec
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class EnrolmentStoreProxyServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfter with ScalaFutures {
+class EnrolmentStoreProxyServiceSpec extends ControllerSpec with BeforeAndAfter {
 
   private val mockEnrolmentStoreProxyConnector =
     mock[EnrolmentStoreProxyConnector]
 
-  private val service                               = new EnrolmentStoreProxyService(mockEnrolmentStoreProxyConnector)
+  override val application: Application =
+    new GuiceApplicationBuilder().overrides(
+      inject.bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
+    ).configure("metrics.jvm" -> false, "metrics.enabled" -> false)
+      .build()
+
+  private val service                               = application.injector.instanceOf[EnrolmentStoreProxyService]
   private implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
   before {
@@ -66,10 +73,12 @@ class EnrolmentStoreProxyServiceSpec extends UnitSpec with MockitoSugar with Bef
       ).thenReturn(
         Future.successful(EnrolmentStoreProxyResponse(List(enrolmentResponse, enrolmentResponseNoHmrcCusOrg)))
       )
+      running(application) {
+        await(service.enrolmentsForGroup(groupId)) shouldBe List(enrolmentResponse, enrolmentResponseNoHmrcCusOrg)
 
-      await(service.enrolmentsForGroup(groupId)) shouldBe List(enrolmentResponse, enrolmentResponseNoHmrcCusOrg)
+        verify(mockEnrolmentStoreProxyConnector).getEnrolmentByGroupId(any[String])(meq(headerCarrier), any)
 
-      verify(mockEnrolmentStoreProxyConnector).getEnrolmentByGroupId(any[String])(meq(headerCarrier), any)
+      }
     }
 
     "exclude non-active enrolments for the groupId" in {
@@ -77,10 +86,12 @@ class EnrolmentStoreProxyServiceSpec extends UnitSpec with MockitoSugar with Bef
         mockEnrolmentStoreProxyConnector
           .getEnrolmentByGroupId(any[String])(meq(headerCarrier), any)
       ).thenReturn(Future.successful(EnrolmentStoreProxyResponse(List(enrolmentResponse, enrolmentResponseNotActive))))
+      running(application) {
 
-      await(service.enrolmentsForGroup(groupId)) shouldBe List(enrolmentResponse)
+        await(service.enrolmentsForGroup(groupId)) shouldBe List(enrolmentResponse)
 
-      verify(mockEnrolmentStoreProxyConnector).getEnrolmentByGroupId(any[String])(meq(headerCarrier), any)
+        verify(mockEnrolmentStoreProxyConnector).getEnrolmentByGroupId(any[String])(meq(headerCarrier), any)
+      }
     }
   }
 }

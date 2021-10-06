@@ -16,32 +16,32 @@
 
 package util
 
-import java.util.UUID
 import akka.stream.Materializer
 import akka.stream.testkit.NoMaterializer
-import util.{Injector, UnitSpec}
-import common.pages.WebPage
+import common.pages.{RegistrationPage, WebPage}
 import org.mockito.scalatest.MockitoSugar
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.http.{DefaultFileMimeTypes, FileMimeTypesConfiguration}
-import play.api.{Configuration, Environment}
-import play.api.i18n.{I18nSupport, Messages, MessagesApi, MessagesImpl}
-import play.api.mvc._
-import play.api.test.Helpers._
-import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import util.builders.{AuthBuilder, SessionBuilder}
 import play.api.i18n.Lang._
+import play.api.i18n.{Messages, MessagesApi, MessagesImpl}
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.mvc._
 import play.api.test.FakeRequest
+import play.api.test.Helpers._
+import play.api.{inject, Configuration, Environment}
+import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
-import common.pages.RegistrationPage
+import util.builders.{AuthBuilder, SessionBuilder}
 
+import java.util.UUID
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
 import scala.util.Random
 
-trait ControllerSpec extends UnitSpec with MockitoSugar with I18nSupport with Injector with TestData {
+trait ControllerSpec extends MockitoSugar with AnyWordSpecLike with Matchers with Injector with TestData {
 
   implicit val messagesApi: MessagesApi = instanceOf[MessagesApi]
 
@@ -61,8 +61,8 @@ trait ControllerSpec extends UnitSpec with MockitoSugar with I18nSupport with In
 
   protected val previousPageUrl = "javascript:history.back()"
 
-  val env: Environment = Environment.simple()
-
+  val env: Environment      = Environment.simple()
+  val mockAuthConnector     = mock[AuthConnector]
   val config: Configuration = Configuration.load(env)
 
   private val serviceConfig = new ServicesConfig(config)
@@ -118,13 +118,13 @@ trait ControllerSpec extends UnitSpec with MockitoSugar with I18nSupport with In
 
   // TODO This trait is used in only one controller, extract the necessary logic and use in the test, rest to remove
   trait AbstractControllerFixture[C <: FrontendController] {
-    val mockAuthConnector = mock[AuthConnector]
-    val userId            = defaultUserId
+    val mockConnector = mock[AuthConnector]
+    val userId        = defaultUserId
 
     val controller: C
 
     private def withAuthorisedUser[T](block: => T): T = {
-      AuthBuilder.withAuthorisedUser(userId, mockAuthConnector)
+      AuthBuilder.withAuthorisedUser(userId, mockConnector)
       block
     }
 
@@ -154,7 +154,7 @@ trait ControllerSpec extends UnitSpec with MockitoSugar with I18nSupport with In
           page.elementIsPresent(fieldLevelErrorXPath) shouldBe true
         }
         page.getElementsText(fieldLevelErrorXPath) shouldBe s"Error: $errorMessage"
-        result
+        await(result)
       }
 
     def assertPresentOnPage(page: RegistrationPage)(elementXpath: String): Unit =
@@ -171,5 +171,10 @@ trait ControllerSpec extends UnitSpec with MockitoSugar with I18nSupport with In
 
   def undersizedString(minLength: Int): String = Random.alphanumeric.take(minLength - 1).mkString
 
-  def application = new GuiceApplicationBuilder().build()
+  def application = new GuiceApplicationBuilder().overrides(inject.bind[AuthConnector].to(mockAuthConnector)).configure(
+    "auditing.enabled" -> "false",
+    "metrics.jvm"      -> false,
+    "metrics.enabled"  -> false
+  ).build()
+
 }

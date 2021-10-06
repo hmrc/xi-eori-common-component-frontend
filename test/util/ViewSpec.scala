@@ -17,7 +17,6 @@
 package util
 
 import akka.util.Timeout
-import util.Injector
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.Lang.defaultLang
 import play.api.i18n._

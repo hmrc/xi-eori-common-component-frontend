@@ -16,10 +16,10 @@
 
 package config
 
-import util.{Injector, UnitSpec}
+import util.ControllerSpec
 import play.api.Configuration
 
-class SessionTimeoutSpec extends UnitSpec with Injector {
+class SessionTimeoutSpec extends ControllerSpec {
 
   private val configuration = instanceOf[Configuration]
 

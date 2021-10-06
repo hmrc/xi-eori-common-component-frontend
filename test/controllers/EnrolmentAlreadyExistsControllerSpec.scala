@@ -16,41 +16,27 @@
 
 package controllers
 
-import play.api.test.Helpers._
-import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.EnrolmentAlreadyExistsController
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{registration_exists, registration_exists_group}
 import common.pages.RegistrationPage
+import play.api.Application
+import play.api.test.Helpers._
 import util.ControllerSpec
 import util.builders.AuthBuilder.withAuthorisedUser
-import util.builders.{AuthActionMock, SessionBuilder}
+import util.builders.SessionBuilder
 
-class EnrolmentAlreadyExistsControllerSpec extends ControllerSpec with AuthActionMock {
-
-  private val registrationExistsView      = instanceOf[registration_exists]
-  private val registrationExistsGroupView = instanceOf[registration_exists_group]
-  private val mockAuthConnector           = mock[AuthConnector]
-  private val mockAuthAction              = authAction(mockAuthConnector)
-
-  val controller =
-    new EnrolmentAlreadyExistsController(mockAuthAction, registrationExistsView, registrationExistsGroupView, mcc)
+class EnrolmentAlreadyExistsControllerSpec extends ControllerSpec {
 
   val paragraphXpath = "//*[@id='para1']"
-
   "Enrolment already exists controller" should {
-
     "redirect to the enrolment already exists page" in {
       running(application) {
 
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
-        val result =
-          await(
-            controller.enrolmentAlreadyExists().apply(
-              SessionBuilder.buildRequestWithSessionAndPath("/atar/", defaultUserId)
-            )
-          )
-
+        val request = SessionBuilder.buildRequestWithSessionAndPath(
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.EnrolmentAlreadyExistsController.enrolmentAlreadyExists().url,
+          defaultUserId
+        )
+        val result = route(application, request).get
         status(result) shouldBe OK
 
         val page = RegistrationPage(contentAsString(result))
@@ -65,13 +51,11 @@ class EnrolmentAlreadyExistsControllerSpec extends ControllerSpec with AuthActio
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
-        val result =
-          await(
-            controller.enrolmentAlreadyExistsForGroup().apply(
-              SessionBuilder.buildRequestWithSessionAndPath("/atar/", defaultUserId)
-            )
-          )
-
+        val request = SessionBuilder.buildRequestWithSessionAndPath(
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.EnrolmentAlreadyExistsController.enrolmentAlreadyExistsForGroup().url,
+          defaultUserId
+        )
+        val result = route(application, request).get
         status(result) shouldBe OK
 
         val page = RegistrationPage(contentAsString(result))
