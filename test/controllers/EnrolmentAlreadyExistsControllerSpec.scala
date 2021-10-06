@@ -46,7 +46,7 @@ class EnrolmentAlreadyExistsControllerSpec extends ControllerSpec with AuthActio
 
         val result =
           await(
-            controller.enrolmentAlreadyExists(atarService).apply(
+            controller.enrolmentAlreadyExists().apply(
               SessionBuilder.buildRequestWithSessionAndPath("/atar/", defaultUserId)
             )
           )
@@ -67,7 +67,7 @@ class EnrolmentAlreadyExistsControllerSpec extends ControllerSpec with AuthActio
 
         val result =
           await(
-            controller.enrolmentAlreadyExistsForGroup(atarService).apply(
+            controller.enrolmentAlreadyExistsForGroup().apply(
               SessionBuilder.buildRequestWithSessionAndPath("/atar/", defaultUserId)
             )
           )

@@ -20,7 +20,7 @@
 
 
 @this(main_template: Layout, appConfig: AppConfig, callBack: helpers.callBack)
-@(service: Service)(implicit messages: Messages, request: Request[_])
+@()(implicit messages: Messages, request: Request[_])
 
 @main_template(Some(messages("ecc.enrolment.already.exists.title"))) {
     <div>

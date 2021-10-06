@@ -52,9 +52,7 @@ class YouCannotUseServiceControllerSpec extends ControllerSpec with AuthActionMo
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
         val result =
-          await(
-            controller.page(atarService).apply(SessionBuilder.buildRequestWithSessionAndPath("/atar/", defaultUserId))
-          )
+          await(controller.page().apply(SessionBuilder.buildRequestWithSessionAndPath("/atar/", defaultUserId)))
 
         status(result) shouldBe UNAUTHORIZED
 
@@ -71,9 +69,7 @@ class YouCannotUseServiceControllerSpec extends ControllerSpec with AuthActionMo
 
         val result =
           await(
-            controller.unauthorisedPage(atarService).apply(
-              SessionBuilder.buildRequestWithSessionAndPath("/atar/", defaultUserId)
-            )
+            controller.unauthorisedPage().apply(SessionBuilder.buildRequestWithSessionAndPath("/atar/", defaultUserId))
           )
 
         status(result) shouldBe UNAUTHORIZED

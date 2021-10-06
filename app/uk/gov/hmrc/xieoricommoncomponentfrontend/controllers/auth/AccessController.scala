@@ -22,7 +22,6 @@ import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Organisation}
 import uk.gov.hmrc.auth.core.{AffinityGroup, CredentialRole, Enrolment, User}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.Service
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.ServiceName.service
 
 import scala.concurrent.Future
 
@@ -45,9 +44,9 @@ trait AccessController {
       }
 
     if (!isPermittedUserType)
-      Future.successful(Redirect(routes.YouCannotUseServiceController.page(service)))
+      Future.successful(Redirect(routes.YouCannotUseServiceController.page))
     else if (hasEnrolment)
-      Future.successful(Redirect(routes.EnrolmentAlreadyExistsController.enrolmentAlreadyExists(service)))
+      Future.successful(Redirect(routes.EnrolmentAlreadyExistsController.enrolmentAlreadyExists))
     else
       action
   }

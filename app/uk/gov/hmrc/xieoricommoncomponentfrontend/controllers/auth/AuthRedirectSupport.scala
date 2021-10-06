@@ -28,9 +28,9 @@ trait AuthRedirectSupport extends AuthRedirects {
   override val env: Environment
 
   private def continueUrl(implicit request: Request[AnyContent]) = {
-    val baseUrl = config.get[String]("external-url.company-auth-frontend.continue-url")
+    val baseUrl = config.get[String]("external-url.loginContinue")
 
-    s"$baseUrl/${service.code}/register"
+    s"$baseUrl/register"
   }
 
   def withAuthRecovery(implicit request: Request[AnyContent]): PartialFunction[Throwable, Result] = {
