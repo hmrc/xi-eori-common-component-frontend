@@ -16,18 +16,18 @@
 
 package services
 
-import org.mockito.ArgumentMatchers.{eq => meq}
+import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfter
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.{inject, Application}
 import play.api.test.Helpers.{await, defaultAwaitTimeout, running}
+import play.api.{inject, Application}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.EnrolmentStoreProxyConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.EnrolmentStoreProxyService
 import util.ControllerSpec
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class EnrolmentStoreProxyServiceSpec extends ControllerSpec with BeforeAndAfter {
@@ -69,14 +69,14 @@ class EnrolmentStoreProxyServiceSpec extends ControllerSpec with BeforeAndAfter 
     "return all enrolments for the groupId" in {
       when(
         mockEnrolmentStoreProxyConnector
-          .getEnrolmentByGroupId(any[String])(meq(headerCarrier), any)
+          .getEnrolmentByGroupId(any[String])(meq(headerCarrier), any())
       ).thenReturn(
         Future.successful(EnrolmentStoreProxyResponse(List(enrolmentResponse, enrolmentResponseNoHmrcCusOrg)))
       )
       running(application) {
         await(service.enrolmentsForGroup(groupId)) shouldBe List(enrolmentResponse, enrolmentResponseNoHmrcCusOrg)
 
-        verify(mockEnrolmentStoreProxyConnector).getEnrolmentByGroupId(any[String])(meq(headerCarrier), any)
+        verify(mockEnrolmentStoreProxyConnector).getEnrolmentByGroupId(any[String])(meq(headerCarrier), any())
 
       }
     }
@@ -84,13 +84,13 @@ class EnrolmentStoreProxyServiceSpec extends ControllerSpec with BeforeAndAfter 
     "exclude non-active enrolments for the groupId" in {
       when(
         mockEnrolmentStoreProxyConnector
-          .getEnrolmentByGroupId(any[String])(meq(headerCarrier), any)
+          .getEnrolmentByGroupId(any[String])(meq(headerCarrier), any())
       ).thenReturn(Future.successful(EnrolmentStoreProxyResponse(List(enrolmentResponse, enrolmentResponseNotActive))))
       running(application) {
 
         await(service.enrolmentsForGroup(groupId)) shouldBe List(enrolmentResponse)
 
-        verify(mockEnrolmentStoreProxyConnector).getEnrolmentByGroupId(any[String])(meq(headerCarrier), any)
+        verify(mockEnrolmentStoreProxyConnector).getEnrolmentByGroupId(any[String])(meq(headerCarrier), any())
       }
     }
   }

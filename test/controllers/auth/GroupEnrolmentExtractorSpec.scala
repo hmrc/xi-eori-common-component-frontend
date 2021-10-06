@@ -16,6 +16,8 @@
 
 package controllers.auth
 
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -48,7 +50,7 @@ class GroupEnrolmentExtractorSpec extends ControllerSpec with BeforeAndAfterEach
 
       "groupId has enrolments" in {
 
-        when(enrolmentStoreProxyService.enrolmentsForGroup(any)(any))
+        when(enrolmentStoreProxyService.enrolmentsForGroup(any())(any()))
           .thenReturn(Future.successful(List(enrolmentResponse)))
 
         val result = await(groupEnrolmentExtractor.groupIdEnrolments("groupId")(hc))

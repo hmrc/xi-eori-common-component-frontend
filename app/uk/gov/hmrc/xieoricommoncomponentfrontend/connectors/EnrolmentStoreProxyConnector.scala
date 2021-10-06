@@ -48,18 +48,19 @@ class EnrolmentStoreProxyConnector @Inject() (http: HttpClient, appConfig: AppCo
     logger.debug(s"GetEnrolmentByGroupId: $url and hc: $hc")
     // $COVERAGE-ON
 
-    http.GET[HttpResponse](url) map { resp =>
-      logResponse(resp)
+    http.GET[HttpResponse](url) map {
+      resp =>
+        logResponse(resp)
 
-      val parsedResponse = resp.status match {
-        case OK => resp.json.as[EnrolmentStoreProxyResponse]
-        case NO_CONTENT =>
-          EnrolmentStoreProxyResponse(enrolments = List.empty[EnrolmentResponse])
-        case _ =>
-          throw new BadRequestException(s"Enrolment Store Proxy Status : ${resp.status}")
-      }
-      auditCall(url, groupId, parsedResponse)
-      parsedResponse
+        val parsedResponse = resp.status match {
+          case OK => resp.json.as[EnrolmentStoreProxyResponse]
+          case NO_CONTENT =>
+            EnrolmentStoreProxyResponse(enrolments = List.empty[EnrolmentResponse])
+          case _ =>
+            throw new BadRequestException(s"Enrolment Store Proxy Status : ${resp.status}")
+        }
+        auditCall(url, groupId, parsedResponse)
+        parsedResponse
     } recover {
       case e: Throwable =>
         logger.error(s"enrolment-store-proxy failed. url: $url, error: $e", e)

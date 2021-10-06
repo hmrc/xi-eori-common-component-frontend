@@ -19,7 +19,7 @@ import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
 import play.mvc.Http.Status._
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier}
+import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.EnrolmentStoreProxyConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, EnrolmentStoreProxyResponse}
 import externalservices.EnrolmentStoreProxy
@@ -110,18 +110,18 @@ class EnrolmentStoreProxyConnectorSpec extends IntegrationTestSpec with ScalaFut
       )
     }
 
- /*      "fail when Service unavailable" in {
+       "fail when Service unavailable" in {
       EnrolmentStoreProxy.stubTheEnrolmentStoreProxyResponse(
         expectedGetUrl,
         "",
         SERVICE_UNAVAILABLE
       )
 
-      val caught = intercept[BadRequestException] {
+      val caught = intercept[UpstreamErrorResponse] {
         await(enrolmentStoreProxyConnector.getEnrolmentByGroupId(groupId))
       }
 
-      caught.getMessage must startWith("Enrolment Store Proxy Status : 503")
+      caught.getMessage must include("503")
     }
 
     "http exception when 4xx status code is received" in {
@@ -134,9 +134,9 @@ class EnrolmentStoreProxyConnectorSpec extends IntegrationTestSpec with ScalaFut
       val caught = intercept[BadRequestException] {
         await(enrolmentStoreProxyConnector.getEnrolmentByGroupId(groupId))
       }
-      caught.getMessage must startWith("Enrolment Store Proxy Status : 400")
+      caught.getMessage must include("Bad Request")
 
 
-    }*/
+    }
   }
 }

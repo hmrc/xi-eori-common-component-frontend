@@ -19,9 +19,8 @@ package util
 import akka.stream.Materializer
 import akka.stream.testkit.NoMaterializer
 import common.pages.{RegistrationPage, WebPage}
-import org.mockito.scalatest.MockitoSugar
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
+import org.scalatest.{Matchers, WordSpec}
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.{DefaultFileMimeTypes, FileMimeTypesConfiguration}
 import play.api.i18n.Lang._
 import play.api.i18n.{Messages, MessagesApi, MessagesImpl}
@@ -41,7 +40,7 @@ import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
 import scala.util.Random
 
-trait ControllerSpec extends MockitoSugar with AnyWordSpecLike with Matchers with Injector with TestData {
+trait ControllerSpec extends WordSpec with MockitoSugar with Matchers with Injector with TestData {
 
   implicit val messagesApi: MessagesApi = instanceOf[MessagesApi]
 

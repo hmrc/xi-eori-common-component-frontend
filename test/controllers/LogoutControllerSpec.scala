@@ -16,8 +16,7 @@
 
 package controllers
 
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
+import org.scalatest.{Matchers, WordSpec}
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
@@ -25,7 +24,7 @@ import util.builders.SessionBuilder
 
 import java.util.UUID
 
-class LogoutControllerSpec extends AnyWordSpecLike with Matchers {
+class LogoutControllerSpec extends WordSpec with Matchers {
   val defaultUserId: String = s"user-${UUID.randomUUID}"
 
   val application: Application =

@@ -17,6 +17,7 @@
 package config
 
 import org.mockito.Mockito
+import org.mockito.Mockito.spy
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig

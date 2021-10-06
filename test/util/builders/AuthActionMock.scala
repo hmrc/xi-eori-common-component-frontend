@@ -16,18 +16,18 @@
 
 package util.builders
 
-import util.Injector
-import org.mockito.scalatest.MockitoSugar
-import org.scalatest.wordspec.AnyWordSpecLike
+import org.scalatest.WordSpec
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.{AnyContentAsEmpty, DefaultActionBuilder}
-import play.api.{Configuration, Environment}
 import play.api.test.Helpers.stubBodyParser
+import play.api.{Configuration, Environment}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
+import util.Injector
 
 import scala.concurrent.ExecutionContext.global
 
-trait AuthActionMock extends AnyWordSpecLike with MockitoSugar with Injector {
+trait AuthActionMock extends WordSpec with MockitoSugar with Injector {
 
   val configuration = instanceOf[Configuration]
   val environment   = Environment.simple()
