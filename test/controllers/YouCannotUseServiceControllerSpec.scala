@@ -23,7 +23,7 @@ import util.ControllerSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.{AuthActionMock, SessionBuilder}
 
-class YouCannotUseServiceControllerSpec extends ControllerSpec with AuthActionMock {
+class YouCannotUseServiceControllerSpec extends ControllerSpec {
 
   val paragraphXpath = "//*[@id='para1']"
   "YouCannotUseThisService controller" should {
@@ -31,7 +31,7 @@ class YouCannotUseServiceControllerSpec extends ControllerSpec with AuthActionMo
     "redirect to the you cannot use this service page" in {
       running(application) {
 
-        withAuthorisedUser(defaultUserId, mockAuthConnector)
+        withAuthorisedUser(defaultUserId, mockAuthConnector, mockGroupEnrolmentExtractor)
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.YouCannotUseServiceController.page().url,
           defaultUserId

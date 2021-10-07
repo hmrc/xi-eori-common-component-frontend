@@ -29,12 +29,12 @@ import scala.concurrent.ExecutionContext.global
 
 trait AuthActionMock extends WordSpec with MockitoSugar with Injector {
 
-  val configuration           = instanceOf[Configuration]
-  val environment             = Environment.simple()
-  val groupEnrolmentExtractor = instanceOf[GroupEnrolmentExtractor]
-  val actionBuilder           = DefaultActionBuilder(stubBodyParser(AnyContentAsEmpty))(global)
+  val configuration               = instanceOf[Configuration]
+  val environment                 = Environment.simple()
+  val mockGroupEnrolmentExtractor = mock[GroupEnrolmentExtractor]
+  val actionBuilder               = DefaultActionBuilder(stubBodyParser(AnyContentAsEmpty))(global)
 
   def authAction(authConnector: AuthConnector) =
-    new AuthAction(configuration, environment, authConnector, actionBuilder, groupEnrolmentExtractor)(global)
+    new AuthAction(configuration, environment, authConnector, actionBuilder, mockGroupEnrolmentExtractor)(global)
 
 }

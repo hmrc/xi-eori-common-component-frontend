@@ -33,11 +33,8 @@ class YouAlreadyHaveEoriControllerSpec extends ControllerSpec {
   "YouAlreadyHaveEori controller" should {
     "redirect to the enrolment already exists page" in {
       running(application) {
-        val groupEnrolmentExtractor = mock[GroupEnrolmentExtractor]
-        withAuthorisedUser(defaultUserId, mockAuthConnector)
+        withAuthorisedUser(defaultUserId, mockAuthConnector, mockGroupEnrolmentExtractor)
 
-        when(groupEnrolmentExtractor.groupIdEnrolments(any())(any()))
-          .thenReturn(Future.successful(List.empty))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.YouAlreadyHaveEoriController.eoriAlreadyExists().url,
           defaultUserId

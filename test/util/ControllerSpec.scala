@@ -33,6 +33,7 @@ import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
+import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
 import util.builders.{AuthBuilder, SessionBuilder}
 
 import java.util.UUID
@@ -60,11 +61,11 @@ trait ControllerSpec extends WordSpec with MockitoSugar with Matchers with Injec
 
   protected val previousPageUrl = "javascript:history.back()"
 
-  val env: Environment      = Environment.simple()
-  val mockAuthConnector     = mock[AuthConnector]
-  val config: Configuration = Configuration.load(env)
-
-  private val serviceConfig = new ServicesConfig(config)
+  val env: Environment            = Environment.simple()
+  val mockAuthConnector           = mock[AuthConnector]
+  val config: Configuration       = Configuration.load(env)
+  val mockGroupEnrolmentExtractor = mock[GroupEnrolmentExtractor]
+  private val serviceConfig       = new ServicesConfig(config)
 
   val appConfig: AppConfig = new AppConfig(config, serviceConfig)
 
@@ -123,7 +124,7 @@ trait ControllerSpec extends WordSpec with MockitoSugar with Matchers with Injec
     val controller: C
 
     private def withAuthorisedUser[T](block: => T): T = {
-      AuthBuilder.withAuthorisedUser(userId, mockConnector)
+      AuthBuilder.withAuthorisedUser(userId, mockConnector, mockGroupEnrolmentExtractor)
       block
     }
 
@@ -170,10 +171,9 @@ trait ControllerSpec extends WordSpec with MockitoSugar with Matchers with Injec
 
   def undersizedString(minLength: Int): String = Random.alphanumeric.take(minLength - 1).mkString
 
-  def application = new GuiceApplicationBuilder().overrides(inject.bind[AuthConnector].to(mockAuthConnector)).configure(
-    "auditing.enabled" -> "false",
-    "metrics.jvm"      -> false,
-    "metrics.enabled"  -> false
-  ).build()
+  def application = new GuiceApplicationBuilder().overrides(
+    inject.bind[AuthConnector].to(mockAuthConnector),
+    inject.bind[GroupEnrolmentExtractor].to(mockGroupEnrolmentExtractor)
+  ).configure("auditing.enabled" -> "false", "metrics.jvm" -> false, "metrics.enabled" -> false).build()
 
 }
