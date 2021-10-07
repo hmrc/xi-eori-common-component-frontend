@@ -19,7 +19,6 @@ package controllers
 import common.pages.RegistrationPage
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.Application
 import play.api.test.Helpers._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
 import util.ControllerSpec
@@ -34,7 +33,7 @@ class YouAlreadyHaveEoriControllerSpec extends ControllerSpec {
   "YouAlreadyHaveEori controller" should {
     "redirect to the enrolment already exists page" in {
       running(application) {
-        val groupEnrolmentExtractor            = mock[GroupEnrolmentExtractor]
+        val groupEnrolmentExtractor = mock[GroupEnrolmentExtractor]
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
         when(groupEnrolmentExtractor.groupIdEnrolments(any())(any()))
