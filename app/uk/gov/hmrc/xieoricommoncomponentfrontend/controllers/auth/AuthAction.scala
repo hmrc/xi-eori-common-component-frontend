@@ -24,7 +24,8 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{affinityGroup, allEnrolment
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
+import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, LoggedInUserWithEnrolments}
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 trait IdentifierAction extends AuthRedirectSupport with AuthorisedFunctions with AccessController
@@ -33,7 +34,8 @@ class AuthAction @Inject() (
   override val config: Configuration,
   override val env: Environment,
   override val authConnector: AuthConnector,
-  action: DefaultActionBuilder
+  action: DefaultActionBuilder,
+  groupEnrolmentExtractor: GroupEnrolmentExtractor
 )(implicit ec: ExecutionContext)
     extends IdentifierAction {
 
@@ -96,7 +98,7 @@ class AuthAction @Inject() (
     userCredentialRole: Option[CredentialRole],
     checkPermittedAccess: Boolean,
     checkServiceEnrolment: Boolean
-  )(implicit request: Request[AnyContent]) = {
+  )(implicit request: Request[AnyContent], hc: HeaderCarrier) = {
 
     def enrolments: Set[Enrolment] = if (checkServiceEnrolment) loggedInUser.enrolments.enrolments else Set.empty
 
@@ -104,7 +106,10 @@ class AuthAction @Inject() (
       requestProcessor fold (_(request)(loggedInUser.internalId)(loggedInUser), _(request)(loggedInUser))
 
     if (checkPermittedAccess)
-      permitUserOrRedirect(loggedInUser.affinityGroup, userCredentialRole, enrolments)(action)
+      groupEnrolmentExtractor.groupIdEnrolments(loggedInUser.groupId.getOrElse(throw MissingGroupId())).flatMap {
+        groupEnrolments =>
+          permitUserOrRedirect(loggedInUser.affinityGroup, userCredentialRole, enrolments, groupEnrolments)(action)
+      }
     else
       action
   }

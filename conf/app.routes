@@ -6,9 +6,7 @@ GET        /register/logout                                                     
 GET        /assets/*file                                                  controllers.Assets.versioned(path = "/public", file: Asset)
 
 # enrolment-already-exists
-GET         /register/enrolment-already-exists                    @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.EnrolmentAlreadyExistsController.enrolmentAlreadyExists
-GET         /register/enrolment-already-exists-for-group          @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.EnrolmentAlreadyExistsController.enrolmentAlreadyExistsForGroup
-
+GET         /register/eori-already-exists                    @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.YouAlreadyHaveEoriController.eoriAlreadyExists
 
 GET        /register/you-cannot-use-service                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.YouCannotUseServiceController.page
 GET        /register/unauthorised                                @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.YouCannotUseServiceController.unauthorisedPage

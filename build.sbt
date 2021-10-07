@@ -18,7 +18,6 @@ lazy val scoverageSettings = {
       "uk\\.gov\\.hmrc\\.xieoricommoncomponentfrontend\\.views.*",
       "uk\\.gov\\.hmrc\\.xieoricommoncomponentfrontend\\.config.*",
       "uk\\.gov\\.hmrc\\.xieoricommoncomponentfrontend\\.models.*",
-      "uk\\.gov\\.hmrc\\.xieoricommoncomponentfrontend\\.util.*",
       "logger.*\\(.*\\)",
       ".*(AuthService|BuildInfo|Routes|TestOnly).*").mkString(";"),
     ScoverageKeys.coverageMinimum := 80,

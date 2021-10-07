@@ -167,7 +167,7 @@ class EnrolmentExtractorSpec extends ControllerSpec {
         val userEnrolments                           = Set(Enrolment("HMRC-TEST-ORG").withIdentifier("EORINumber", eori.id))
         val groupEnrolments: List[EnrolmentResponse] = List.empty
 
-        val result = enrolmentExtractor.existingEoriForUserOrGroup(loggedInUser(userEnrolments), groupEnrolments)
+        val result = enrolmentExtractor.existingEoriForUserOrGroup(userEnrolments, groupEnrolments)
 
         result shouldBe Some(ExistingEori(eori.id, "HMRC-TEST-ORG"))
       }
@@ -178,7 +178,7 @@ class EnrolmentExtractorSpec extends ControllerSpec {
         val groupEnrolments: List[EnrolmentResponse] =
           List(EnrolmentResponse("HMRC-GROUP-ORG", "Active", List(KeyValue("EORINumber", eori.id))))
 
-        val result = enrolmentExtractor.existingEoriForUserOrGroup(loggedInUser(userEnrolments), groupEnrolments)
+        val result = enrolmentExtractor.existingEoriForUserOrGroup(userEnrolments, groupEnrolments)
 
         result shouldBe Some(ExistingEori(eori.id, "HMRC-GROUP-ORG"))
       }
@@ -189,7 +189,7 @@ class EnrolmentExtractorSpec extends ControllerSpec {
         val groupEnrolments =
           List(EnrolmentResponse("HMRC-GROUP-ORG", "Active", List(KeyValue("OtherIdentifierKey", "SomeValue"))))
 
-        val result = enrolmentExtractor.existingEoriForUserOrGroup(loggedInUser(userEnrolments), groupEnrolments)
+        val result = enrolmentExtractor.existingEoriForUserOrGroup(userEnrolments, groupEnrolments)
 
         result shouldBe None
       }
@@ -199,7 +199,7 @@ class EnrolmentExtractorSpec extends ControllerSpec {
         val userEnrolments: Set[Enrolment]           = Set.empty
         val groupEnrolments: List[EnrolmentResponse] = List.empty
 
-        val result = enrolmentExtractor.existingEoriForUserOrGroup(loggedInUser(userEnrolments), groupEnrolments)
+        val result = enrolmentExtractor.existingEoriForUserOrGroup(userEnrolments, groupEnrolments)
 
         result shouldBe None
       }

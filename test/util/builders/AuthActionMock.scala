@@ -22,19 +22,19 @@ import play.api.mvc.{AnyContentAsEmpty, DefaultActionBuilder}
 import play.api.test.Helpers.stubBodyParser
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
+import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{AuthAction, GroupEnrolmentExtractor}
 import util.Injector
 
 import scala.concurrent.ExecutionContext.global
 
 trait AuthActionMock extends WordSpec with MockitoSugar with Injector {
 
-  val configuration = instanceOf[Configuration]
-  val environment   = Environment.simple()
-
-  val actionBuilder = DefaultActionBuilder(stubBodyParser(AnyContentAsEmpty))(global)
+  val configuration           = instanceOf[Configuration]
+  val environment             = Environment.simple()
+  val groupEnrolmentExtractor = instanceOf[GroupEnrolmentExtractor]
+  val actionBuilder           = DefaultActionBuilder(stubBodyParser(AnyContentAsEmpty))(global)
 
   def authAction(authConnector: AuthConnector) =
-    new AuthAction(configuration, environment, authConnector, actionBuilder)(global)
+    new AuthAction(configuration, environment, authConnector, actionBuilder, groupEnrolmentExtractor)(global)
 
 }

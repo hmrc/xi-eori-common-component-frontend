@@ -23,7 +23,7 @@ import util.ControllerSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
 
-class EnrolmentAlreadyExistsControllerSpec extends ControllerSpec {
+class YouAlreadyHaveEoriControllerSpec extends ControllerSpec {
 
   val paragraphXpath = "//*[@id='para1']"
   "Enrolment already exists controller" should {
@@ -33,7 +33,7 @@ class EnrolmentAlreadyExistsControllerSpec extends ControllerSpec {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.EnrolmentAlreadyExistsController.enrolmentAlreadyExists().url,
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.YouAlreadyHaveEoriController.eoriAlreadyExists().url,
           defaultUserId
         )
         val result = route(application, request).get
@@ -47,22 +47,5 @@ class EnrolmentAlreadyExistsControllerSpec extends ControllerSpec {
 
     }
 
-    "redirect to the enrolment already exists for group page" in {
-      running(application) {
-        withAuthorisedUser(defaultUserId, mockAuthConnector)
-
-        val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.EnrolmentAlreadyExistsController.enrolmentAlreadyExistsForGroup().url,
-          defaultUserId
-        )
-        val result = route(application, request).get
-        status(result) shouldBe OK
-
-        val page = RegistrationPage(contentAsString(result))
-
-        page.title should startWith("There is a problem")
-
-      }
-    }
   }
 }

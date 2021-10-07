@@ -20,21 +20,27 @@ import play.api.mvc.Results.Redirect
 import play.api.mvc.{AnyContent, Request, Result}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Organisation}
 import uk.gov.hmrc.auth.core.{AffinityGroup, CredentialRole, Enrolment, User}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.Service
+import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.EnrolmentResponse
+import scala.concurrent.{ExecutionContext, Future}
 
-import scala.concurrent.Future
-
-trait AccessController {
+trait AccessController extends EnrolmentExtractor {
 
   def permitUserOrRedirect(
     affinityGroup: Option[AffinityGroup],
     credentialRole: Option[CredentialRole],
-    enrolments: Set[Enrolment]
-  )(action: Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
+    enrolments: Set[Enrolment],
+    groupEnrolments: List[EnrolmentResponse]
+  )(
+    action: Future[Result]
+  )(implicit request: Request[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
 
     def hasEnrolment(implicit request: Request[AnyContent]): Boolean =
-      Service.serviceFromRequest.exists(service => enrolments.exists(_.key.equalsIgnoreCase(service.enrolmentKey)))
+      existingEoriForUserOrGroup(enrolments, groupEnrolments) match {
+        case Some(_) => true
+        case None    => false
+      }
 
     def isPermittedUserType: Boolean =
       affinityGroup match {
@@ -46,9 +52,11 @@ trait AccessController {
     if (!isPermittedUserType)
       Future.successful(Redirect(routes.YouCannotUseServiceController.page))
     else if (hasEnrolment)
-      Future.successful(Redirect(routes.EnrolmentAlreadyExistsController.enrolmentAlreadyExists))
+      Future.successful(Redirect(routes.YouAlreadyHaveEoriController.eoriAlreadyExists()))
     else
       action
   }
 
 }
+
+case class MissingGroupId() extends Exception(s"User doesn't have groupId")

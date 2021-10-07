@@ -21,30 +21,22 @@ import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{registration_exists, registration_exists_group}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.eori_exists
 
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class EnrolmentAlreadyExistsController @Inject() (
+class YouAlreadyHaveEoriController @Inject() (
   authAction: AuthAction,
-  registrationExistsView: registration_exists,
-  registrationExistsForGroupView: registration_exists_group,
+  eoriExistsView: eori_exists,
   mcc: MessagesControllerComponents
 ) extends FrontendController(mcc) with I18nSupport {
 
   // Note: permitted for user with service enrolment
-  def enrolmentAlreadyExists: Action[AnyContent] =
+  def eoriAlreadyExists: Action[AnyContent] =
     authAction.ggAuthorisedUserWithServiceAction {
       implicit request => _: LoggedInUserWithEnrolments =>
-        Future.successful(Ok(registrationExistsView()))
-    }
-
-  // Note: permitted for user with service enrolment
-  def enrolmentAlreadyExistsForGroup: Action[AnyContent] =
-    authAction.ggAuthorisedUserWithServiceAction {
-      implicit request => _: LoggedInUserWithEnrolments =>
-        Future.successful(Ok(registrationExistsForGroupView()))
+        Future.successful(Ok(eoriExistsView()))
     }
 
 }
