@@ -16,9 +16,10 @@
 
 package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth
 
+import play.api.mvc.Results.Redirect
 import play.api.mvc.{AnyContent, Request, Result}
 import play.api.{Configuration, Environment}
-import uk.gov.hmrc.auth.core.NoActiveSession
+import uk.gov.hmrc.auth.core.{AuthorisationException, InsufficientEnrolments, NoActiveSession}
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 
 trait AuthRedirectSupport extends AuthRedirects {
@@ -34,6 +35,14 @@ trait AuthRedirectSupport extends AuthRedirects {
 
   def withAuthRecovery(implicit request: Request[AnyContent]): PartialFunction[Throwable, Result] = {
     case _: NoActiveSession => toGGLogin(continueUrl = continueUrl)
+    case _: InsufficientEnrolments =>
+      Redirect(
+        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.YouCannotUseServiceController.unauthorisedPage()
+      )
+    case _: AuthorisationException =>
+      Redirect(
+        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.YouCannotUseServiceController.unauthorisedPage()
+      )
   }
 
 }
