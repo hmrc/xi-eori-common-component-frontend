@@ -19,13 +19,11 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth
 import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{
   EnrolmentResponse,
-  Eori,
   ExistingEori,
   LoggedInUserWithEnrolments,
   Nino,
   Utr
 }
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.Service
 
 trait EnrolmentExtractor {
 
@@ -44,18 +42,6 @@ trait EnrolmentExtractor {
             .getIdentifier(identifierName)
             .map(identifier => identifier.value)
       )
-
-  def enrolledForService(loggedInUser: LoggedInUserWithEnrolments, service: Service): Option[Eori] =
-    identifierFor(service.enrolmentKey, EoriIdentifier, loggedInUser).map(Eori)
-
-  def activatedEnrolmentForService(loggedInUser: LoggedInUserWithEnrolments, service: Service): Option[Eori] =
-    loggedInUser.enrolments
-      .getEnrolment(service.enrolmentKey)
-      .flatMap { enrolment =>
-        if (enrolment.state.equalsIgnoreCase("Activated"))
-          enrolment.getIdentifier(EoriIdentifier).map(identifier => Eori(identifier.value))
-        else None
-      }
 
   def enrolledCtUtr(loggedInUser: LoggedInUserWithEnrolments): Option[Utr] =
     identifierFor("IR-CT", "UTR", loggedInUser).map(Utr)

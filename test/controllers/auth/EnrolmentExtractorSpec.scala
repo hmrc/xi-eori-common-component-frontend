@@ -20,7 +20,6 @@ import util.ControllerSpec
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.EnrolmentExtractor
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain._
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.Service
 
 class EnrolmentExtractorSpec extends ControllerSpec {
 
@@ -34,71 +33,6 @@ class EnrolmentExtractorSpec extends ControllerSpec {
   val enrolmentExtractor = new EnrolmentExtractor {}
 
   "Enrolment Extractor" should {
-
-    "return EORI" when {
-
-      "user is enrolled for ATaR" in {
-
-        val atarEnrolment = Enrolment("HMRC-ATAR-ORG").withIdentifier("EORINumber", eori.id)
-
-        val result = enrolmentExtractor.enrolledForService(loggedInUser(Set(atarEnrolment)), atarService)
-
-        result shouldBe Some(eori)
-      }
-
-      "user is enrolled for CDS" in {
-
-        val cdsEnrolment = Enrolment("HMRC-CUS-ORG").withIdentifier("EORINumber", eori.id)
-
-        val result = enrolmentExtractor.enrolledForService(loggedInUser(Set(cdsEnrolment)), Service.cds)
-
-        result shouldBe Some(eori)
-      }
-    }
-
-    "doesn't return EORI" when {
-
-      "user is not enrolled for ATaR" in {
-
-        enrolmentExtractor.enrolledForService(loggedInUser(Set.empty), atarService) shouldBe None
-      }
-
-      "user is not enrolled for CDS" in {
-
-        enrolmentExtractor.enrolledForService(loggedInUser(Set.empty), Service.cds) shouldBe None
-      }
-    }
-
-    "return EORI" when {
-
-      "user has activated enrolment" in {
-
-        val atarEnrolment = Enrolment("HMRC-ATAR-ORG", Seq(EnrolmentIdentifier("EORINumber", eori.id)), "Activated")
-
-        val result = enrolmentExtractor.activatedEnrolmentForService(loggedInUser(Set(atarEnrolment)), atarService)
-
-        result shouldBe Some(eori)
-      }
-    }
-
-    "doesn't return EORI" when {
-
-      "user has not activated enrolment" in {
-
-        val atarEnrolment = Enrolment("HMRC-ATAR-ORG", Seq(EnrolmentIdentifier("EORINumber", eori.id)), "Pending")
-
-        val result = enrolmentExtractor.activatedEnrolmentForService(loggedInUser(Set(atarEnrolment)), atarService)
-
-        result shouldBe None
-      }
-
-      "user doesn't have enrolment" in {
-
-        val result = enrolmentExtractor.activatedEnrolmentForService(loggedInUser(Set.empty), atarService)
-
-        result shouldBe None
-      }
-    }
 
     "return Self Assessment UTR" when {
 

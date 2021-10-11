@@ -41,7 +41,7 @@ import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
 import scala.util.Random
 
-trait ControllerSpec extends WordSpec with MockitoSugar with Matchers with Injector with TestData {
+trait ControllerSpec extends WordSpec with MockitoSugar with Matchers with Injector {
 
   implicit val messagesApi: MessagesApi = instanceOf[MessagesApi]
 

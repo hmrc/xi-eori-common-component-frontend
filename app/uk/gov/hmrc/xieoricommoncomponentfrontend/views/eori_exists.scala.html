@@ -15,10 +15,9 @@
  *@
 
 @import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
-@import uk.gov.hmrc.xieoricommoncomponentfrontend.models.ServiceName._
 
 
-@this(main_template: Layout, appConfig: AppConfig, callBack: helpers.callBack)
+@this(main_template: Layout, appConfig: AppConfig)
 @()(implicit messages: Messages, request: Request[_])
 
 @main_template(Some(messages("ecc.enrolment.already.exists.title"))) {
@@ -26,9 +25,7 @@
 
         <h1 id="page-heading" class="govuk-heading-l">@messages("ecc.enrolment.already.exists.heading")</h1>
 
-        <p class="govuk-body" id="para1">@messages("ecc.enrolment.already.exists.para1", longName)</p>
-
-        @callBack(service)
+        <p class="govuk-body" id="para1">@messages("ecc.enrolment.already.exists.para1")</p>
 
         @helpers.helpAndSupport()
     </div>

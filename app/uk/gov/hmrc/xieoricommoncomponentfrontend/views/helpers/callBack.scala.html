@@ -14,16 +14,14 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.xieoricommoncomponentfrontend.models.Service
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Button
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 
 @this(govukButton: GovukButton)
 
-@(service: Service)(implicit request: Request[_], messages: Messages)
+@()(implicit request: Request[_], messages: Messages)
 
 @govukButton(Button(
   content = Text(messages("ecc.navigation.continue")),
-  href=Some(service.callBack)
 ))

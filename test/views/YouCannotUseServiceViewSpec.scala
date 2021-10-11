@@ -41,7 +41,7 @@ class YouCannotUseServiceViewSpec extends ViewSpec {
     "display para-1" in {
       standardOrgDoc.body
         .getElementById("para-1")
-        .text mustBe "You signed in to Government Gateway as a standard user. To apply for access to Advance Tariff Rulings you must be an administrator user."
+        .text mustBe "You signed in to Government Gateway as a standard user. To apply for access you must be an administrator user."
     }
 
     "display para-2" in {
@@ -74,7 +74,7 @@ class YouCannotUseServiceViewSpec extends ViewSpec {
     "display para-2" in {
       agentDoc.body
         .getElementById("para-2")
-        .text mustBe "You need to sign in with the Government Gateway for the organisation or individual that is applying for access to Advance Tariff Rulings."
+        .text mustBe "You need to sign in with the Government Gateway for the organisation or individual that is applying for access."
     }
 
     "have a Sign out button with the correct href" in {
