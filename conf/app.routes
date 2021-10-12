@@ -1,5 +1,12 @@
 # microservice specific routes
 
-->         /hmrc-frontend           hmrcfrontend.Routes
-GET        /                        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.HelloWorldController.helloWorld
-GET        /assets/*file            controllers.Assets.versioned(path = "/public", file: Asset)
+->         /hmrc-frontend                                                 hmrcfrontend.Routes
+
+GET        /register/logout                                                        @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.LogoutController.logout
+GET        /assets/*file                                                  controllers.Assets.versioned(path = "/public", file: Asset)
+
+# enrolment-already-exists
+GET         /register/eori-already-exists                    @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.YouAlreadyHaveEoriController.eoriAlreadyExists
+
+GET        /register/you-cannot-use-service                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.YouCannotUseServiceController.page
+GET        /register/unauthorised                                @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.YouCannotUseServiceController.unauthorisedPage

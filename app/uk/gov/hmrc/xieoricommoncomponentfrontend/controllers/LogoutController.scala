@@ -16,18 +16,18 @@
 
 package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.HelloWorldPage
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
+
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
 
 @Singleton
-class HelloWorldController @Inject() (mcc: MessagesControllerComponents, helloWorldPage: HelloWorldPage)
+class LogoutController @Inject() (appConfig: AppConfig, mcc: MessagesControllerComponents)
     extends FrontendController(mcc) {
 
-  val helloWorld: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(helloWorldPage()))
+  def logout: Action[AnyContent] = Action { implicit request =>
+    Redirect(appConfig.loginContinueUrl)
   }
 
 }
