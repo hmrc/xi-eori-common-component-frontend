@@ -17,21 +17,24 @@
 @import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLayout
 @import views.html.helper.CSPNonce
+@import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
 
 @this(
-        appConfig: AppConfig,
-        hmrcLayout: HmrcLayout
+appConfig: AppConfig,
+hmrcLayout: HmrcLayout,
+standardBetaBanner: StandardBetaBanner,
 )
-@(pageTitle: Option[String] = None)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
+@(pageTitle: String,form: Option[Form[_]] = None)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
 
 @serviceUrl = @{
  "/xi-customs-registration-services"
 }
 
 @hmrcLayout(
-    pageTitle = pageTitle,
+    pageTitle = Some(pageTitle),
     nonce = CSPNonce.get,
     isWelshTranslationAvailable = appConfig.welshLanguageSupportEnabled,
     serviceUrl = Some(serviceUrl),
-    serviceName = Some(messages("service.name"))
+    serviceName = Some(messages("service.name")),
+    phaseBanner = Some(standardBetaBanner(url = "#")),
 )(contentBlock)
