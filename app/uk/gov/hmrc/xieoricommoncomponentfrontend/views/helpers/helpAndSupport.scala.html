@@ -14,12 +14,7 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components.Text
-
-@this(layout: Layout)
-
-@(pageTitle: String, heading: String, message: String)(implicit request: Request[_], messages: Messages)
-@layout(pageTitle = pageTitle) {
-    <h1 class="govuk-heading-xl">@{Text(heading).asHtml}</h1>
-    <p class="govuk-body">@{Text(message).asHtml}</p>
-}
+@()(implicit messages: Messages)
+<div id="helpAndSupport">
+ <a href="#" class="govuk-link" target="_blank">@messages("ecc.help-and-support.text")</a>
+</div>

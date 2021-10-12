@@ -16,18 +16,26 @@
 
 package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.HelloWorldPage
+import play.api.i18n.I18nSupport
+import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import javax.inject.{Inject, Singleton}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
+import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
+import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.eori_exists
+
+import javax.inject.Inject
 import scala.concurrent.Future
 
-@Singleton
-class HelloWorldController @Inject() (mcc: MessagesControllerComponents, helloWorldPage: HelloWorldPage)
-    extends FrontendController(mcc) {
+class YouAlreadyHaveEoriController @Inject() (
+  authAction: AuthAction,
+  eoriExistsView: eori_exists,
+  mcc: MessagesControllerComponents
+) extends FrontendController(mcc) with I18nSupport {
 
-  val helloWorld: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(helloWorldPage()))
-  }
+  def eoriAlreadyExists: Action[AnyContent] =
+    authAction.ggAuthorisedUserWithEnrolmentsAction {
+      implicit request => _: LoggedInUserWithEnrolments =>
+        Future.successful(Ok(eoriExistsView()))
+    }
 
 }

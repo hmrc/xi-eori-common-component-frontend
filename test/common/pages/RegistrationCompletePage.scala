@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,13 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this(layout: Layout)
+package common.pages
 
-@()(implicit request: Request[_], messages: Messages)
+class RegistrationCompletePage extends RegistrationOutcomePage("complete") with XPathRegistrationOutcomePage {
 
-@layout(pageTitle = Some("xi-eori-common-component-frontend")) {
-    <h1 class="govuk-heading-xl">xi-eori-common-component-frontend</h1>
-    <p class="govuk-body">@{messages("service.text")}</p>
+  val eoriXpath: String = "//*[@id='eori-number']"
+
+  override val title = "Application complete"
+
+  val LeaveFeedbackLinkXpath = "//a[@id='feedback_link']"
+  val DownloadEoriLinkXpath  = "//a[@id='download-eori']"
 }
+
+object RegistrationCompletePage extends RegistrationCompletePage

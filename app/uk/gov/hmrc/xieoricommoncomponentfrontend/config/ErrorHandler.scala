@@ -16,20 +16,44 @@
 
 package uk.gov.hmrc.xieoricommoncomponentfrontend.config
 
-import javax.inject.{Inject, Singleton}
+import play.api.Logger
+import play.api.http.Status._
 
+import javax.inject.{Inject, Singleton}
 import play.api.i18n.MessagesApi
-import play.api.mvc.Request
+import play.api.mvc._
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.ErrorTemplate
+import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{client_error_template, notFound, ErrorTemplate}
+
+import scala.concurrent.Future
 
 @Singleton
-class ErrorHandler @Inject() (errorTemplate: ErrorTemplate, val messagesApi: MessagesApi) extends FrontendErrorHandler {
+class ErrorHandler @Inject() (
+  errorTemplate: ErrorTemplate,
+  notFoundView: notFound,
+  clientErrorTemplateView: client_error_template,
+  val messagesApi: MessagesApi
+) extends FrontendErrorHandler {
+
+  private val logger = Logger(this.getClass)
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit
     request: Request[_]
   ): Html =
     errorTemplate(pageTitle, heading, message)
+
+  override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
+
+    // $COVERAGE-OFF$Loggers
+    logger.error(s"Error with status code: $statusCode and message: $message")
+    // $COVERAGE-ON
+    implicit val req: Request[_] = Request(request, "")
+
+    statusCode match {
+      case NOT_FOUND => Future.successful(Results.NotFound(notFoundView()))
+      case _         => Future.successful(Results.InternalServerError(clientErrorTemplateView(message)))
+    }
+  }
 
 }

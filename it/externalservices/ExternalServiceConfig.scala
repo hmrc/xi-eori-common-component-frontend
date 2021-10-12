@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,14 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.govukfrontend.views.html.components.Text
+package externalservices
 
-@this(layout: Layout)
-
-@(pageTitle: String, heading: String, message: String)(implicit request: Request[_], messages: Messages)
-@layout(pageTitle = pageTitle) {
-    <h1 class="govuk-heading-xl">@{Text(heading).asHtml}</h1>
-    <p class="govuk-body">@{Text(message).asHtml}</p>
+object ExternalServiceConfig {
+  val Port: Int              = sys.env.getOrElse("WIREMOCK_SERVICE_LOCATOR_PORT", "11111").toInt
+  val Host                   = "localhost"
+  val sessionCacheDomain     = "test-only/keystore"
+  val shortLivedCacheDomain  = "test-only/save4later"
+  val cdsFrontendSource      = "cds-frontend"
+  val subscriptionEoriNumber = "ZZZ1ZZZZ23ZZZZZZZ"
+  val etmpFormBundleId       = "077063075008"
 }

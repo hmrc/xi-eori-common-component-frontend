@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,14 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.govukfrontend.views.html.components.Text
+package models
 
-@this(layout: Layout)
+import org.scalatest.{MustMatchers, WordSpec}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.WithName
 
-@(pageTitle: String, heading: String, message: String)(implicit request: Request[_], messages: Messages)
-@layout(pageTitle = pageTitle) {
-    <h1 class="govuk-heading-xl">@{Text(heading).asHtml}</h1>
-    <p class="govuk-body">@{Text(message).asHtml}</p>
+class WithNameSpec extends WordSpec with MustMatchers {
+
+  object Foo extends WithName("bar")
+
+  ".toString" must {
+    "return the correct string" in {
+      Foo.toString mustEqual "bar"
+    }
+  }
 }

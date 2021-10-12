@@ -14,12 +14,16 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components.Text
+@this(main_template: Layout)
+@()(implicit messages: Messages, request: Request[_])
 
-@this(layout: Layout)
+@main_template(messages("ecc.enrolment.already.exists.title")) {
+    <div>
 
-@(pageTitle: String, heading: String, message: String)(implicit request: Request[_], messages: Messages)
-@layout(pageTitle = pageTitle) {
-    <h1 class="govuk-heading-xl">@{Text(heading).asHtml}</h1>
-    <p class="govuk-body">@{Text(message).asHtml}</p>
+        <h1 id="page-heading" class="govuk-heading-l">@messages("ecc.enrolment.already.exists.heading")</h1>
+
+        <p class="govuk-body" id="para1">@messages("ecc.enrolment.already.exists.para1")</p>
+
+        @helpers.helpAndSupport()
+    </div>
 }

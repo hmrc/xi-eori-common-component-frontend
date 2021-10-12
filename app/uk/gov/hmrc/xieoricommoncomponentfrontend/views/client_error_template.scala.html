@@ -14,12 +14,15 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components.Text
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html._
 
-@this(layout: Layout)
 
-@(pageTitle: String, heading: String, message: String)(implicit request: Request[_], messages: Messages)
-@layout(pageTitle = pageTitle) {
-    <h1 class="govuk-heading-xl">@{Text(heading).asHtml}</h1>
-    <p class="govuk-body">@{Text(message).asHtml}</p>
+
+@this(main_template: Layout)
+
+@(message: String)(implicit messages: Messages, request: Request[_])
+
+@main_template(messages("ecc.error.title"), displayBackLink = false) {
+<p class="govuk-body">@messages(message)</p>
+
 }
