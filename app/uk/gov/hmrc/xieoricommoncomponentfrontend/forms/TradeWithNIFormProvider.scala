@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html._
+package uk.gov.hmrc.xieoricommoncomponentfrontend.forms
 
+import play.api.data.Form
+import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.mappings.Mappings
+import javax.inject.Inject
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.TradeWithNI
 
-@this(main_template: Layout)
-@()(implicit messages: Messages, request: Request[_])
-@main_template(messages("ecc.server-errors.401.title")) {
-    <div>
-        <header class="page-header">
-            <h1 class="govuk-heading-xl">@messages("ecc.server-errors.401.heading")</h1>
+class TradeWithNIFormProvider @Inject() extends Mappings{
 
-        </header>
+  def apply(): Form[TradeWithNI] =
+    Form(
+      "value" -> enumerable[TradeWithNI]("traderWithNI.error.required")
+    )
 
-        <p class="govuk-body" id="para-1">@messages("ecc.server-errors.401.message1")</p>
-        <p class="govuk-body" id="para-2">@messages("ecc.server-errors.401.message2")</p>
-    </div>
 }
