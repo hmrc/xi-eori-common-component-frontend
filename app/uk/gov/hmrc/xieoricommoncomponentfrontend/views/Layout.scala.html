@@ -29,6 +29,10 @@ standardBetaBanner: StandardBetaBanner,
 @serviceUrl = @{
  "/xi-customs-registration-services"
 }
+@logOutUrl = @{
+    s"/xi-customs-registration-services/register/logout"
+}
+
 
 @hmrcLayout(
     pageTitle = Some(pageTitle),
@@ -36,5 +40,6 @@ standardBetaBanner: StandardBetaBanner,
     isWelshTranslationAvailable = appConfig.welshLanguageSupportEnabled,
     serviceUrl = Some(serviceUrl),
     serviceName = Some(messages("service.name")),
-    phaseBanner = Some(standardBetaBanner(url = "#")),
+    signOutUrl = Some(logOutUrl),
+    phaseBanner = Some(standardBetaBanner(url = "#"))
 )(contentBlock)

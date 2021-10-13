@@ -51,7 +51,7 @@ class LogoutControllerSpec extends WordSpec with Matchers {
         defaultUserId
       )
       val result = route(application, request).get
-      redirectLocation(result) shouldBe Some("http://localhost:6755/xi-customs-registration-services")
+      redirectLocation(result) shouldBe Some("http://localhost:9553/bas-gateway/sign-out-without-state")
 
     }
   }
