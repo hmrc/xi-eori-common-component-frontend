@@ -30,15 +30,17 @@ trait Formatters {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
       data.get(key) match {
         case None | Some("") => Left(Seq(FormError(key, errorKey)))
-        case Some(s) => Right(s)
+        case Some(s)         => Right(s)
       }
 
     override def unbind(key: String, value: String): Map[String, String] =
       Map(key -> value)
+
   }
 
-
-  private[mappings] def enumerableFormatter[A](requiredKey: String, invalidKey: String)(implicit ev: Enumerable[A]): Formatter[A] =
+  private[mappings] def enumerableFormatter[A](requiredKey: String, invalidKey: String)(implicit
+    ev: Enumerable[A]
+  ): Formatter[A] =
     new Formatter[A] {
 
       private val baseFormatter = stringFormatter(requiredKey)
@@ -51,6 +53,7 @@ trait Formatters {
 
       override def unbind(key: String, value: A): Map[String, String] =
         baseFormatter.unbind(key, value.toString)
+
     }
 
 }

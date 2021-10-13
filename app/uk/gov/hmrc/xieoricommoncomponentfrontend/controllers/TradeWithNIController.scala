@@ -29,11 +29,11 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.trade_with_ni
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class TradeWithNIController @Inject()(
-                                       authAction: AuthAction,
-                                       tradeWithNIView: trade_with_ni,
-                                       formProvider: TradeWithNIFormProvider,
-                                       mcc: MessagesControllerComponents
+class TradeWithNIController @Inject() (
+  authAction: AuthAction,
+  tradeWithNIView: trade_with_ni,
+  formProvider: TradeWithNIFormProvider,
+  mcc: MessagesControllerComponents
 ) extends FrontendController(mcc) with I18nSupport {
 
   private val form = formProvider()
@@ -45,19 +45,19 @@ class TradeWithNIController @Inject()(
         Future.successful(Ok(tradeWithNIView(form)))
     }
 
-
   def submit: Action[AnyContent] = Action { implicit request =>
     form
       .bindFromRequest()
-      .fold(
-        formWithErrors => BadRequest(tradeWithNIView(formWithErrors)),
-        value => destinationsByAnswer(value)
-      )
+      .fold(formWithErrors => BadRequest(tradeWithNIView(formWithErrors)), value => destinationsByAnswer(value))
   }
 
   private def destinationsByAnswer(tradeWithNI: TradeWithNI): Result = tradeWithNI match {
-    case Yes => Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.YouCannotUseServiceController.page())
-    case No                           => Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.YouAlreadyHaveEoriController.eoriAlreadyExists())
+    case Yes =>
+      Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.YouCannotUseServiceController.page())
+    case No =>
+      Redirect(
+        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.YouAlreadyHaveEoriController.eoriAlreadyExists()
+      )
   }
 
 }

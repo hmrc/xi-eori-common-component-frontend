@@ -22,11 +22,9 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.Enumerable
 
 trait Mappings extends Formatters {
 
-
-
-  protected def enumerable[A](requiredKey: String = "error.required",
-                              invalidKey: String = "error.invalid")(implicit ev: Enumerable[A]): FieldMapping[A] =
+  protected def enumerable[A](requiredKey: String = "error.required", invalidKey: String = "error.invalid")(implicit
+    ev: Enumerable[A]
+  ): FieldMapping[A] =
     of(enumerableFormatter[A](requiredKey, invalidKey))
-
 
 }
