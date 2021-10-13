@@ -27,7 +27,7 @@ class LogoutController @Inject() (appConfig: AppConfig, mcc: MessagesControllerC
     extends FrontendController(mcc) {
 
   def logout: Action[AnyContent] = Action { implicit request =>
-    Redirect(appConfig.loginContinueUrl)
+    Redirect(appConfig.signOutUrl)
   }
 
 }
