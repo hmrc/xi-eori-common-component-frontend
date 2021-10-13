@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.xieoricommoncomponentfrontend.forms
+package models
 
-import play.api.data.Form
-import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.mappings.Mappings
-import javax.inject.Inject
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.TradeWithNI
+import org.scalatest.{MustMatchers, WordSpec}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.WithName
 
-class TradeWithNIFormProvider @Inject() extends Mappings {
+class WithNameSpec extends WordSpec with MustMatchers {
 
-  def apply(): Form[TradeWithNI] =
-    Form("value" -> enumerable[TradeWithNI]("traderWithNI.error.required"))
+  object Foo extends WithName("bar")
 
+  ".toString" must {
+    "return the correct string" in {
+      Foo.toString mustEqual "bar"
+    }
+  }
 }

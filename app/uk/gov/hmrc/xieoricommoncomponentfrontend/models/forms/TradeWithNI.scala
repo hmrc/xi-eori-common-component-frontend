@@ -26,22 +26,17 @@ sealed trait TradeWithNI
 object TradeWithNI extends Enumerable.Implicits {
 
   case object Yes extends WithName("yes") with TradeWithNI
-  case object No extends WithName("no") with TradeWithNI
+  case object No  extends WithName("no") with TradeWithNI
 
-  val values: Seq[TradeWithNI] = Seq(
-    Yes,
-    No
-  )
+  val values: Seq[TradeWithNI] = Seq(Yes, No)
 
-  def fromBoolean(viewBalance: Boolean): TradeWithNI = {
-    if(viewBalance){
+  def fromBoolean(viewBalance: Boolean): TradeWithNI =
+    if (viewBalance)
       Yes
-    } else {
+    else
       No
-    }
-  }
 
-  def options(form: Form[_])(implicit messages: Messages): Seq[RadioItem] = {
+  def options(form: Form[_])(implicit messages: Messages): Seq[RadioItem] =
     Seq(
       RadioItem(
         value = Some(Yes.toString),
@@ -54,8 +49,8 @@ object TradeWithNI extends Enumerable.Implicits {
         checked = form("value").value.contains(No.toString)
       )
     )
-  }
 
   implicit val enumerable: Enumerable[TradeWithNI] =
     Enumerable(values.map(v => v.toString -> v): _*)
+
 }
