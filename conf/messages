@@ -1,4 +1,4 @@
-service.name = Get an XI EORI
+service.name = Apply for an XI EORI
 service.text = This is your new service
 
 ecc.sign.out=Sign out
