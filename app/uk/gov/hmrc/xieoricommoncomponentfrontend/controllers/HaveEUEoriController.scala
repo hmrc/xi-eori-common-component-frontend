@@ -21,18 +21,18 @@ import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
-import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.TradeWithNIFormProvider
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.TradeWithNI
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.TradeWithNI.{No, Yes}
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.trade_with_ni
+import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.HaveEUEoriFormProvider
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.HaveEUEori
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.HaveEUEori.{No, Yes}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.have_eu_eori
 
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class TradeWithNIController @Inject() (
+class HaveEUEoriController @Inject() (
   authAction: AuthAction,
-  tradeWithNIView: trade_with_ni,
-  formProvider: TradeWithNIFormProvider,
+  haveEUEoriView: have_eu_eori,
+  formProvider: HaveEUEoriFormProvider,
   mcc: MessagesControllerComponents
 ) extends FrontendController(mcc) with I18nSupport {
 
@@ -42,20 +42,22 @@ class TradeWithNIController @Inject() (
   def onPageLoad: Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
       implicit request => _: LoggedInUserWithEnrolments =>
-        Future.successful(Ok(tradeWithNIView(form)))
+        Future.successful(Ok(haveEUEoriView(form)))
     }
 
   def submit: Action[AnyContent] = Action { implicit request =>
     form
       .bindFromRequest()
-      .fold(formWithErrors => BadRequest(tradeWithNIView(formWithErrors)), value => destinationsByAnswer(value))
+      .fold(formWithErrors => BadRequest(haveEUEoriView(formWithErrors)), value => destinationsByAnswer(value))
   }
 
-  private def destinationsByAnswer(tradeWithNI: TradeWithNI): Result = tradeWithNI match {
+  private def destinationsByAnswer(haveEUEori: HaveEUEori): Result = haveEUEori match {
     case Yes =>
-      Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.YouCannotUseServiceController.page())
-    case No =>
       Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded())
+    case No =>
+      Redirect(
+        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.YouAlreadyHaveEoriController.eoriAlreadyExists()
+      )
   }
 
 }
