@@ -5,16 +5,16 @@
 GET        /register/logout                              @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.LogoutController.logout
 GET        /assets/*file                                 controllers.Assets.versioned(path = "/public", file: Asset)
 
-# enrolment-already-exists
+# eori-already-exists
 GET        /register/eori-already-exists                 @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.YouAlreadyHaveEoriController.eoriAlreadyExists
 
 #you-cannot-use-service
 GET        /register/you-cannot-use-service              @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.YouCannotUseServiceController.page
 GET        /register/unauthorised                        @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.YouCannotUseServiceController.unauthorisedPage
 
-#trader-with-ni
-GET        /register/trader-with-ni                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.TradeWithNIController.onPageLoad
-POST        /register/trader-with-ni                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.TradeWithNIController.submit
+#trade-with-ni
+GET        /register/trade-with-ni                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.TradeWithNIController.onPageLoad
+POST        /register/trade-with-ni                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.TradeWithNIController.submit
 
 #xi-eori-not-needed
 GET        /register/xi-eori-not-needed                  @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.XiEoriNotNeededController.eoriNotNeeded

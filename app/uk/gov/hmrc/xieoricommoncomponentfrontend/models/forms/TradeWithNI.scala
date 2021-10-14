@@ -25,8 +25,8 @@ sealed trait TradeWithNI
 
 object TradeWithNI extends Enumerable.Implicits {
 
-  case object Yes extends WithName("yes") with TradeWithNI
-  case object No  extends WithName("no") with TradeWithNI
+  case object Yes extends WithName("Yes") with TradeWithNI
+  case object No  extends WithName("No") with TradeWithNI
 
   val values: Seq[TradeWithNI] = Seq(Yes, No)
 

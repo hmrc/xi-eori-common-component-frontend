@@ -28,8 +28,8 @@ ecc.server-errors.401.message2=It is currently only available by invitation.
 #trade-with-ni
 tradeWithNI.page.title=Do you move goods in or out of Northern Ireland?
 traderWithNI.error.required=Tell us if move goods in or out of Northern Ireland?
-traderWithNI.yes=yes
-traderWithNI.no=no
+traderWithNI.Yes=Yes
+traderWithNI.No=No
 traderWithNI.hint=You only need an XI EORI if you move goods from GB (England, Scotland, Wales, the Isle of Man and the Channel Islands) to Northern Ireland.
 
 #xi-Eori-Not-Needed
