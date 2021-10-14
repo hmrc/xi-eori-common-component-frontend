@@ -18,3 +18,7 @@ POST        /register/trade-with-ni                      @uk.gov.hmrc.xieoricomm
 
 #xi-eori-not-needed
 GET        /register/xi-eori-not-needed                  @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.XiEoriNotNeededController.eoriNotNeeded
+
+#have-eu-eori
+GET        /register/have-eu-eori                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.HaveEUEoriController.onPageLoad
+POST       /register/have-eu-eori                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.HaveEUEoriController.submit
