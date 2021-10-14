@@ -44,6 +44,6 @@ haveEUEori.page.title=Do you have an EU Economic Operator Registration and Ident
 haveEUEori.error.required=Tell us if you have an EU Economic Operator Registration and Identification (EORI) number
 haveEUEori.yes=Yes
 haveEUEori.no=No
-haveEUEori.hint=You only need an XI EORI if you move goods from GB (England, Scotland, Wales, the Isle of Man and the Channel Islands) to Northern Ireland.
+haveEUEori.hint=This can be issued by any country within the EU.
 haveEUEori.coutries=Countries in the EU
 haveEUEori.coutries.list=Austria, Belgium, Bulgaria, Croatia, Republic of Cyprus, Czech Republic, Denmark, Estonia, Finland, France, Germany, Greece, Hungary, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, Poland, Portugal, Romania, Slovakia, Slovenia, Spain and Sweden.
