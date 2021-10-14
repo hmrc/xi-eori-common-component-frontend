@@ -36,7 +36,8 @@
 
         @govukButton(Button(
             content = Text(messages("ecc.sign.out")),
-            href = Some(appConfig.signOutUrl)
+            href = Some(appConfig.signOutUrl),
+            attributes = Map("id" -> "sign-out")
         ))
 
 

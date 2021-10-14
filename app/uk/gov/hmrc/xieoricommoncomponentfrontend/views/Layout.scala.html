@@ -38,7 +38,7 @@ standardBetaBanner: StandardBetaBanner,
 }
 @beforeContent = {
 @if(displayBackLink) {
-    @govukBackLink(BackLink(href = "#", content = Text(messages("ecc.navigation.back")), attributes = Map("id" -> "back-link")))
+    @govukBackLink(BackLink(href = "javascript:history.back()", content = Text(messages("ecc.navigation.back")), attributes = Map("id" -> "back-link")))
 }
 }
 
