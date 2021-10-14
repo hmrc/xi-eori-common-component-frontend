@@ -26,7 +26,6 @@ import util.builders.SessionBuilder
 
 class TradeWithNIControllerSpec extends ControllerSpec {
 
-  val paragraphXpath = "//*[@id='para1']"
   "TradeWithNI controller" should {
     "return OK and the correct view for a GET" in {
 
@@ -45,7 +44,7 @@ class TradeWithNIControllerSpec extends ControllerSpec {
         page.title should startWith("Do you move goods in or out of Northern Ireland")
       }
     }
-    "redirect to the next page when valid data is submitted" in {
+    "redirect to HaveEuEori Page when Yes is selected" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector, mockGroupEnrolmentExtractor)
 
@@ -60,7 +59,27 @@ class TradeWithNIControllerSpec extends ControllerSpec {
         status(result) shouldBe SEE_OTHER
         redirectLocation(
           result
-        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.YouCannotUseServiceController.page().url
+        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.onPageLoad().url
+      }
+
+    }
+
+    "redirect to XiEoriNotNeeded Page when No is selected" in {
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector, mockGroupEnrolmentExtractor)
+
+        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
+          "POST",
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.submit().url,
+          defaultUserId,
+          Map("value" -> TradeWithNI.values.last.toString)
+        )
+
+        val result = route(application, request).get
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(
+          result
+        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded().url
       }
 
     }

@@ -24,7 +24,7 @@ import util.ViewSpec
 
 class UnAuthorizedViewSpec extends ViewSpec {
 
-  private implicit val request = withFakeCSRF(fakeAtarRegisterRequest)
+  private implicit val request = withFakeCSRF(fakeRegisterRequest)
   private val unAuthorizedView = instanceOf[unauthorized]
 
   "UnAuthorized page" should {

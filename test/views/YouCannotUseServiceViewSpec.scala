@@ -25,7 +25,7 @@ import util.ViewSpec
 
 class YouCannotUseServiceViewSpec extends ViewSpec {
 
-  private implicit val request      = withFakeCSRF(fakeAtarRegisterRequest)
+  private implicit val request      = withFakeCSRF(fakeRegisterRequest)
   private val youCantUseServiceView = instanceOf[you_cant_use_service]
 
   "You cannot use this service page for users of type standard org" should {

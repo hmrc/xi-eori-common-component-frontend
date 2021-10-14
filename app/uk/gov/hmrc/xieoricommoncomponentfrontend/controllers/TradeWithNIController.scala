@@ -53,7 +53,7 @@ class TradeWithNIController @Inject() (
 
   private def destinationsByAnswer(tradeWithNI: TradeWithNI): Result = tradeWithNI match {
     case Yes =>
-      Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.YouCannotUseServiceController.page())
+      Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.onPageLoad())
     case No =>
       Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded())
   }
