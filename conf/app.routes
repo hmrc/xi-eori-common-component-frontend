@@ -15,3 +15,6 @@ GET        /register/unauthorised                        @uk.gov.hmrc.xieoricomm
 #trader-with-ni
 GET        /register/trader-with-ni                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.TradeWithNIController.onPageLoad
 POST        /register/trader-with-ni                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.TradeWithNIController.submit
+
+#xi-eori-not-needed
+GET        /register/xi-eori-not-needed                  @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.XiEoriNotNeededController.eoriNotNeeded

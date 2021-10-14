@@ -18,13 +18,17 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLayout
 @import views.html.helper.CSPNonce
 @import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukBackLink
+@import uk.gov.hmrc.govukfrontend.views.Aliases.BackLink
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 
 @this(
 appConfig: AppConfig,
 hmrcLayout: HmrcLayout,
+govukBackLink: GovukBackLink,
 standardBetaBanner: StandardBetaBanner,
 )
-@(pageTitle: String,form: Option[Form[_]] = None)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
+@(pageTitle: String,form: Option[Form[_]] = None,displayBackLink: Boolean = true)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
 
 @serviceUrl = @{
  "/xi-customs-registration-services"
@@ -32,7 +36,11 @@ standardBetaBanner: StandardBetaBanner,
 @logOutUrl = @{
     s"/xi-customs-registration-services/register/logout"
 }
-
+@beforeContent = {
+@if(displayBackLink) {
+    @govukBackLink(BackLink(href = "#", content = Text(messages("ecc.navigation.back")), attributes = Map("id" -> "back-link")))
+}
+}
 
 @hmrcLayout(
     pageTitle = Some(pageTitle),
@@ -41,5 +49,6 @@ standardBetaBanner: StandardBetaBanner,
     serviceUrl = Some(serviceUrl),
     serviceName = Some(messages("service.name")),
     signOutUrl = Some(logOutUrl),
-    phaseBanner = Some(standardBetaBanner(url = "#"))
+    phaseBanner = Some(standardBetaBanner(url = "#")),
+    beforeContentBlock = Some(beforeContent)
 )(contentBlock)
