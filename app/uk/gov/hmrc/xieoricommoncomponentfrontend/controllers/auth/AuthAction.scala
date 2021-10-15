@@ -61,14 +61,10 @@ class AuthAction @Inject() (
     */
   def ggAuthorisedUserAction(requestProcessor: RequestProcessorSimple) =
     action.async { implicit request =>
-      authorise(requestProcessor, checkPermittedAccess = false)
+      authorise(requestProcessor)
     }
 
-  private def authorise(
-    requestProcessor: RequestProcessorSimple,
-    checkPermittedAccess: Boolean = true,
-    checkServiceEnrolment: Boolean = true
-  )(implicit request: Request[AnyContent]) = {
+  private def authorise(requestProcessor: RequestProcessorSimple)(implicit request: Request[AnyContent]) = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     authorised(AuthProviders(GovernmentGateway))
@@ -77,9 +73,7 @@ class AuthAction @Inject() (
           transformRequest(
             Right(requestProcessor),
             LoggedInUserWithEnrolments(userAffinityGroup, userInternalId, userAllEnrolments, currentUserEmail, groupId),
-            userCredentialRole,
-            checkPermittedAccess,
-            checkServiceEnrolment
+            userCredentialRole
           )
       } recover withAuthRecovery(request)
   }
@@ -87,23 +81,12 @@ class AuthAction @Inject() (
   private def transformRequest(
     requestProcessor: Either[RequestProcessorExtended, RequestProcessorSimple],
     loggedInUser: LoggedInUserWithEnrolments,
-    userCredentialRole: Option[CredentialRole],
-    checkPermittedAccess: Boolean,
-    checkServiceEnrolment: Boolean
+    userCredentialRole: Option[CredentialRole]
   )(implicit request: Request[AnyContent], hc: HeaderCarrier) = {
-
-    def enrolments: Set[Enrolment] = if (checkServiceEnrolment) loggedInUser.enrolments.enrolments else Set.empty
 
     def action: Future[Result] =
       requestProcessor fold (_(request)(loggedInUser.internalId)(loggedInUser), _(request)(loggedInUser))
-
-    if (checkPermittedAccess)
-      groupEnrolmentExtractor.groupIdEnrolments(loggedInUser.groupId.getOrElse(throw MissingGroupId())).flatMap {
-        groupEnrolments =>
-          permitUserOrRedirect(loggedInUser.affinityGroup, userCredentialRole, enrolments, groupEnrolments)(action)
-      }
-    else
-      action
+    permitUserOrRedirect(loggedInUser.affinityGroup, userCredentialRole)(action)
   }
 
 }

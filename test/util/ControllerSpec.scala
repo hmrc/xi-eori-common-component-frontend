@@ -85,10 +85,7 @@ trait ControllerSpec extends WordSpec with MockitoSugar with Matchers with Injec
         AuthBuilder.withNotLoggedInUser(mockAuthConnector, mockGroupEnrolmentExtractor)
 
         val result = action.apply(
-          SessionBuilder.buildRequestWithSessionAndPathNoUser(
-            method = "GET",
-            path = s"/customs-registration-services/"
-          )
+          SessionBuilder.buildRequestWithSessionAndPathNoUser(method = "GET", path = s"/customs-registration-services/")
         )
         status(result) shouldBe SEE_OTHER
         header(LOCATION, result).get should include(
