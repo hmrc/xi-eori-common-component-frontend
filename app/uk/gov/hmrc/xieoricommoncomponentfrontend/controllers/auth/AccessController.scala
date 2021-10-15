@@ -27,20 +27,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait AccessController extends EnrolmentExtractor {
 
-  def permitUserOrRedirect(
-    affinityGroup: Option[AffinityGroup],
-    credentialRole: Option[CredentialRole],
-    enrolments: Set[Enrolment],
-    groupEnrolments: List[EnrolmentResponse]
-  )(
+  def permitUserOrRedirect(affinityGroup: Option[AffinityGroup], credentialRole: Option[CredentialRole])(
     action: Future[Result]
   )(implicit request: Request[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
-
-    def hasEnrolment(implicit request: Request[AnyContent]): Boolean =
-      existingEoriForUserOrGroup(enrolments, groupEnrolments) match {
-        case Some(_) => true
-        case None    => false
-      }
 
     def isPermittedUserType: Boolean =
       affinityGroup match {
@@ -51,8 +40,6 @@ trait AccessController extends EnrolmentExtractor {
 
     if (!isPermittedUserType)
       Future.successful(Redirect(routes.YouCannotUseServiceController.page))
-    else if (hasEnrolment)
-      Future.successful(Redirect(routes.YouAlreadyHaveEoriController.eoriAlreadyExists()))
     else
       action
   }

@@ -33,4 +33,5 @@ class LogoutController @Inject() (authAction: AuthAction, appConfig: AppConfig, 
     implicit request => _: LoggedInUserWithEnrolments =>
       Future.successful(Redirect(appConfig.signOutUrl))
   }
+
 }
