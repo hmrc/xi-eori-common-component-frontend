@@ -29,20 +29,19 @@ import util.builders.SessionBuilder
 import java.util.UUID
 
 class LogoutControllerSpec extends WordSpec with Matchers {
-  val defaultUserId: String       = s"user-${UUID.randomUUID}"
-  val mockAuthConnector           = mock[AuthConnector]
-  val mockGroupEnrolmentExtractor = mock[GroupEnrolmentExtractor]
+  val defaultUserId: String = s"user-${UUID.randomUUID}"
+  val mockAuthConnector     = mock[AuthConnector]
 
   val application: Application =
-    new GuiceApplicationBuilder().overrides(
-      inject.bind[AuthConnector].to(mockAuthConnector),
-      inject.bind[GroupEnrolmentExtractor].to(mockGroupEnrolmentExtractor)
-    ).configure("metrics.jvm" -> false, "metrics.enabled" -> false)
+    new GuiceApplicationBuilder().overrides(inject.bind[AuthConnector].to(mockAuthConnector)).configure(
+      "metrics.jvm"     -> false,
+      "metrics.enabled" -> false
+    )
       .build()
 
   "LogoutController" should {
     "return 303 when logout button is clicked" in {
-      withAuthorisedUser(defaultUserId, mockAuthConnector, mockGroupEnrolmentExtractor)
+      withAuthorisedUser(defaultUserId, mockAuthConnector)
       val request = SessionBuilder.buildRequestWithSessionAndPath(
         uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.logout().url,
         defaultUserId
@@ -53,7 +52,7 @@ class LogoutControllerSpec extends WordSpec with Matchers {
     }
 
     "redirect to start page when user logout" in {
-      withAuthorisedUser(defaultUserId, mockAuthConnector, mockGroupEnrolmentExtractor)
+      withAuthorisedUser(defaultUserId, mockAuthConnector)
       val request = SessionBuilder.buildRequestWithSessionAndPath(
         uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.logout().url,
         defaultUserId

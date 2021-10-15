@@ -61,11 +61,11 @@ trait ControllerSpec extends WordSpec with MockitoSugar with Matchers with Injec
 
   protected val previousPageUrl = "javascript:history.back()"
 
-  val env: Environment            = Environment.simple()
-  val mockAuthConnector           = mock[AuthConnector]
-  val config: Configuration       = Configuration.load(env)
-  val mockGroupEnrolmentExtractor = mock[GroupEnrolmentExtractor]
-  private val serviceConfig       = new ServicesConfig(config)
+  val env: Environment      = Environment.simple()
+  val mockAuthConnector     = mock[AuthConnector]
+  val config: Configuration = Configuration.load(env)
+
+  private val serviceConfig = new ServicesConfig(config)
 
   val appConfig: AppConfig = new AppConfig(config, serviceConfig)
 
@@ -76,13 +76,12 @@ trait ControllerSpec extends WordSpec with MockitoSugar with Matchers with Injec
 
   protected def assertNotLoggedInUserShouldBeRedirectedToLoginPage(
     mockAuthConnector: AuthConnector,
-    mockGroupEnrolmentExtractor: GroupEnrolmentExtractor,
     actionDescription: String,
     action: Action[AnyContent]
   ): Unit =
     actionDescription should {
       "redirect to GG login when request is not authenticated" in {
-        AuthBuilder.withNotLoggedInUser(mockAuthConnector, mockGroupEnrolmentExtractor)
+        AuthBuilder.withNotLoggedInUser(mockAuthConnector)
 
         val result = action.apply(
           SessionBuilder.buildRequestWithSessionAndPathNoUser(method = "GET", path = s"/customs-registration-services/")
@@ -96,12 +95,11 @@ trait ControllerSpec extends WordSpec with MockitoSugar with Matchers with Injec
 
   protected def assertNotLoggedInAndCdsEnrolmentChecksForGetAnEori(
     mockAuthConnector: AuthConnector,
-    mockGroupEnrolmentExtractor: GroupEnrolmentExtractor,
     action: Action[AnyContent],
     additionalLabel: String = ""
   ): Unit =
     s"redirect to GG login when request is not authenticated when the Journey is for a Get An EORI Journey $additionalLabel" in {
-      AuthBuilder.withNotLoggedInUser(mockAuthConnector, mockGroupEnrolmentExtractor)
+      AuthBuilder.withNotLoggedInUser(mockAuthConnector)
 
       val result: Future[Result] = action.apply(
         SessionBuilder.buildRequestWithSessionAndPathNoUser(
@@ -123,7 +121,7 @@ trait ControllerSpec extends WordSpec with MockitoSugar with Matchers with Injec
     val controller: C
 
     private def withAuthorisedUser[T](block: => T): T = {
-      AuthBuilder.withAuthorisedUser(userId, mockConnector, mockGroupEnrolmentExtractor)
+      AuthBuilder.withAuthorisedUser(userId, mockConnector)
       block
     }
 
@@ -170,9 +168,10 @@ trait ControllerSpec extends WordSpec with MockitoSugar with Matchers with Injec
 
   def undersizedString(minLength: Int): String = Random.alphanumeric.take(minLength - 1).mkString
 
-  def application = new GuiceApplicationBuilder().overrides(
-    inject.bind[AuthConnector].to(mockAuthConnector),
-    inject.bind[GroupEnrolmentExtractor].to(mockGroupEnrolmentExtractor)
-  ).configure("auditing.enabled" -> "false", "metrics.jvm" -> false, "metrics.enabled" -> false).build()
+  def application = new GuiceApplicationBuilder().overrides(inject.bind[AuthConnector].to(mockAuthConnector)).configure(
+    "auditing.enabled" -> "false",
+    "metrics.jvm"      -> false,
+    "metrics.enabled"  -> false
+  ).build()
 
 }

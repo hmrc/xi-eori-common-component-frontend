@@ -30,7 +30,7 @@ class TradeWithNIControllerSpec extends ControllerSpec {
     "return OK and the correct view for a GET" in {
 
       running(application) {
-        withAuthorisedUser(defaultUserId, mockAuthConnector, mockGroupEnrolmentExtractor)
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
 
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad().url,
@@ -47,7 +47,7 @@ class TradeWithNIControllerSpec extends ControllerSpec {
     "redirect to GG login page if the user is not logged in" in {
 
       running(application) {
-        withNotLoggedInUser(mockAuthConnector, mockGroupEnrolmentExtractor)
+        withNotLoggedInUser(mockAuthConnector)
 
         val request = SessionBuilder.buildRequestWithSessionAndPathNoUser(
           "GET",
@@ -63,7 +63,7 @@ class TradeWithNIControllerSpec extends ControllerSpec {
     }
     "redirect to HaveEuEori Page when Yes is selected" in {
       running(application) {
-        withAuthorisedUser(defaultUserId, mockAuthConnector, mockGroupEnrolmentExtractor)
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
 
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
@@ -83,7 +83,7 @@ class TradeWithNIControllerSpec extends ControllerSpec {
 
     "redirect to XiEoriNotNeeded Page when No is selected" in {
       running(application) {
-        withAuthorisedUser(defaultUserId, mockAuthConnector, mockGroupEnrolmentExtractor)
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
 
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
@@ -104,7 +104,7 @@ class TradeWithNIControllerSpec extends ControllerSpec {
     "return a Bad Request and errors when invalid data is submitted" in {
 
       running(application) {
-        withAuthorisedUser(defaultUserId, mockAuthConnector, mockGroupEnrolmentExtractor)
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
 
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",

@@ -34,7 +34,6 @@ object AuthBuilder {
   def withAuthorisedUser(
     userId: String,
     mockAuthConnector: AuthConnector,
-    mockGroupEnrolmentExtractor: GroupEnrolmentExtractor,
     ctUtrId: Option[String] = None,
     saUtrId: Option[String] = None,
     payeNinoId: Option[String] = None,
@@ -51,9 +50,6 @@ object AuthBuilder {
       mockAuthConnector.authorise(any, ArgumentMatchers.eq(EmptyRetrieval))(any[HeaderCarrier], any[ExecutionContext])
     )
       .thenReturn(Future.successful(()))
-
-    when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
-      .thenReturn(Future.successful(List.empty))
 
     val idsRetrievalResult = new ~(new ~(Option(userAffinityGroup), Option(userId)), groupId)
 
@@ -144,10 +140,7 @@ object AuthBuilder {
       .thenReturn(Future.successful(Some(userAffinityGroup)))
   }
 
-  def withNotLoggedInUser(
-    mockAuthConnector: AuthConnector,
-    mockGroupEnrolmentExtractor: GroupEnrolmentExtractor
-  ): Unit = {
+  def withNotLoggedInUser(mockAuthConnector: AuthConnector): Unit = {
     val noBearerTokenMatcher: ArgumentMatcher[HeaderCarrier] = new ArgumentMatcher[HeaderCarrier] {
       def matches(item: HeaderCarrier): Boolean = item match {
         case hc: HeaderCarrier if hc.authorization.isEmpty => true
@@ -163,8 +156,6 @@ object AuthBuilder {
     )
       .thenReturn(Future.failed(notLoggedInException))
 
-    when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
-      .thenReturn(Future.successful(List.empty))
   }
 
 }

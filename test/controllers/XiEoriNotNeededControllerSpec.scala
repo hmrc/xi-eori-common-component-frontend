@@ -27,7 +27,7 @@ class XiEoriNotNeededControllerSpec extends ControllerSpec {
   "XiEoriNotNeeded controller" should {
     "display Eori Not Needed page" in {
       running(application) {
-        withAuthorisedUser(defaultUserId, mockAuthConnector, mockGroupEnrolmentExtractor)
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
 
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded().url,
@@ -46,7 +46,7 @@ class XiEoriNotNeededControllerSpec extends ControllerSpec {
 
     "redirect to Sign out page when user clicks Sign Out" in {
 
-      withAuthorisedUser(defaultUserId, mockAuthConnector, mockGroupEnrolmentExtractor)
+      withAuthorisedUser(defaultUserId, mockAuthConnector)
       val request = SessionBuilder.buildRequestWithSessionAndPath(
         uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded().url,
         defaultUserId
