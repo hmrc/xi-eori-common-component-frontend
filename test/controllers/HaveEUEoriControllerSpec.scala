@@ -30,7 +30,7 @@ class HaveEUEoriControllerSpec extends ControllerSpec {
     "return OK and the correct view for a GET" in {
 
       running(application) {
-        withAuthorisedUser(defaultUserId, mockAuthConnector, mockGroupEnrolmentExtractor)
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
 
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.onPageLoad().url,
@@ -48,7 +48,7 @@ class HaveEUEoriControllerSpec extends ControllerSpec {
     }
     "redirect to the next page when valid data is submitted" in {
       running(application) {
-        withAuthorisedUser(defaultUserId, mockAuthConnector, mockGroupEnrolmentExtractor)
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
 
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
@@ -69,7 +69,7 @@ class HaveEUEoriControllerSpec extends ControllerSpec {
     "return a Bad Request and errors when invalid data is submitted" in {
 
       running(application) {
-        withAuthorisedUser(defaultUserId, mockAuthConnector, mockGroupEnrolmentExtractor)
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
 
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",

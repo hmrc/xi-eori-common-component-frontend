@@ -34,8 +34,7 @@ class AuthAction @Inject() (
   override val config: Configuration,
   override val env: Environment,
   override val authConnector: AuthConnector,
-  action: DefaultActionBuilder,
-  groupEnrolmentExtractor: GroupEnrolmentExtractor
+  action: DefaultActionBuilder
 )(implicit ec: ExecutionContext)
     extends IdentifierAction {
 
