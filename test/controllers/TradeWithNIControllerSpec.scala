@@ -44,23 +44,6 @@ class TradeWithNIControllerSpec extends ControllerSpec {
         page.title should startWith("Do you move goods in or out of Northern Ireland")
       }
     }
-    "redirect to GG login page if the user is not logged in" in {
-
-      running(application) {
-        withNotLoggedInUser(mockAuthConnector)
-
-        val request = SessionBuilder.buildRequestWithSessionAndPathNoUser(
-          "GET",
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad().url
-        )
-
-        val result = route(application, request).get
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result).get should startWith("/bas-gateway/sign-in")
-
-      }
-    }
     "redirect to HaveEuEori Page when Yes is selected" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)

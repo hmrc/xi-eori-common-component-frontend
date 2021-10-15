@@ -17,11 +17,10 @@
 package controllers
 
 import common.pages.RegistrationPage
-import play.api.Application
 import play.api.test.Helpers._
 import util.ControllerSpec
 import util.builders.AuthBuilder.withAuthorisedUser
-import util.builders.{AuthActionMock, SessionBuilder}
+import util.builders.SessionBuilder
 
 class YouCannotUseServiceControllerSpec extends ControllerSpec {
 
