@@ -17,7 +17,7 @@ lazy val scoverageSettings = {
       "Reverse.*",
       "uk\\.gov\\.hmrc\\.xieoricommoncomponentfrontend\\.views.*",
       "uk\\.gov\\.hmrc\\.xieoricommoncomponentfrontend\\.config.*",
-      "uk\\.gov\\.hmrc\\.xieoricommoncomponentfrontend\\.models.*",
+      "uk\\.gov\\.hmrc\\.xieoricommoncomponentfrontend\\.models.audit.*",
       "logger.*\\(.*\\)",
       ".*(AuthService|BuildInfo|Routes|TestOnly).*").mkString(";"),
     ScoverageKeys.coverageMinimum := 80,

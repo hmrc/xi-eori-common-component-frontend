@@ -144,7 +144,10 @@ object AuthBuilder {
       .thenReturn(Future.successful(Some(userAffinityGroup)))
   }
 
-  def withNotLoggedInUser(mockAuthConnector: AuthConnector): Unit = {
+  def withNotLoggedInUser(
+    mockAuthConnector: AuthConnector,
+    mockGroupEnrolmentExtractor: GroupEnrolmentExtractor
+  ): Unit = {
     val noBearerTokenMatcher: ArgumentMatcher[HeaderCarrier] = new ArgumentMatcher[HeaderCarrier] {
       def matches(item: HeaderCarrier): Boolean = item match {
         case hc: HeaderCarrier if hc.authorization.isEmpty => true
@@ -159,6 +162,9 @@ object AuthBuilder {
       )
     )
       .thenReturn(Future.failed(notLoggedInException))
+
+    when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
+      .thenReturn(Future.successful(List.empty))
   }
 
 }

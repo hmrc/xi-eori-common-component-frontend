@@ -32,9 +32,8 @@ class YouAlreadyHaveEoriController @Inject() (
   mcc: MessagesControllerComponents
 ) extends FrontendController(mcc) with I18nSupport {
 
-  // Note: permitted for user with service enrolment
   def eoriAlreadyExists: Action[AnyContent] =
-    authAction.ggAuthorisedUserWithServiceAction {
+    authAction.ggAuthorisedUserWithEnrolmentsAction {
       implicit request => _: LoggedInUserWithEnrolments =>
         Future.successful(Ok(eoriExistsView()))
     }

@@ -19,15 +19,18 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
+import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
+import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.Future
 
 @Singleton
-class LogoutController @Inject() (appConfig: AppConfig, mcc: MessagesControllerComponents)
+class LogoutController @Inject() (authAction: AuthAction, appConfig: AppConfig, mcc: MessagesControllerComponents)
     extends FrontendController(mcc) {
 
-  def logout: Action[AnyContent] = Action { implicit request =>
-    Redirect(appConfig.signOutUrl)
+  def logout: Action[AnyContent] = authAction.ggAuthorisedUserAction {
+    implicit request => _: LoggedInUserWithEnrolments =>
+      Future.successful(Redirect(appConfig.signOutUrl))
   }
-
 }

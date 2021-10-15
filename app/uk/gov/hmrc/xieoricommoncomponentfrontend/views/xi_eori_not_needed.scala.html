@@ -27,11 +27,11 @@
 
         <h1 id="page-heading" class="govuk-heading-l">@messages("xiEoriNotNeeded.page.heading")</h1>
 
-        <p id="gb-eori-list-heading" class=" govuk-body">@messages("xiEoriNotNeeded.page.list.heading")</p>
+        <p id="xi-eori-list-heading" class=" govuk-body">@messages("xiEoriNotNeeded.page.list.heading")</p>
 
             <ul class="govuk-list govuk-list--bullet ">
-                <li>@Html(messages("xiEoriNotNeeded.page.list.text1"))</li>
-                <li>@messages("xiEoriNotNeeded.page.list.text2")</li>
+                <li id="xi-eori-bullet1">@Html(messages("xiEoriNotNeeded.page.list.text1"))</li>
+                <li id="xi-eori-bullet2">@messages("xiEoriNotNeeded.page.list.text2")</li>
             </ul>
 
         @govukButton(Button(

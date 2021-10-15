@@ -17,24 +17,32 @@
 package controllers
 
 import org.scalatest.{Matchers, WordSpec}
-import play.api.Application
+import org.scalatestplus.mockito.MockitoSugar.mock
+import play.api.{inject, Application}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
+import uk.gov.hmrc.auth.core.AuthConnector
+import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
+import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
 
 import java.util.UUID
 
 class LogoutControllerSpec extends WordSpec with Matchers {
-  val defaultUserId: String = s"user-${UUID.randomUUID}"
+  val defaultUserId: String       = s"user-${UUID.randomUUID}"
+  val mockAuthConnector           = mock[AuthConnector]
+  val mockGroupEnrolmentExtractor = mock[GroupEnrolmentExtractor]
 
   val application: Application =
-    new GuiceApplicationBuilder()
-      .configure("metrics.jvm" -> false, "metrics.enabled" -> false)
+    new GuiceApplicationBuilder().overrides(
+      inject.bind[AuthConnector].to(mockAuthConnector),
+      inject.bind[GroupEnrolmentExtractor].to(mockGroupEnrolmentExtractor)
+    ).configure("metrics.jvm" -> false, "metrics.enabled" -> false)
       .build()
 
   "LogoutController" should {
     "return 303 when logout button is clicked" in {
-
+      withAuthorisedUser(defaultUserId, mockAuthConnector, mockGroupEnrolmentExtractor)
       val request = SessionBuilder.buildRequestWithSessionAndPath(
         uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.logout().url,
         defaultUserId
@@ -45,7 +53,7 @@ class LogoutControllerSpec extends WordSpec with Matchers {
     }
 
     "redirect to start page when user logout" in {
-
+      withAuthorisedUser(defaultUserId, mockAuthConnector, mockGroupEnrolmentExtractor)
       val request = SessionBuilder.buildRequestWithSessionAndPath(
         uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.logout().url,
         defaultUserId
