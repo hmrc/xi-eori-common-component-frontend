@@ -21,7 +21,7 @@ import play.api.test.Helpers._
 import play.test.Helpers.fakeRequest
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.TradeWithNI
 import util.ControllerSpec
-import util.builders.AuthBuilder.withAuthorisedUser
+import util.builders.AuthBuilder.{withAuthorisedUser, withNotLoggedInUser}
 import util.builders.SessionBuilder
 
 class TradeWithNIControllerSpec extends ControllerSpec {
@@ -42,6 +42,23 @@ class TradeWithNIControllerSpec extends ControllerSpec {
         val page = RegistrationPage(contentAsString(result))
 
         page.title should startWith("Do you move goods in or out of Northern Ireland")
+      }
+    }
+    "redirect to GG login page if the user is not logged in" in {
+
+      running(application) {
+        withNotLoggedInUser(mockAuthConnector, mockGroupEnrolmentExtractor)
+
+        val request = SessionBuilder.buildRequestWithSessionAndPathNoUser(
+          "GET",
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad().url
+        )
+
+        val result = route(application, request).get
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result).get should startWith("/bas-gateway/sign-in")
+
       }
     }
     "redirect to HaveEuEori Page when Yes is selected" in {

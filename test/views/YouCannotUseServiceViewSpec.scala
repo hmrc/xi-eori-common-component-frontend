@@ -51,7 +51,7 @@ class YouCannotUseServiceViewSpec extends ViewSpec {
     }
 
     "have a Sign out button with the correct href" in {
-      standardOrgDoc.body().getElementsByClass("govuk-button").attr("href") must endWith("/register/logout")
+      standardOrgDoc.body().getElementsByClass("govuk-button").attr("href") must endWith("/logout")
     }
   }
 
@@ -78,7 +78,7 @@ class YouCannotUseServiceViewSpec extends ViewSpec {
     }
 
     "have a Sign out button with the correct href" in {
-      agentDoc.body().getElementsByClass("govuk-button").attr("href") must endWith("/register/logout")
+      agentDoc.body().getElementsByClass("govuk-button").attr("href") must endWith("/logout")
     }
   }
 

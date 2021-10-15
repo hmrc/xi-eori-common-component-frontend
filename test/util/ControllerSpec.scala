@@ -76,17 +76,18 @@ trait ControllerSpec extends WordSpec with MockitoSugar with Matchers with Injec
 
   protected def assertNotLoggedInUserShouldBeRedirectedToLoginPage(
     mockAuthConnector: AuthConnector,
+    mockGroupEnrolmentExtractor: GroupEnrolmentExtractor,
     actionDescription: String,
     action: Action[AnyContent]
   ): Unit =
     actionDescription should {
       "redirect to GG login when request is not authenticated" in {
-        AuthBuilder.withNotLoggedInUser(mockAuthConnector)
+        AuthBuilder.withNotLoggedInUser(mockAuthConnector, mockGroupEnrolmentExtractor)
 
         val result = action.apply(
           SessionBuilder.buildRequestWithSessionAndPathNoUser(
             method = "GET",
-            path = s"/customs-registration-services/atar/register/"
+            path = s"/customs-registration-services/"
           )
         )
         status(result) shouldBe SEE_OTHER
@@ -98,11 +99,12 @@ trait ControllerSpec extends WordSpec with MockitoSugar with Matchers with Injec
 
   protected def assertNotLoggedInAndCdsEnrolmentChecksForGetAnEori(
     mockAuthConnector: AuthConnector,
+    mockGroupEnrolmentExtractor: GroupEnrolmentExtractor,
     action: Action[AnyContent],
     additionalLabel: String = ""
   ): Unit =
     s"redirect to GG login when request is not authenticated when the Journey is for a Get An EORI Journey $additionalLabel" in {
-      AuthBuilder.withNotLoggedInUser(mockAuthConnector)
+      AuthBuilder.withNotLoggedInUser(mockAuthConnector, mockGroupEnrolmentExtractor)
 
       val result: Future[Result] = action.apply(
         SessionBuilder.buildRequestWithSessionAndPathNoUser(

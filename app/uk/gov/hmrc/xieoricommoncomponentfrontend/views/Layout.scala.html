@@ -34,12 +34,12 @@ standardBetaBanner: StandardBetaBanner,
  "/xi-customs-registration-services"
 }
 @logOutUrl = @{
-    s"/xi-customs-registration-services/register/logout"
+    s"/xi-customs-registration-services/logout"
 }
 @beforeContent = {
-@if(displayBackLink) {
-    @govukBackLink(BackLink(href = "javascript:history.back()", content = Text(messages("ecc.navigation.back")), attributes = Map("id" -> "back-link")))
-}
+    @if(displayBackLink) {
+        @govukBackLink(BackLink(href = "javascript:history.back()", content = Text(messages("ecc.navigation.back")), attributes = Map("id" -> "back-link")))
+    }
 }
 
 @hmrcLayout(
