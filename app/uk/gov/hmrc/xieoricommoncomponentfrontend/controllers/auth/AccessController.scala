@@ -19,28 +19,16 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{AnyContent, Request, Result}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Organisation}
-import uk.gov.hmrc.auth.core.{AffinityGroup, CredentialRole, Enrolment, User}
+import uk.gov.hmrc.auth.core.{AffinityGroup, CredentialRole, User}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes
-import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.EnrolmentResponse
 import scala.concurrent.{ExecutionContext, Future}
 
 trait AccessController extends EnrolmentExtractor {
 
-  def permitUserOrRedirect(
-    affinityGroup: Option[AffinityGroup],
-    credentialRole: Option[CredentialRole],
-    enrolments: Set[Enrolment],
-    groupEnrolments: List[EnrolmentResponse]
-  )(
+  def permitUserOrRedirect(affinityGroup: Option[AffinityGroup], credentialRole: Option[CredentialRole])(
     action: Future[Result]
   )(implicit request: Request[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
-
-    def hasEnrolment(implicit request: Request[AnyContent]): Boolean =
-      existingEoriForUserOrGroup(enrolments, groupEnrolments) match {
-        case Some(_) => true
-        case None    => false
-      }
 
     def isPermittedUserType: Boolean =
       affinityGroup match {
@@ -50,9 +38,7 @@ trait AccessController extends EnrolmentExtractor {
       }
 
     if (!isPermittedUserType)
-      Future.successful(Redirect(routes.YouCannotUseServiceController.page))
-    else if (hasEnrolment)
-      Future.successful(Redirect(routes.YouAlreadyHaveEoriController.eoriAlreadyExists()))
+      Future.successful(Redirect(routes.YouCannotUseServiceController.page()))
     else
       action
   }

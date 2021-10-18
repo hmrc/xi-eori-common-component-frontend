@@ -27,11 +27,8 @@ trait AuthRedirectSupport extends AuthRedirects {
   override val config: Configuration
   override val env: Environment
 
-  private def continueUrl(implicit request: Request[AnyContent]) = {
-    val baseUrl = config.get[String]("external-urls.loginContinue")
-
-    s"$baseUrl/register"
-  }
+  private def continueUrl(implicit request: Request[AnyContent]) =
+    config.get[String]("external-urls.loginContinue")
 
   def withAuthRecovery(implicit request: Request[AnyContent]): PartialFunction[Throwable, Result] = {
     case _: NoActiveSession => toGGLogin(continueUrl = continueUrl)

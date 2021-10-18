@@ -20,10 +20,9 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.mockito.{ArgumentMatcher, ArgumentMatchers}
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve._
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -34,7 +33,6 @@ object AuthBuilder {
   def withAuthorisedUser(
     userId: String,
     mockAuthConnector: AuthConnector,
-    mockGroupEnrolmentExtractor: GroupEnrolmentExtractor,
     ctUtrId: Option[String] = None,
     saUtrId: Option[String] = None,
     payeNinoId: Option[String] = None,
@@ -51,9 +49,6 @@ object AuthBuilder {
       mockAuthConnector.authorise(any, ArgumentMatchers.eq(EmptyRetrieval))(any[HeaderCarrier], any[ExecutionContext])
     )
       .thenReturn(Future.successful(()))
-
-    when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
-      .thenReturn(Future.successful(List.empty))
 
     val idsRetrievalResult = new ~(new ~(Option(userAffinityGroup), Option(userId)), groupId)
 
@@ -159,6 +154,7 @@ object AuthBuilder {
       )
     )
       .thenReturn(Future.failed(notLoggedInException))
+
   }
 
 }

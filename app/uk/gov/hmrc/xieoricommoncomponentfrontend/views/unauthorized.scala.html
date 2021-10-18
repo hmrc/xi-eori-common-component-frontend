@@ -19,7 +19,7 @@
 
 @this(main_template: Layout)
 @()(implicit messages: Messages, request: Request[_])
-@main_template(Some(messages("ecc.server-errors.401.title"))) {
+@main_template(messages("ecc.server-errors.401.title")) {
     <div>
         <header class="page-header">
             <h1 class="govuk-heading-xl">@messages("ecc.server-errors.401.heading")</h1>

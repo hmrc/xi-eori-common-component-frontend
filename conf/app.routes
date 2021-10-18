@@ -1,12 +1,28 @@
 # microservice specific routes
 
-->         /hmrc-frontend                                                 hmrcfrontend.Routes
+->         /hmrc-frontend                                hmrcfrontend.Routes
 
-GET        /register/logout                                                        @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.LogoutController.logout
-GET        /assets/*file                                                  controllers.Assets.versioned(path = "/public", file: Asset)
+GET        /logout                              @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.LogoutController.logout
+GET        /assets/*file                                 controllers.Assets.versioned(path = "/public", file: Asset)
 
-# enrolment-already-exists
-GET         /register/eori-already-exists                    @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.YouAlreadyHaveEoriController.eoriAlreadyExists
+#security-sign-out
+GET         /display-sign-out              @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.LogoutController.displayTimeOutPage()
+GET         /sign-out                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.LogoutController.timeout()
 
-GET        /register/you-cannot-use-service                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.YouCannotUseServiceController.page
-GET        /register/unauthorised                                @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.YouCannotUseServiceController.unauthorisedPage
+# eori-already-exists
+GET        /eori-already-exists                 @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.YouAlreadyHaveEoriController.eoriAlreadyExists
+
+#you-cannot-use-service
+GET        /you-cannot-use-service              @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.YouCannotUseServiceController.page
+GET        /unauthorised                        @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.YouCannotUseServiceController.unauthorisedPage
+
+#trade-with-ni
+GET        /trade-with-ni                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.TradeWithNIController.onPageLoad
+POST        /trade-with-ni                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.TradeWithNIController.submit
+
+#xi-eori-not-needed
+GET        /xi-eori-not-needed                  @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.XiEoriNotNeededController.eoriNotNeeded
+
+#have-eu-eori
+GET        /have-eu-eori                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.HaveEUEoriController.onPageLoad
+POST       /have-eu-eori                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.HaveEUEoriController.submit

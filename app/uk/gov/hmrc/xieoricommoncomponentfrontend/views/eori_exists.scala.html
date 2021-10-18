@@ -14,13 +14,10 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
-
-
-@this(main_template: Layout, appConfig: AppConfig)
+@this(main_template: Layout)
 @()(implicit messages: Messages, request: Request[_])
 
-@main_template(Some(messages("ecc.enrolment.already.exists.title"))) {
+@main_template(messages("ecc.enrolment.already.exists.title")) {
     <div>
 
         <h1 id="page-heading" class="govuk-heading-l">@messages("ecc.enrolment.already.exists.heading")</h1>

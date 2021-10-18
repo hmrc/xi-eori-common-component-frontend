@@ -1,7 +1,27 @@
-service.name = Get an XI EORI
+service.name = Apply for an XI EORI
 service.text = This is your new service
 
 ecc.sign.out=Sign out
+ecc.navigation.continue=Continue
+ecc.navigation.back=Back
+ecc.help-and-support.text=Get help with this page
+
+#timeout dialog
+ecc.timeout.message=For your security, we will delete your answers and you will be signed out in
+ecc.timeout.keep-alive-button=Get another 20 minutes
+ecc.timeout.sign-out-button=Sign out now
+ecc.security-sign-out.heading=For your security, we signed you out
+ecc.security-sign-out.note=We did not save your answers.
+ecc.security-sign-in=Sign in
+
+#Not Found
+ecc.server-errors.404.title=Page not found
+ecc.server-errors.404.heading=Page not found
+ecc.server-errors.404.message1=If you typed the web address, check it is correct.
+ecc.server-errors.404.message2=If you pasted the web address, check you copied the entire address.
+
+#error template
+ecc.error.title=Something went wrong. Please try again later.
 
 ecc.enrolment.already.exists.title=There is a problem
 ecc.enrolment.already.exists.heading=There is a problem
@@ -21,3 +41,27 @@ ecc.server-errors.401.title=Service unavailable
 ecc.server-errors.401.heading=Service unavailable
 ecc.server-errors.401.message1=You may not have access to this service.
 ecc.server-errors.401.message2=It is currently only available by invitation.
+
+#trade-with-ni
+tradeWithNI.page.title=Do you move goods in or out of Northern Ireland?
+traderWithNI.error.required=Tell us if you move goods in or out of Northern Ireland
+traderWithNI.yes=Yes
+traderWithNI.no=No
+traderWithNI.hint=You only need an XI EORI if you move goods from GB (England, Scotland, Wales, the Isle of Man and the Channel Islands) to Northern Ireland.
+
+#xi-Eori-Not-Needed
+xiEoriNotNeeded.page.title=You do not need an XI EORI number
+xiEoriNotNeeded.page.heading=You do not need an XI EORI number
+xiEoriNotNeeded.page.list.heading= You do not need an XI EORI. This is because either:
+xiEoriNotNeeded.page.list.text1= you do not move goods in or out of Northern Ireland
+xiEoriNotNeeded.page.list.text2= you have an EORI number issued in the EU (you can use this number to move your goods)
+
+#have-eu-eori
+haveEUEori.page.title=Do you have an EU Economic Operator Registration and Identification (EORI) number?
+haveEUEori.error.required=Tell us if you have an EU Economic Operator Registration and Identification (EORI) number
+haveEUEori.yes=Yes
+haveEUEori.no=No
+haveEUEori.hint=This can be issued by any country within the EU.
+haveEUEori.coutries=Countries in the EU
+haveEUEori.coutries.list=Austria, Belgium, Bulgaria, Croatia, Republic of Cyprus, Czech Republic, Denmark, Estonia, Finland, France, Germany, Greece, Hungary, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, Poland, Portugal, Romania, Slovakia, Slovenia, Spain and Sweden.
+

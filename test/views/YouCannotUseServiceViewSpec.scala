@@ -25,7 +25,7 @@ import util.ViewSpec
 
 class YouCannotUseServiceViewSpec extends ViewSpec {
 
-  private implicit val request      = withFakeCSRF(fakeAtarRegisterRequest)
+  private implicit val request      = withFakeCSRF(fakeRegisterRequest)
   private val youCantUseServiceView = instanceOf[you_cant_use_service]
 
   "You cannot use this service page for users of type standard org" should {
@@ -51,7 +51,7 @@ class YouCannotUseServiceViewSpec extends ViewSpec {
     }
 
     "have a Sign out button with the correct href" in {
-      standardOrgDoc.body().getElementsByClass("govuk-button").attr("href") must endWith("/register/logout")
+      standardOrgDoc.body().getElementsByClass("govuk-button").attr("href") must endWith("/logout")
     }
   }
 
@@ -78,7 +78,7 @@ class YouCannotUseServiceViewSpec extends ViewSpec {
     }
 
     "have a Sign out button with the correct href" in {
-      agentDoc.body().getElementsByClass("govuk-button").attr("href") must endWith("/register/logout")
+      agentDoc.body().getElementsByClass("govuk-button").attr("href") must endWith("/logout")
     }
   }
 

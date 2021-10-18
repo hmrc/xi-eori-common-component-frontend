@@ -17,21 +17,66 @@
 @import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLayout
 @import views.html.helper.CSPNonce
+@import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukBackLink
+@import uk.gov.hmrc.govukfrontend.views.Aliases.BackLink
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcTimeoutDialog
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.timeoutdialog.TimeoutDialog
 
 @this(
         appConfig: AppConfig,
-        hmrcLayout: HmrcLayout
+        hmrcLayout: HmrcLayout,
+        govukBackLink: GovukBackLink,
+        standardBetaBanner: StandardBetaBanner,
+        hmrcTimeoutDialog: HmrcTimeoutDialog
 )
-@(pageTitle: Option[String] = None)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
+@(pageTitle: String, form: Option[Form[_]] = None, displayBackLink: Boolean = true)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
+
+@isLoggedIn = @{
+    !request.session.isEmpty && request.session.get("authToken").isDefined
+}
 
 @serviceUrl = @{
- "/xi-customs-registration-services"
+    "/xi-customs-registration-services/trade-with-ni"
+}
+@logOutUrl = @{
+    s"/xi-customs-registration-services/logout"
+}
+
+@signOutUrl = @{
+    s"/xi-customs-registration-services/sign-out"
+}
+@beforeContent = {
+@if(displayBackLink) {
+    @govukBackLink(BackLink(href = "javascript:history.back()", content = Text(messages("ecc.navigation.back")), attributes = Map("id" -> "back-link")))
+}
+}
+
+ @theHead = {
+    @if(isLoggedIn) {
+        @hmrcTimeoutDialog(TimeoutDialog(
+            title = Some(" "),
+            timeout = Some(1200),
+            countdown = Some(300),
+            keepAliveUrl = Some(request.uri),
+            signOutUrl = Some(logOutUrl),
+            timeoutUrl = Some(signOutUrl),
+            keepAliveButtonText = Some(messages("ecc.timeout.keep-alive-button")),
+            signOutButtonText = Some(messages("ecc.timeout.sign-out-button")),
+            message = Some(messages("ecc.timeout.message"))
+        ))
+    }
 }
 
 @hmrcLayout(
-    pageTitle = pageTitle,
+    pageTitle = Some(pageTitle),
     nonce = CSPNonce.get,
     isWelshTranslationAvailable = appConfig.welshLanguageSupportEnabled,
     serviceUrl = Some(serviceUrl),
-    serviceName = Some(messages("service.name"))
+    serviceName = Some(messages("service.name")),
+    signOutUrl = Some(logOutUrl),
+    phaseBanner = Some(standardBetaBanner(url = "#")),
+    additionalHeadBlock = Some(theHead),
+    beforeContentBlock = Some(beforeContent)
 )(contentBlock)

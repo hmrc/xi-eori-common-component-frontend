@@ -17,11 +17,10 @@
 package controllers
 
 import common.pages.RegistrationPage
-import play.api.Application
 import play.api.test.Helpers._
 import util.ControllerSpec
 import util.builders.AuthBuilder.withAuthorisedUser
-import util.builders.{AuthActionMock, SessionBuilder}
+import util.builders.SessionBuilder
 
 class YouCannotUseServiceControllerSpec extends ControllerSpec {
 
@@ -31,7 +30,7 @@ class YouCannotUseServiceControllerSpec extends ControllerSpec {
     "redirect to the you cannot use this service page" in {
       running(application) {
 
-        withAuthorisedUser(defaultUserId, mockAuthConnector, mockGroupEnrolmentExtractor)
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.YouCannotUseServiceController.page().url,
           defaultUserId

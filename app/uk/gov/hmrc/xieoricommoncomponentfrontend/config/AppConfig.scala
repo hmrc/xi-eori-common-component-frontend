@@ -29,7 +29,7 @@ class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig
   lazy val loginContinueUrl: String = config.get[String]("external-urls.loginContinue")
   lazy val loginUrl: String         = config.get[String]("external-urls.login")
   lazy val signOutUrl: String       = config.get[String]("external-urls.signOut")
-  lazy val appName                  = config.get[String]("appName")
+  lazy val appName: String          = config.get[String]("appName")
 
   val enrolmentStoreProxyBaseUrl: String = servicesConfig.baseUrl("enrolment-store-proxy")
 
