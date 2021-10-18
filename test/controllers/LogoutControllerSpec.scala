@@ -16,17 +16,22 @@
 
 package controllers
 
+import common.pages.RegistrationPage
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{verify, when}
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.{inject, Application}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AuthConnector
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
 
 import java.util.UUID
+import scala.concurrent.Future
 
 class LogoutControllerSpec extends WordSpec with Matchers {
   val defaultUserId: String = s"user-${UUID.randomUUID}"
@@ -61,5 +66,30 @@ class LogoutControllerSpec extends WordSpec with Matchers {
       redirectLocation(result) shouldBe Some("http://localhost:9553/bas-gateway/sign-out-without-state")
 
     }
+
+    "return Ok 303 when signOut method is requested" in {
+      withAuthorisedUser(defaultUserId, mockAuthConnector)
+      val request = SessionBuilder.buildRequestWithSessionAndPath(
+        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.timeout().url,
+        defaultUserId
+      )
+      val result = route(application, request).get
+      status(result) shouldBe SEE_OTHER
+
+    }
+
+    "return Ok 200 when displayPage method is requested" in {
+
+      withAuthorisedUser(defaultUserId, mockAuthConnector)
+      val request = SessionBuilder.buildRequestWithSessionAndPath(
+        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.displayTimeOutPage().url,
+        defaultUserId
+      )
+      val result = route(application, request).get
+      val page   = RegistrationPage(contentAsString(result))
+      page.title should startWith("For your security, we signed you out")
+
+    }
+
   }
 }
