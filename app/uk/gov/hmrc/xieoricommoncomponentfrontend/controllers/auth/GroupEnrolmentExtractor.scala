@@ -20,28 +20,13 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, GroupId}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.EnrolmentStoreProxyService
 
-<<<<<<< HEAD:app/uk/gov/hmrc/xieoricommoncomponentfrontend/controllers/auth/GroupEnrolmentExtractor.scala
-=======
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
-
->>>>>>> master:app/uk/gov/hmrc/xieoricommoncomponentfrontend/controllers/LogoutController.scala
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.Future
 
 @Singleton
-<<<<<<< HEAD:app/uk/gov/hmrc/xieoricommoncomponentfrontend/controllers/auth/GroupEnrolmentExtractor.scala
 class GroupEnrolmentExtractor @Inject() (enrolmentStoreProxyService: EnrolmentStoreProxyService) {
 
   def groupIdEnrolments(groupId: String)(implicit hc: HeaderCarrier): Future[List[EnrolmentResponse]] =
     enrolmentStoreProxyService.enrolmentsForGroup(GroupId(groupId))
-=======
-class LogoutController @Inject() (appConfig: AppConfig, mcc: MessagesControllerComponents)
-    extends FrontendController(mcc) {
-
-  def logout: Action[AnyContent] = Action { implicit request =>
-    Redirect(appConfig.loginContinueUrl)
-  }
->>>>>>> master:app/uk/gov/hmrc/xieoricommoncomponentfrontend/controllers/LogoutController.scala
 
 }
