@@ -19,9 +19,8 @@ package views
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.contentAsString
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Organisation}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.TradeWithNIFormProvider
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{trade_with_ni, you_cant_use_service}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.trade_with_ni
 import util.ViewSpec
 
 class TradeWithNIViewSpec extends ViewSpec {

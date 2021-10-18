@@ -16,10 +16,10 @@
 
 package controllers.auth
 
-import util.ControllerSpec
-import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
+import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.EnrolmentExtractor
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain._
+import util.ControllerSpec
 
 class EnrolmentExtractorSpec extends ControllerSpec {
 

@@ -17,15 +17,10 @@
 package controllers
 
 import common.pages.RegistrationPage
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import play.api.test.Helpers._
-import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
 import util.ControllerSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
-
-import scala.concurrent.Future
 
 class YouAlreadyHaveEoriControllerSpec extends ControllerSpec {
 

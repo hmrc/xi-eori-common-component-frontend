@@ -24,12 +24,10 @@ import play.api.libs.json._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.HaveEUEori
 
 class HaveEUEoriSpec extends WordSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues {
-
+  val gen = Gen.oneOf(HaveEUEori.values)
   "HaveEUEori" must {
 
     "deserialise valid values" in {
-
-      val gen = Gen.oneOf(HaveEUEori.values.toSeq)
 
       forAll(gen) {
         haveEUEori =>
@@ -48,8 +46,6 @@ class HaveEUEoriSpec extends WordSpec with MustMatchers with ScalaCheckPropertyC
     }
 
     "serialise" in {
-
-      val gen = Gen.oneOf(HaveEUEori.values.toSeq)
 
       forAll(gen) {
         haveEUEori =>

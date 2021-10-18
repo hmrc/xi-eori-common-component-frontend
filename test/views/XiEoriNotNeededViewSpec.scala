@@ -19,8 +19,7 @@ package views
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.contentAsString
-import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.TradeWithNIFormProvider
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{trade_with_ni, xi_eori_not_needed}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.xi_eori_not_needed
 import util.ViewSpec
 
 class XiEoriNotNeededViewSpec extends ViewSpec {

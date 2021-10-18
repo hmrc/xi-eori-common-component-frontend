@@ -18,10 +18,9 @@ package controllers
 
 import common.pages.RegistrationPage
 import play.api.test.Helpers._
-import play.test.Helpers.fakeRequest
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.TradeWithNI
 import util.ControllerSpec
-import util.builders.AuthBuilder.{withAuthorisedUser, withNotLoggedInUser}
+import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
 
 class TradeWithNIControllerSpec extends ControllerSpec {

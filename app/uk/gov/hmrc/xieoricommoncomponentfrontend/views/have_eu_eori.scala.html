@@ -17,46 +17,45 @@
 @import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.HaveEUEori
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@this(main_template: Layout, formHelper: FormWithCSRF,govukButton: GovukButton, govukDetails: GovukDetails, inputRadioGroup: components.inputRadioGroup, errorSummary: components.errorSummary)
+@this(main_template: Layout, formHelper: FormWithCSRF, govukButton: GovukButton, govukDetails: GovukDetails, inputRadioGroup: components.inputRadioGroup, errorSummary: components.errorSummary)
 @(haveEUEoriForm: Form[HaveEUEori])(implicit messages: Messages, request: Request[_])
 @title = @{
-messages("haveEUEori.page.title")
+    messages("haveEUEori.page.title")
 }
 @hintHtml = {
-<p id="eu-eori-hint" class="govuk-hint">@messages("haveEUEori.hint")</p>
+    <p id="eu-eori-hint" class="govuk-hint">@messages("haveEUEori.hint")</p>
 }
 @detailsContent = {
-<p id="p3" class="govuk-body">@Html(messages("haveEUEori.coutries.list"))</p>
+    <p id="p3" class="govuk-body">@Html(messages("haveEUEori.coutries.list"))</p>
 }
-@main_template(title,form = Some(haveEUEoriForm)) {
+@main_template(title, form = Some(haveEUEoriForm)) {
 
-@formHelper(action = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.submit(), 'autoComplete -> "off") {
 
-@errorSummary(haveEUEoriForm.errors)
-@inputRadioGroup(
-haveEUEoriForm("value"),
-legend = title,
-items = HaveEUEori.options(haveEUEoriForm),
-hint = Some(Hint(content = HtmlContent(hintHtml), classes = "govuk-body-s")),
-classes = "govuk-fieldset__legend--l"
-)
+        @errorSummary(haveEUEoriForm.errors)
+        @inputRadioGroup(
+            haveEUEoriForm("value"),
+            legend = title,
+            items = HaveEUEori.options(haveEUEoriForm),
+            hint = Some(Hint(content = HtmlContent(hintHtml), classes = "govuk-body-s")),
+            classes = "govuk-fieldset__legend--l"
+        )
+
+        @govukButton(Button(
+            content = Text(messages("ecc.navigation.continue"))
+        ))
 
 
-@govukButton(Button(
-content = Text(messages("ecc.navigation.continue"))
-))
+        <div class="govuk-form-group">
+        @govukDetails(Details(
+            summary = Text(messages("haveEUEori.coutries")),
+            content = HtmlContent(detailsContent)
+        ))
+        </div>
 
+        @helpers.helpAndSupport()
 
-<div class="govuk-form-group">
- @govukDetails(Details(
- summary = Text(messages("haveEUEori.coutries")),
- content = HtmlContent(detailsContent)
- ))
-</div>
-
-@helpers.helpAndSupport()
-
-}
+    }
 }
 
 
