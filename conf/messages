@@ -14,6 +14,15 @@ ecc.security-sign-out.heading=For your security, we signed you out
 ecc.security-sign-out.note=We did not save your answers.
 ecc.security-sign-in=Sign in
 
+#Not Found
+ecc.server-errors.404.title=Page not found
+ecc.server-errors.404.heading=Page not found
+ecc.server-errors.404.message1=If you typed the web address, check it is correct.
+ecc.server-errors.404.message2=If you pasted the web address, check you copied the entire address.
+
+#error template
+ecc.error.title=Something went wrong. Please try again later.
+
 ecc.enrolment.already.exists.title=There is a problem
 ecc.enrolment.already.exists.heading=There is a problem
 ecc.enrolment.already.exists.para1=Our records show that this Government Gateway user ID has already been used to subscribe to {0}.
