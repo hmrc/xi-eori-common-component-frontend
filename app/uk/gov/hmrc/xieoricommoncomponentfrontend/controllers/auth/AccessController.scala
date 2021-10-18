@@ -19,10 +19,9 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{AnyContent, Request, Result}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Organisation}
-import uk.gov.hmrc.auth.core.{AffinityGroup, CredentialRole, Enrolment, User}
+import uk.gov.hmrc.auth.core.{AffinityGroup, CredentialRole, User}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes
-import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.EnrolmentResponse
 import scala.concurrent.{ExecutionContext, Future}
 
 trait AccessController extends EnrolmentExtractor {
@@ -39,7 +38,7 @@ trait AccessController extends EnrolmentExtractor {
       }
 
     if (!isPermittedUserType)
-      Future.successful(Redirect(routes.YouCannotUseServiceController.page))
+      Future.successful(Redirect(routes.YouCannotUseServiceController.page()))
     else
       action
   }

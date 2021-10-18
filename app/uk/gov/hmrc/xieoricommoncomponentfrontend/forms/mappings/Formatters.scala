@@ -20,9 +20,6 @@ import play.api.data.FormError
 import play.api.data.format.Formatter
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.Enumerable
 
-import scala.util.control.Exception.nonFatalCatch
-import scala.util.{Failure, Success, Try}
-
 trait Formatters {
 
   private[mappings] def stringFormatter(errorKey: String): Formatter[String] = new Formatter[String] {

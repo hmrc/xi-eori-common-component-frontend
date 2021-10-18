@@ -34,7 +34,7 @@ class LogoutController @Inject() (
   displaySignOutView: display_sign_out
 ) extends FrontendController(mcc) {
 
-  def logout: Action[AnyContent] = authAction.ggAuthorisedUserAction {
+  def logout: Action[AnyContent] = authAction.ggAuthorisedUserWithEnrolmentsAction {
     implicit request => _: LoggedInUserWithEnrolments =>
       Future.successful(Redirect(appConfig.signOutUrl))
   }

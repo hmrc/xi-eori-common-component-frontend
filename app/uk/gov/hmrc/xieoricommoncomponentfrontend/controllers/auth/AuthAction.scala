@@ -24,7 +24,7 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{affinityGroup, allEnrolment
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, LoggedInUserWithEnrolments}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -51,14 +51,6 @@ class AuthAction @Inject() (
     * Allows Gov Gateway user with correct user type, affinity group and no enrolment to service
     */
   def ggAuthorisedUserWithEnrolmentsAction(requestProcessor: RequestProcessorSimple) =
-    action.async { implicit request =>
-      authorise(requestProcessor)
-    }
-
-  /**
-    * Allows Gov Gateway user without checks for user type, affinity group or enrolment to service
-    */
-  def ggAuthorisedUserAction(requestProcessor: RequestProcessorSimple) =
     action.async { implicit request =>
       authorise(requestProcessor)
     }
