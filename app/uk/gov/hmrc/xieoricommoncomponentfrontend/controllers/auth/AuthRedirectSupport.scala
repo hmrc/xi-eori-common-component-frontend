@@ -30,7 +30,7 @@ trait AuthRedirectSupport extends AuthRedirects {
   private def continueUrl(implicit request: Request[AnyContent]) = {
     val baseUrl = config.get[String]("external-urls.loginContinue")
 
-    s"$baseUrl/register"
+    s"$baseUrl"
   }
 
   def withAuthRecovery(implicit request: Request[AnyContent]): PartialFunction[Throwable, Result] = {
