@@ -6,6 +6,14 @@ ecc.navigation.continue=Continue
 ecc.navigation.back=Back
 ecc.help-and-support.text=Get help with this page
 
+#timeout dialog
+ecc.timeout.message=For your security, we will delete your answers and you will be signed out in
+ecc.timeout.keep-alive-button=Get another 20 minutes
+ecc.timeout.sign-out-button=Sign out now
+ecc.security-sign-out.heading=For your security, we signed you out
+ecc.security-sign-out.note=We did not save your answers.
+ecc.security-sign-in=Sign in
+
 ecc.enrolment.already.exists.title=There is a problem
 ecc.enrolment.already.exists.heading=There is a problem
 ecc.enrolment.already.exists.para1=Our records show that this Government Gateway user ID has already been used to subscribe to {0}.

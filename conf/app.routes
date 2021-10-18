@@ -5,6 +5,10 @@
 GET        /logout                              @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.LogoutController.logout
 GET        /assets/*file                                 controllers.Assets.versioned(path = "/public", file: Asset)
 
+#security-sign-out
+GET         /display-sign-out              @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.LogoutController.displayTimeOutPage()
+GET         /sign-out                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.LogoutController.timeout()
+
 # eori-already-exists
 GET        /eori-already-exists                 @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.YouAlreadyHaveEoriController.eoriAlreadyExists
 
