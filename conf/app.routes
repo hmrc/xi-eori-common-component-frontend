@@ -26,3 +26,7 @@ GET        /xi-eori-not-needed                  @uk.gov.hmrc.xieoricommoncompone
 #have-eu-eori
 GET        /have-eu-eori                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.HaveEUEoriController.onPageLoad
 POST       /have-eu-eori                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.HaveEUEoriController.submit
+
+#confirm-details
+GET        /confirm-details                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ConfirmDetailsController.onPageLoad
+POST       /confirm-details                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ConfirmDetailsController.submit

@@ -65,3 +65,6 @@ haveEUEori.hint=This can be issued by any country within the EU.
 haveEUEori.coutries=Countries in the EU
 haveEUEori.coutries.list=Austria, Belgium, Bulgaria, Croatia, Republic of Cyprus, Czech Republic, Denmark, Estonia, Finland, France, Germany, Greece, Hungary, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, Poland, Portugal, Romania, Slovakia, Slovenia, Spain and Sweden.
 
+#confirm-details
+confirmDetails.page.title=Confirm details
+confirmDetails.page.options.heading=Are these details correct?
