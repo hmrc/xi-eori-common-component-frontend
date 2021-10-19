@@ -22,7 +22,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.{ConfirmDetailsFormProvider, TradeWithNIFormProvider}
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.TradeWithNI
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.{ConfirmDetails, TradeWithNI}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.TradeWithNI.{No, Yes}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{confirm_details, trade_with_ni}
 
@@ -38,7 +38,6 @@ class ConfirmDetailsController @Inject()(
 
   private val form = formProvider()
 
-  // Note: permitted for user with service enrolment
   def onPageLoad: Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
       implicit request => _: LoggedInUserWithEnrolments =>
@@ -51,10 +50,12 @@ class ConfirmDetailsController @Inject()(
       .fold(formWithErrors => BadRequest(confirmDetailsView(formWithErrors)), value => destinationsByAnswer(value))
   }
 
-  private def destinationsByAnswer(tradeWithNI: TradeWithNI): Result = tradeWithNI match {
-    case Yes =>
+  private def destinationsByAnswer(confirmDetails: ConfirmDetails): Result = confirmDetails match {
+    case ConfirmDetails.confirmedDetails =>
       Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.onPageLoad())
-    case No =>
+    case ConfirmDetails.changeCredentials =>
+      Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded())
+    case ConfirmDetails.changeDetails =>
       Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded())
   }
 

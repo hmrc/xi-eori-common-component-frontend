@@ -18,13 +18,13 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.forms
 
 import play.api.data.Form
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.mappings.Mappings
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.TradeWithNI
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ConfirmDetails
 
 import javax.inject.Inject
 
 class ConfirmDetailsFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[TradeWithNI] =
-    Form("value" -> enumerable[TradeWithNI]("traderWithNI.error.required"))
+  def apply(): Form[ConfirmDetails] =
+    Form("value" -> enumerable[ConfirmDetails]("ConfirmDetails.error.required"))
 
 }

@@ -68,3 +68,8 @@ haveEUEori.coutries.list=Austria, Belgium, Bulgaria, Croatia, Republic of Cyprus
 #confirm-details
 confirmDetails.page.title=Confirm details
 confirmDetails.page.options.heading=Are these details correct?
+confirmDetails.confirmedDetails=Yes, these are the details I want to use
+confirmDetails.changeCredentials=No, I need to sign in as a different user
+confirmDetails.changeDetails=No, I need to change my details
+confirmDetails.error.required=Tell us if these details are correct
+

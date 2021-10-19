@@ -18,16 +18,15 @@
 @import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.TradeWithNI
 @import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ConfirmDetails
 
 
 @this(main_template: Layout, appConfig: AppConfig, formHelper: FormWithCSRF,govukButton: GovukButton, inputRadioGroup: components.inputRadioGroup, errorSummary: components.errorSummary)
-@(confirmDetailsForm: Form[TradeWithNI])(implicit messages: Messages, request: Request[_])
+@(confirmDetailsForm: Form[ConfirmDetails])(implicit messages: Messages, request: Request[_])
 @title = @{
     messages("confirmDetails.page.title")
 }
-@hintHtml = {
-    <p id="trade-hint" class="govuk-hint">@messages("traderWithNI.hint")</p>
-}
+
 
 @main_template(title,form = Some(confirmDetailsForm)) {
     <h1 class="govuk-heading-xl">@messages("confirmDetails.page.title")</h1>
@@ -37,7 +36,7 @@
         @inputRadioGroup(
             confirmDetailsForm("value"),
             legend = messages("confirmDetails.page.options.heading"),
-            items = TradeWithNI.options(confirmDetailsForm),
+            items = ConfirmDetails.options(confirmDetailsForm),
             classes = "govuk-fieldset__legend--l"
         )
 
