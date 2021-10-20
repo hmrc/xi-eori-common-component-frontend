@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,15 +12,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package uk.gov.hmrc.xieoricommoncomponentfrontend.models
+@this()
 
-import play.api.libs.json.Json
+@(msg: String, id: Option[String] = None)(implicit messages: Messages)
 
+<h2 @{id.fold("")(id => s"id=$id")} class="govuk-heading-m">@messages(msg)</h2>
 
-case class AddressDetails(street: String, city: String, postcode: Option[String], countryCode: String)
-
-object AddressDetails {
-  implicit val jsonFormat = Json.format[AddressDetails]
-}
