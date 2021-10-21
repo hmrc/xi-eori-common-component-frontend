@@ -23,17 +23,15 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 
 sealed trait ConfirmDetails
 
-
 object ConfirmDetails extends Enumerable.Implicits {
 
-  case object confirmedDetails extends WithName("confirmedDetails") with ConfirmDetails
-  case object changeCredentials  extends WithName("changeCredentials") with ConfirmDetails
-  case object changeDetails  extends WithName("changeDetails") with ConfirmDetails
+  case object confirmedDetails  extends WithName("confirmedDetails") with ConfirmDetails
+  case object changeCredentials extends WithName("changeCredentials") with ConfirmDetails
+  case object changeDetails     extends WithName("changeDetails") with ConfirmDetails
 
-  val values: Seq[ConfirmDetails] = Seq(confirmedDetails, changeCredentials,changeDetails )
+  val values: Seq[ConfirmDetails] = Seq(confirmedDetails, changeCredentials, changeDetails)
 
-
-  def options(form: Form[_])(implicit messages: Messages): Seq[RadioItem] =values.map {
+  def options(form: Form[_])(implicit messages: Messages): Seq[RadioItem] = values.map {
     value =>
       RadioItem(
         value = Some(value.toString),
@@ -44,7 +42,5 @@ object ConfirmDetails extends Enumerable.Implicits {
 
   implicit val enumerable: Enumerable[ConfirmDetails] =
     Enumerable(values.map(v => v.toString -> v): _*)
+
 }
-
-
-

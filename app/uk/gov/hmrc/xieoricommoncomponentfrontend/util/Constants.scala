@@ -18,4 +18,5 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.util
 
 object Constants {
   val INVALID_PATH_PARAM = "invalid value"
+
 }

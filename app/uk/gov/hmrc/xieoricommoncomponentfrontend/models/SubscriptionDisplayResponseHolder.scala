@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.xieoricommoncomponentfrontend.util
+package uk.gov.hmrc.xieoricommoncomponentfrontend.models
 
-object FormUtils {
-  def formatInput(value: String): String = value.replaceAll(" ", "").toUpperCase
+import play.api.libs.json.Json
+
+case class SubscriptionDisplayResponseHolder(subscriptionDisplayResponse: SubscriptionDisplayResponse)
+
+object SubscriptionDisplayResponseHolder {
+  implicit val jsonFormat = Json.format[SubscriptionDisplayResponseHolder]
 }

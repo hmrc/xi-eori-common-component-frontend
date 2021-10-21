@@ -18,14 +18,15 @@
 @import uk.gov.hmrc.play.language.LanguageUtils
 @import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html._
 @import java.time.LocalDate
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewModel
 
 
 @this(govukSummaryList : GovukSummaryList,
-        h2:components.h2,
-        p: components.p,
-        languageUtils: LanguageUtils
+h2:components.h2,
+p: components.p,
+languageUtils: LanguageUtils
 )
-@()(implicit messages: Messages, request: Request[_])
+@(model:ConfirmDetailsViewModel)(implicit messages: Messages, request: Request[_])
 
 @formatDate(date: LocalDate) = @{
     languageUtils.Dates.formatDate(date)

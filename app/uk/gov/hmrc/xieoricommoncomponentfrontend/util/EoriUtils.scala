@@ -16,6 +16,14 @@
 
 package uk.gov.hmrc.xieoricommoncomponentfrontend.util
 
-object FormUtils {
-  def formatInput(value: String): String = value.replaceAll(" ", "").toUpperCase
+import java.util.UUID
+import javax.inject.{Inject, Singleton}
+
+@Singleton
+class EoriUtils @Inject()(){
+
+  def generateUUIDAsString: String = UUID.randomUUID().toString.replace("-", "")
+
+  def is2xx: Int => Boolean = status => status >= 200 && status < 300
+
 }

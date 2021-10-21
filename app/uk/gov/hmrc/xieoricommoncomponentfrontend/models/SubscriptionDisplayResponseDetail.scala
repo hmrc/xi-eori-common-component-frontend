@@ -17,43 +17,53 @@
 package uk.gov.hmrc.xieoricommoncomponentfrontend.models
 
 import play.api.libs.json.Json
+
 import java.time.{Clock, LocalDate, LocalDateTime, ZoneId}
 
 case class SubscriptionInfoVatId(countryCode: Option[String], VATID: Option[String])
+
 case class ContactInformation(
-                               personOfContact: Option[String] = None,
-                               sepCorrAddrIndicator: Option[Boolean] = None,
-                               streetAndNumber: Option[String] = None,
-                               city: Option[String] = None,
-                               postalCode: Option[String] = None,
-                               countryCode: Option[String] = None,
-                               telephoneNumber: Option[String] = None,
-                               faxNumber: Option[String] = None,
-                               emailAddress: Option[String] = None,
-                               emailVerificationTimestamp: Option[LocalDateTime] = Some(
-                                 LocalDateTime.ofInstant(Clock.systemUTC().instant, ZoneId.of("Europe/London"))
-                               )
-                             )
-case class EstablishmentAddress(
-                                 streetAndNumber: String,
-                                 city: String,
-                                 postalCode: Option[String] = None,
-                                 countryCode: String
-                               )
-case class SubscriptionDisplayResponseDetail(
-  EORINo: Option[String],
-  CDSFullName: String,
-  CDSEstablishmentAddress: EstablishmentAddress,
-  contactInformation: Option[ContactInformation],
-  VATIDs: Option[List[SubscriptionInfoVatId]],
-  thirdCountryUniqueIdentificationNumber: Option[List[String]],
-  shortName: Option[String],
-  dateOfEstablishment: Option[LocalDate] = None
+  personOfContact: Option[String] = None,
+  sepCorrAddrIndicator: Option[Boolean] = None,
+  streetAndNumber: Option[String] = None,
+  city: Option[String] = None,
+  postalCode: Option[String] = None,
+  countryCode: Option[String] = None,
+  telephoneNumber: Option[String] = None,
+  faxNumber: Option[String] = None,
+  emailAddress: Option[String] = None,
+  emailVerificationTimestamp: Option[LocalDateTime] = Some(
+    LocalDateTime.ofInstant(Clock.systemUTC().instant, ZoneId.of("Europe/London"))
+  )
 )
 
+case class EstablishmentAddress(
+  streetAndNumber: String,
+  city: String,
+  postalCode: Option[String] = None,
+  countryCode: String
+)
+
+case class SubscriptionDisplayResponseDetail(
+                                              EORINo: Option[String],
+                                              CDSFullName: String,
+                                              CDSEstablishmentAddress: EstablishmentAddress,
+                                              establishmentInTheCustomsTerritoryOfTheUnion: Option[String],
+                                              typeOfLegalEntity: Option[String],
+                                              contactInformation: Option[ContactInformation],
+                                              VATIDs: Option[List[SubscriptionInfoVatId]],
+                                              thirdCountryUniqueIdentificationNumber: Option[List[String]],
+                                              consentToDisclosureOfPersonalData: Option[String],
+                                              shortName: Option[String],
+                                              dateOfEstablishment: Option[LocalDate] = None,
+                                              typeOfPerson: Option[String],
+                                              principalEconomicActivity: Option[String]
+                                            )
+
+
 object SubscriptionDisplayResponseDetail {
-  implicit val addressFormat = Json.format[EstablishmentAddress]
-  implicit val contactInformationFormat = Json.format[ContactInformation]
-  implicit val vatFormat = Json.format[SubscriptionInfoVatId]
+  implicit val addressFormat             = Json.format[EstablishmentAddress]
+  implicit val contactInformationFormat  = Json.format[ContactInformation]
+  implicit val vatFormat                 = Json.format[SubscriptionInfoVatId]
   implicit val subscriptionDetailsFormat = Json.format[SubscriptionDisplayResponseDetail]
 }

@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.xieoricommoncomponentfrontend.util
+package uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels
 
-object FormUtils {
-  def formatInput(value: String): String = value.replaceAll(" ", "").toUpperCase
-}
+import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail
+
+case class ConfirmDetailsViewModel(
+                                    subscriptionDisplay: SubscriptionDisplayResponseDetail, affinityGroup: AffinityGroup
+)
+

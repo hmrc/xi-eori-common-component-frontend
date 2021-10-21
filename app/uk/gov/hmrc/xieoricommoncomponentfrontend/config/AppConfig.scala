@@ -36,4 +36,11 @@ class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig
   val enrolmentStoreProxyServiceContext: String =
     config.get[String]("microservice.services.enrolment-store-proxy.context")
 
+  //handle subscription service
+  val subscriptionDisplayBaseUrl: String = servicesConfig.baseUrl("subscription-display")
+
+  val subscriptionDisplayServiceContext: String =
+    config.get[String]("microservice.services.subscription-display.context")
+
+
 }
