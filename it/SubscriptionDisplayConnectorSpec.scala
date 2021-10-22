@@ -20,10 +20,9 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
-import play.mvc.Http.Status._
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.SubscriptionDisplayConnector
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{SubscriptionDisplayResponseDetail, SubscriptionDisplayResponseHolder}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail
 
 class SubscriptionDisplayConnectorSpec extends IntegrationTestSpec with ScalaFutures {
 
@@ -56,8 +55,7 @@ class SubscriptionDisplayConnectorSpec extends IntegrationTestSpec with ScalaFut
 
   private val expectedResponse = Json
     .parse(SubscriptionDisplay.validResponse(typeOfLegalEntity = "0001","0100086619"))
-    .as[SubscriptionDisplayResponseHolder]
-    .subscriptionDisplayResponse.responseDetail
+    .as[SubscriptionDisplayResponseDetail]
 
 
   implicit val hc: HeaderCarrier = HeaderCarrier()

@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.xieoricommoncomponentfrontend.models
 
-import play.api.libs.json.Json
-
+import play.api.libs.json.{JsPath, Json, Reads}
+import play.api.libs.functional.syntax._
 import java.time.{Clock, LocalDate, LocalDateTime, ZoneId}
 
 case class SubscriptionInfoVatId(countryCode: Option[String], VATID: Option[String])
@@ -48,21 +48,27 @@ case class SubscriptionDisplayResponseDetail(
   EORINo: Option[String],
   CDSFullName: String,
   CDSEstablishmentAddress: EstablishmentAddress,
-  establishmentInTheCustomsTerritoryOfTheUnion: Option[String],
-  typeOfLegalEntity: Option[String],
-  contactInformation: Option[ContactInformation],
   VATIDs: Option[List[SubscriptionInfoVatId]],
-  thirdCountryUniqueIdentificationNumber: Option[List[String]],
-  consentToDisclosureOfPersonalData: Option[String],
   shortName: Option[String],
-  dateOfEstablishment: Option[LocalDate] = None,
-  typeOfPerson: Option[String],
-  principalEconomicActivity: Option[String]
+  dateOfEstablishment: Option[LocalDate] = None
 )
 
 object SubscriptionDisplayResponseDetail {
-  implicit val addressFormat             = Json.format[EstablishmentAddress]
-  implicit val contactInformationFormat  = Json.format[ContactInformation]
-  implicit val vatFormat                 = Json.format[SubscriptionInfoVatId]
-  implicit val subscriptionDetailsFormat = Json.format[SubscriptionDisplayResponseDetail]
+  implicit val addressFormat            = Json.format[EstablishmentAddress]
+  implicit val contactInformationFormat = Json.format[ContactInformation]
+  implicit val vatFormat                = Json.format[SubscriptionInfoVatId]
+
+  implicit val subscriptionDisplayReads: Reads[SubscriptionDisplayResponseDetail] = (
+    (JsPath \ "subscriptionDisplayResponse" \ "responseDetail" \ "EORINo").readNullable[String] and
+      (JsPath \ "subscriptionDisplayResponse" \ "responseDetail" \ "CDSFullName").read[String] and
+      (JsPath \ "subscriptionDisplayResponse" \ "responseDetail" \ "CDSEstablishmentAddress").read[
+        EstablishmentAddress
+      ] and
+      (JsPath \ "subscriptionDisplayResponse" \ "responseDetail" \ "VATIDs").readNullable[
+        List[SubscriptionInfoVatId]
+      ] and
+      (JsPath \ "subscriptionDisplayResponse" \ "responseDetail" \ "shortName").readNullable[String] and
+      (JsPath \ "subscriptionDisplayResponse" \ "responseDetail" \ "dateOfEstablishment").readNullable[LocalDate]
+  )(SubscriptionDisplayResponseDetail.apply _)
+
 }

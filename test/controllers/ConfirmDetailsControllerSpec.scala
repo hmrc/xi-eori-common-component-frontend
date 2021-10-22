@@ -55,16 +55,9 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
     EORINo = Some("GB123456789012"),
     CDSFullName = "FirstName LastName",
     CDSEstablishmentAddress = establishmentAddress,
-    establishmentInTheCustomsTerritoryOfTheUnion = None,
-    typeOfLegalEntity = None,
-    contactInformation = None,
     VATIDs = None,
-    thirdCountryUniqueIdentificationNumber = None,
-    consentToDisclosureOfPersonalData = None,
     shortName = Some("Short Name"),
-    dateOfEstablishment = Some(LocalDate.now()),
-    typeOfPerson = None,
-    principalEconomicActivity = None
+    dateOfEstablishment = Some(LocalDate.now())
   )
 
   override def application = new GuiceApplicationBuilder().overrides(

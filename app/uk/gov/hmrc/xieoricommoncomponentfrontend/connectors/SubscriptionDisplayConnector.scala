@@ -19,11 +19,7 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.connectors
 import play.api.Logger
 import uk.gov.hmrc.http.{HttpClient, _}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
-  SubscriptionDisplayResponse,
-  SubscriptionDisplayResponseDetail,
-  SubscriptionDisplayResponseHolder
-}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,9 +38,7 @@ class SubscriptionDisplayConnector @Inject() (http: HttpClient, appConfig: AppCo
     logger.debug(s"Call: $url , body: $sub09Request, and hc: $hc")
     // $COVERAGE-ON
 
-    http.GET[SubscriptionDisplayResponseHolder](url, sub09Request).map(
-      response => response.subscriptionDisplayResponse.responseDetail
-    )
+    http.GET[SubscriptionDisplayResponseDetail](url, sub09Request)
   }
 
 }
