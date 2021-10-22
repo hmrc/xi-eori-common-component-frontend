@@ -52,10 +52,7 @@ class ConfirmDetailsController @Inject() (
         for {
           subscriptionDisplay <- connector.call(queryParameters)
         } yield (Ok(
-          confirmDetailsView(
-            form,
-            ConfirmDetailsViewModel(subscriptionDisplay.responseDetail, loggedInUser.affinityGroup.get)
-          )
+          confirmDetailsView(form, ConfirmDetailsViewModel(subscriptionDisplay, loggedInUser.affinityGroup.get))
         ))
 
     }
@@ -71,7 +68,7 @@ class ConfirmDetailsController @Inject() (
             } yield (BadRequest(
               confirmDetailsView(
                 formWithErrors,
-                ConfirmDetailsViewModel(subscriptionDisplay.responseDetail, loggedInUser.affinityGroup.get)
+                ConfirmDetailsViewModel(subscriptionDisplay, loggedInUser.affinityGroup.get)
               )
             )),
           value => destinationsByAnswer(value)

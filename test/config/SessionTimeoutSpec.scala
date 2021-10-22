@@ -16,10 +16,10 @@
 
 package config
 
-import util.ControllerSpec
+import util.BaseSpec
 import play.api.Configuration
 
-class SessionTimeoutSpec extends ControllerSpec {
+class SessionTimeoutSpec extends BaseSpec {
 
   private val configuration = instanceOf[Configuration]
 

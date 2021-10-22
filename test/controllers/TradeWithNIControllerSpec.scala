@@ -19,11 +19,11 @@ package controllers
 import common.pages.RegistrationPage
 import play.api.test.Helpers._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.TradeWithNI
-import util.ControllerSpec
+import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
 
-class TradeWithNIControllerSpec extends ControllerSpec {
+class TradeWithNIControllerSpec extends BaseSpec {
 
   "TradeWithNI controller" should {
     "return OK and the correct view for a GET" in {

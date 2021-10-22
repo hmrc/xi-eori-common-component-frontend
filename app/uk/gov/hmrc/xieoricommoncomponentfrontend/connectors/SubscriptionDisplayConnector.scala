@@ -19,7 +19,11 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.connectors
 import play.api.Logger
 import uk.gov.hmrc.http.{HttpClient, _}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{SubscriptionDisplayResponse, SubscriptionDisplayResponseHolder}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
+  SubscriptionDisplayResponse,
+  SubscriptionDisplayResponseDetail,
+  SubscriptionDisplayResponseHolder
+}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -30,13 +34,17 @@ class SubscriptionDisplayConnector @Inject() (http: HttpClient, appConfig: AppCo
   private val logger = Logger(this.getClass)
   private val url    = s"${appConfig.subscriptionDisplayBaseUrl}/${appConfig.subscriptionDisplayServiceContext}"
 
-  def call(sub09Request: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[SubscriptionDisplayResponse] = {
+  def call(
+    sub09Request: Seq[(String, String)]
+  )(implicit hc: HeaderCarrier): Future[SubscriptionDisplayResponseDetail] = {
 
     // $COVERAGE-OFF$Loggers
     logger.debug(s"Call: $url , body: $sub09Request, and hc: $hc")
     // $COVERAGE-ON
 
-    http.GET[SubscriptionDisplayResponseHolder](url, sub09Request).map(response => response.subscriptionDisplayResponse)
+    http.GET[SubscriptionDisplayResponseHolder](url, sub09Request).map(
+      response => response.subscriptionDisplayResponse.responseDetail
+    )
   }
 
 }

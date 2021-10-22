@@ -18,11 +18,11 @@ package controllers
 
 import common.pages.RegistrationPage
 import play.api.test.Helpers._
-import util.ControllerSpec
+import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
 
-class YouAlreadyHaveEoriControllerSpec extends ControllerSpec {
+class YouAlreadyHaveEoriControllerSpec extends BaseSpec {
 
   val paragraphXpath = "//*[@id='para1']"
   "YouAlreadyHaveEori controller" should {

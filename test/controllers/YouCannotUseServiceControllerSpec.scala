@@ -18,11 +18,11 @@ package controllers
 
 import common.pages.RegistrationPage
 import play.api.test.Helpers._
-import util.ControllerSpec
+import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
 
-class YouCannotUseServiceControllerSpec extends ControllerSpec {
+class YouCannotUseServiceControllerSpec extends BaseSpec {
 
   val paragraphXpath = "//*[@id='para1']"
   "YouCannotUseThisService controller" should {

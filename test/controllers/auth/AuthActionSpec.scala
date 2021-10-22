@@ -26,7 +26,7 @@ import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector, MissingBearerToken}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
-import util.ControllerSpec
+import util.BaseSpec
 import util.builders.AuthActionMock
 import util.builders.AuthBuilder.{withAuthorisedUser, withNotLoggedInUser}
 import util.builders.SessionBuilder.{addToken, sessionMap}
@@ -35,7 +35,7 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthActionSpec extends ControllerSpec with AuthActionMock {
+class AuthActionSpec extends BaseSpec with AuthActionMock {
 
   class Harness(authAction: AuthAction) {
 

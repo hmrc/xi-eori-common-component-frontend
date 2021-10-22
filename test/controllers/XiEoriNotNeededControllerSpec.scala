@@ -18,11 +18,11 @@ package controllers
 
 import common.pages.RegistrationPage
 import play.api.test.Helpers._
-import util.ControllerSpec
+import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
 
-class XiEoriNotNeededControllerSpec extends ControllerSpec {
+class XiEoriNotNeededControllerSpec extends BaseSpec {
   val signOutXpath = "//*[@id='sign-out']"
   "XiEoriNotNeeded controller" should {
     "display Eori Not Needed page" in {

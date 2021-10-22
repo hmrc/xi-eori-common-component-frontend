@@ -26,11 +26,11 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.EnrolmentStoreProxyConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.EnrolmentStoreProxyService
-import util.ControllerSpec
+import util.BaseSpec
 
 import scala.concurrent.Future
 
-class EnrolmentStoreProxyServiceSpec extends ControllerSpec with BeforeAndAfter {
+class EnrolmentStoreProxyServiceSpec extends BaseSpec with BeforeAndAfter {
 
   private val mockEnrolmentStoreProxyConnector =
     mock[EnrolmentStoreProxyConnector]

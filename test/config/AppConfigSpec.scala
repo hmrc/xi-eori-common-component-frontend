@@ -21,9 +21,9 @@ import org.mockito.Mockito.spy
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import util.ControllerSpec
+import util.BaseSpec
 
-class AppConfigSpec extends ControllerSpec with BeforeAndAfterEach {
+class AppConfigSpec extends BaseSpec with BeforeAndAfterEach {
 
   private val mockConfig: Configuration = spy(config)
   private val mockServiceConfig         = mock[ServicesConfig]
