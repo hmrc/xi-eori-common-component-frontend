@@ -19,7 +19,4 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail
 
-case class ConfirmDetailsViewModel(
-                                    subscriptionDisplay: SubscriptionDisplayResponseDetail, affinityGroup: AffinityGroup
-)
-
+case class ConfirmDetailsViewModel(subscriptionDisplay: SubscriptionDisplayResponseDetail, affinityGroup: AffinityGroup)

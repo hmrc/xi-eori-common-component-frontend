@@ -42,5 +42,4 @@ class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig
   val subscriptionDisplayServiceContext: String =
     config.get[String]("microservice.services.subscription-display.context")
 
-
 }

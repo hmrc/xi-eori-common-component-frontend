@@ -38,21 +38,27 @@ class ConfirmDetailsController @Inject() (
   mcc: MessagesControllerComponents,
   connector: SubscriptionDisplayConnector,
   utils: EoriUtils
-)(implicit val ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+)(implicit val ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport {
 
-  val queryParameters = List("EORI" -> "GB123456789012", "regime" -> "CDS", "acknowledgementReference" -> utils.generateUUIDAsString)
+  val queryParameters =
+    List("EORI" -> "GB123456789012", "regime" -> "CDS", "acknowledgementReference" -> utils.generateUUIDAsString)
 
   private val form = formProvider()
-  def onPageLoad: Action[AnyContent] =
-  authAction.ggAuthorisedUserWithEnrolmentsAction {
-      implicit request => loggedInUser: LoggedInUserWithEnrolments =>
-            for{
 
-              subscriptionDisplay <- connector.call(queryParameters)
-            }yield(Ok(confirmDetailsView(form, ConfirmDetailsViewModel(subscriptionDisplay.responseDetail,loggedInUser.affinityGroup.get))))
+  def onPageLoad: Action[AnyContent] =
+    authAction.ggAuthorisedUserWithEnrolmentsAction {
+      implicit request => loggedInUser: LoggedInUserWithEnrolments =>
+        for {
+          subscriptionDisplay <- connector.call(queryParameters)
+        } yield (Ok(
+          confirmDetailsView(
+            form,
+            ConfirmDetailsViewModel(subscriptionDisplay.responseDetail, loggedInUser.affinityGroup.get)
+          )
+        ))
 
     }
-
 
   def submit(): Action[AnyContent] = authAction.ggAuthorisedUserWithEnrolmentsAction {
     implicit request => loggedInUser: LoggedInUserWithEnrolments =>
@@ -60,9 +66,14 @@ class ConfirmDetailsController @Inject() (
         .bindFromRequest()
         .fold(
           formWithErrors =>
-            for{
+            for {
               subscriptionDisplay <- connector.call(queryParameters)
-            }yield(BadRequest(confirmDetailsView(formWithErrors, ConfirmDetailsViewModel(subscriptionDisplay.responseDetail,loggedInUser.affinityGroup.get)))),
+            } yield (BadRequest(
+              confirmDetailsView(
+                formWithErrors,
+                ConfirmDetailsViewModel(subscriptionDisplay.responseDetail, loggedInUser.affinityGroup.get)
+              )
+            )),
           value => destinationsByAnswer(value)
         )
   }

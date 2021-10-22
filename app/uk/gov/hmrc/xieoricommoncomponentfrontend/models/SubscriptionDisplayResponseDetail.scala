@@ -45,21 +45,20 @@ case class EstablishmentAddress(
 )
 
 case class SubscriptionDisplayResponseDetail(
-                                              EORINo: Option[String],
-                                              CDSFullName: String,
-                                              CDSEstablishmentAddress: EstablishmentAddress,
-                                              establishmentInTheCustomsTerritoryOfTheUnion: Option[String],
-                                              typeOfLegalEntity: Option[String],
-                                              contactInformation: Option[ContactInformation],
-                                              VATIDs: Option[List[SubscriptionInfoVatId]],
-                                              thirdCountryUniqueIdentificationNumber: Option[List[String]],
-                                              consentToDisclosureOfPersonalData: Option[String],
-                                              shortName: Option[String],
-                                              dateOfEstablishment: Option[LocalDate] = None,
-                                              typeOfPerson: Option[String],
-                                              principalEconomicActivity: Option[String]
-                                            )
-
+  EORINo: Option[String],
+  CDSFullName: String,
+  CDSEstablishmentAddress: EstablishmentAddress,
+  establishmentInTheCustomsTerritoryOfTheUnion: Option[String],
+  typeOfLegalEntity: Option[String],
+  contactInformation: Option[ContactInformation],
+  VATIDs: Option[List[SubscriptionInfoVatId]],
+  thirdCountryUniqueIdentificationNumber: Option[List[String]],
+  consentToDisclosureOfPersonalData: Option[String],
+  shortName: Option[String],
+  dateOfEstablishment: Option[LocalDate] = None,
+  typeOfPerson: Option[String],
+  principalEconomicActivity: Option[String]
+)
 
 object SubscriptionDisplayResponseDetail {
   implicit val addressFormat             = Json.format[EstablishmentAddress]

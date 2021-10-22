@@ -25,7 +25,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SubscriptionDisplayConnector @Inject()(http: HttpClient, appConfig: AppConfig)(implicit ec: ExecutionContext) {
+class SubscriptionDisplayConnector @Inject() (http: HttpClient, appConfig: AppConfig)(implicit ec: ExecutionContext) {
 
   private val logger = Logger(this.getClass)
   private val url    = s"${appConfig.subscriptionDisplayBaseUrl}/${appConfig.subscriptionDisplayServiceContext}"
@@ -36,7 +36,7 @@ class SubscriptionDisplayConnector @Inject()(http: HttpClient, appConfig: AppCon
     logger.debug(s"Call: $url , body: $sub09Request, and hc: $hc")
     // $COVERAGE-ON
 
-    http.GET[SubscriptionDisplayResponseHolder](url, sub09Request).map( response => response.subscriptionDisplayResponse)
+    http.GET[SubscriptionDisplayResponseHolder](url, sub09Request).map(response => response.subscriptionDisplayResponse)
   }
 
 }

@@ -20,7 +20,7 @@ import java.util.UUID
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class EoriUtils @Inject()(){
+class EoriUtils @Inject() () {
 
   def generateUUIDAsString: String = UUID.randomUUID().toString.replace("-", "")
 

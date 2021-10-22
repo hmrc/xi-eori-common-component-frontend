@@ -20,6 +20,7 @@ import play.api.libs.json.{JsError, JsResult, JsString, JsSuccess, JsValue, Json
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDateTime, ZoneId, ZoneOffset, ZonedDateTime}
+
 trait CommonHeader {
 
   private def dateTimeWritesIsoUtc: Writes[LocalDateTime] = new Writes[LocalDateTime] {
@@ -64,18 +65,20 @@ object MessagingServiceParam {
 
   val formBundleIdParamName = "ETMPFORMBUNDLENUMBER"
 }
+
 case class ResponseCommon(
-                           status: String,
-                           statusText: Option[String] = None,
-                           processingDate: LocalDateTime,
-                           returnParameters: Option[List[MessagingServiceParam]] = None
-                         )
+  status: String,
+  statusText: Option[String] = None,
+  processingDate: LocalDateTime,
+  returnParameters: Option[List[MessagingServiceParam]] = None
+)
 
 object ResponseCommon extends CommonHeader {
   val StatusOK         = "OK"
   val StatusNotOK      = "NOT_OK"
   implicit val formats = Json.format[ResponseCommon]
 }
+
 case class SubscriptionDisplayResponse(
   responseCommon: ResponseCommon,
   responseDetail: SubscriptionDisplayResponseDetail
