@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html._
 @import java.time.LocalDate
 @import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewModel
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.models.EstablishmentAddress
 
 
 @this(govukSummaryList : GovukSummaryList,
@@ -50,35 +51,40 @@ languageUtils: LanguageUtils
         case _ => None
     }
 }
-@addressHtml = {
-  @p(Html("Flat 1C, Aire, HMRC Lane"),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0")
-  @p(Html("Test Town"),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0")
-  @p(Html("SE28 1AA"),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0")
-  @p(Html(transformCountryCodeToOptionalLabel(Some("GB"))))
+@addressHtml(address: EstablishmentAddress) = {
+  @p(Html(address.streetAndNumber),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0")
+  @p(Html(address.city),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0")
+  @address.postalCode.map( postalCode => p(Html(postalCode),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0"))
+  @p(Html(transformCountryCodeToOptionalLabel(Some(address.countryCode))))
 }
+
+
 
 <div id="company-details">
     @h2("Company details")
     @govukSummaryList(SummaryList(
-        rows = Seq(SummaryListRow(
+        rows = Seq(Some(SummaryListRow(
             key = Key(content = Text("Registered name")),
             value = Value(content = HtmlContent(Html(model.subscriptionDisplay.CDSFullName))
-        )),
-        SummaryListRow(
+        ))),
+        Some(SummaryListRow(
             key = Key(content = Text("Corporation tax UTR")),
             value = Value(content = HtmlContent(Html("1234567890"))
-            )),
-        SummaryListRow(
+        ))),
+        Some(SummaryListRow(
             key = Key(content = Text("Registered company address")),
-            value = Value(content = HtmlContent(addressHtml)
-            )),
-        SummaryListRow(
-            key = Key(content = Text("Date of establishment")),
-            value = Value(content = HtmlContent(formatDate(LocalDate.now()))
-            )),
-        SummaryListRow(
+            value = Value(content = HtmlContent(addressHtml(model.subscriptionDisplay.CDSEstablishmentAddress))
+        ))),
+        model.subscriptionDisplay.dateOfEstablishment.map { cd => {
+            SummaryListRow(
+                key = Key(content = Text("Date of establishment")),
+                value = Value(content = HtmlContent(formatDate(cd))
+                ))
+        }
+        },
+        Some(SummaryListRow(
             key = Key(content = Text("GB EORI number")),
-            value = Value(content = HtmlContent("GB123456789000")
-            ))
-    )))
+            value = Value(content = HtmlContent(model.subscriptionDisplay.EORINo.getOrElse(""))
+        )))
+    ).flatten))
 </div>
