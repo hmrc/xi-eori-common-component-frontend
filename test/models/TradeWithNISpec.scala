@@ -29,7 +29,7 @@ class TradeWithNISpec extends WordSpec with MustMatchers with ScalaCheckProperty
 
     "deserialise valid values" in {
 
-      val gen = Gen.oneOf(TradeWithNI.values.toSeq)
+      val gen = Gen.oneOf(TradeWithNI.values)
 
       forAll(gen) {
         tradeWithNI =>
@@ -49,7 +49,7 @@ class TradeWithNISpec extends WordSpec with MustMatchers with ScalaCheckProperty
 
     "serialise" in {
 
-      val gen = Gen.oneOf(TradeWithNI.values.toSeq)
+      val gen = Gen.oneOf(TradeWithNI.values)
 
       forAll(gen) {
         tradeWithNI =>
