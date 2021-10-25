@@ -36,11 +36,11 @@ languageUtils: LanguageUtils
     @vatIDs.map( vatID => p(Html(vatID.VATID), classes = "govuk-!-margin-bottom-0 govuk-!-margin-top-0"))
 }
 
-@vatID(vatID: SubscriptionInfoVatId) = {
-    @p(Html(vatID.VATID), classes = "govuk-!-margin-bottom-0 govuk-!-margin-top-0")
+@vatID(vatID: Option[String]) = {
+    @p(Html(vatID.getOrElse("")), classes = "govuk-!-margin-bottom-0 govuk-!-margin-top-0")
 }
-@displayVatRows(vatIDs: Option[List[SubscriptionInfoVatId]]) = {
- @vatIDs.map(vatList => vatList.map(vatID(_)) )
+@displayGBVatNumber(vatIDs: Option[List[SubscriptionInfoVatId]]) = {
+    @vatIDs.map(vatList => vatList.filter(_.countryCode == Some("GB")).map(vat => vatID(vat.VATID)) )
 }
 
 <div id="vat-details">
@@ -48,7 +48,7 @@ languageUtils: LanguageUtils
     @govukSummaryList(SummaryList(
         rows = Seq(SummaryListRow(
             key = Key(content = Text(messages("confirmDetails.vat-number.label")),classes = "govuk-!-width-one-half"),
-            value = Value(content = HtmlContent(displayVatRows(model.subscriptionDisplay.VATIDs))
+            value = Value(content = HtmlContent(displayGBVatNumber(model.subscriptionDisplay.VATIDs))
             )),
             SummaryListRow(
                 key = Key(content = Text(messages("confirmDetails.vat-address.label")),classes = "govuk-!-width-one-half"),
@@ -56,7 +56,7 @@ languageUtils: LanguageUtils
                 )),
             SummaryListRow(
                 key = Key(content = Text(messages("confirmDetails.vat-effective-date.label")),classes = "govuk-!-width-one-half"),
-                value = Value(content = HtmlContent(formatDate(LocalDate.now()))
+                value = Value(content = HtmlContent(formatDate(LocalDate.of(1980,4,3)))
                 )),
             SummaryListRow(
                 key = Key(content = Text(messages("confirmDetails.xi-vat-number.label")),classes = "govuk-!-width-one-half"),
