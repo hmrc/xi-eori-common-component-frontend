@@ -25,7 +25,11 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.SubscriptionDisplayConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ConfirmDetails._
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, SubscriptionDisplayResponseDetail}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
+  EstablishmentAddress,
+  ServiceUnavailableResponse,
+  SubscriptionDisplayResponseDetail
+}
 import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
@@ -64,7 +68,7 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(subscriptionDisplayConnector.call(any())(any()))
-          .thenReturn(Future.successful(subscriptionDisplayResponse))
+          .thenReturn(Future.successful(Right(subscriptionDisplayResponse)))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad().url,
           defaultUserId
@@ -83,7 +87,7 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(subscriptionDisplayConnector.call(any())(any()))
-          .thenReturn(Future.successful(subscriptionDisplayResponse))
+          .thenReturn(Future.successful(Right(subscriptionDisplayResponse)))
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.submit().url,
@@ -96,6 +100,23 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
 
         val page = RegistrationPage(contentAsString(result))
         page.errors should startWith("Tell us if these details are correct")
+      }
+    }
+
+    "redirect InternalServerError when Subscription Display call fails" in {
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+        when(subscriptionDisplayConnector.call(any())(any()))
+          .thenReturn(Future.successful(Left(ServiceUnavailableResponse)))
+        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
+          "POST",
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.submit().url,
+          defaultUserId,
+          Map("value" -> "")
+        )
+
+        val result = route(application, request).get
+        status(result) shouldBe INTERNAL_SERVER_ERROR
       }
     }
 

@@ -27,6 +27,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ConfirmDetails
 import uk.gov.hmrc.xieoricommoncomponentfrontend.util.EoriUtils
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewModel
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.confirm_details
+import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.error_template
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,7 +38,8 @@ class ConfirmDetailsController @Inject() (
   formProvider: ConfirmDetailsFormProvider,
   mcc: MessagesControllerComponents,
   connector: SubscriptionDisplayConnector,
-  utils: EoriUtils
+  utils: EoriUtils,
+  errorTemplateView: error_template
 )(implicit val ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -51,9 +53,11 @@ class ConfirmDetailsController @Inject() (
       implicit request => loggedInUser: LoggedInUserWithEnrolments =>
         for {
           subscriptionDisplay <- connector.call(queryParameters)
-        } yield (Ok(
-          confirmDetailsView(form, ConfirmDetailsViewModel(subscriptionDisplay, loggedInUser.affinityGroup.get))
-        ))
+        } yield subscriptionDisplay match {
+          case Right(response) =>
+            Ok(confirmDetailsView(form, ConfirmDetailsViewModel(response, loggedInUser.affinityGroup.get)))
+          case Left(_) => InternalServerError(errorTemplateView())
+        }
 
     }
 
@@ -65,12 +69,13 @@ class ConfirmDetailsController @Inject() (
           formWithErrors =>
             for {
               subscriptionDisplay <- connector.call(queryParameters)
-            } yield (BadRequest(
-              confirmDetailsView(
-                formWithErrors,
-                ConfirmDetailsViewModel(subscriptionDisplay, loggedInUser.affinityGroup.get)
-              )
-            )),
+            } yield subscriptionDisplay match {
+              case Right(response) =>
+                BadRequest(
+                  confirmDetailsView(formWithErrors, ConfirmDetailsViewModel(response, loggedInUser.affinityGroup.get))
+                )
+              case Left(_) => InternalServerError(errorTemplateView())
+            },
           value => destinationsByAnswer(value)
         )
   }

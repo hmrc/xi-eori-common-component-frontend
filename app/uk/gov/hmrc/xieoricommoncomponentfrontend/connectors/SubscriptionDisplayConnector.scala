@@ -19,10 +19,15 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.connectors
 import play.api.Logger
 import uk.gov.hmrc.http.{HttpClient, _}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
+  ErrorResponse,
+  ServiceUnavailableResponse,
+  SubscriptionDisplayResponseDetail
+}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.control.NonFatal
 
 @Singleton
 class SubscriptionDisplayConnector @Inject() (http: HttpClient, appConfig: AppConfig)(implicit ec: ExecutionContext) {
@@ -32,13 +37,23 @@ class SubscriptionDisplayConnector @Inject() (http: HttpClient, appConfig: AppCo
 
   def call(
     sub09Request: Seq[(String, String)]
-  )(implicit hc: HeaderCarrier): Future[SubscriptionDisplayResponseDetail] = {
+  )(implicit hc: HeaderCarrier): Future[Either[ErrorResponse, SubscriptionDisplayResponseDetail]] = {
 
     // $COVERAGE-OFF$Loggers
     logger.debug(s"Call: $url , body: $sub09Request, and hc: $hc")
     // $COVERAGE-ON
 
-    http.GET[SubscriptionDisplayResponseDetail](url, sub09Request)
+    http.GET[SubscriptionDisplayResponseDetail](url, sub09Request) map { resp =>
+      // $COVERAGE-OFF$Loggers
+      logger.debug("SubscriptionDisplay SUB09 details retrieved successfully")
+      // $COVERAGE-ON
+
+      Right(resp)
+    }
+  } recover {
+    case NonFatal(e) =>
+      logger.error(s"SubscriptionDisplay SUB09 failed. url: $url, error: $e")
+      Left(ServiceUnavailableResponse)
   }
 
 }

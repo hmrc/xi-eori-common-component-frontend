@@ -20,9 +20,10 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import play.mvc.Http.Status.SERVICE_UNAVAILABLE
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.SubscriptionDisplayConnector
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{ServiceUnavailableResponse, SubscriptionDisplayResponseDetail}
 
 class SubscriptionDisplayConnectorSpec extends IntegrationTestSpec with ScalaFutures {
 
@@ -40,11 +41,18 @@ class SubscriptionDisplayConnectorSpec extends IntegrationTestSpec with ScalaFut
     .build()
 
   private lazy val connector                  = app.injector.instanceOf[SubscriptionDisplayConnector]
+  private val requestTaxPayerId               = "GBE9XSDF10BCKEYAX"
   private val requestEori                     = "GB083456789000"
   private val requestAcknowledgementReference = "1234567890ABCDEFG"
 
   private val reqEori =
     Seq(("regime", "CDS"), ("EORI", requestEori), ("acknowledgementReference", requestAcknowledgementReference))
+
+  private val reqTaxPayerId = Seq(
+    ("regime", "CDS"),
+    ("taxPayerID", requestTaxPayerId),
+    ("acknowledgementReference", requestAcknowledgementReference)
+  )
 
   private val expectedResponse = Json
     .parse(SubscriptionDisplay.validResponse(typeOfLegalEntity = "0001","0100086619"))
@@ -70,7 +78,18 @@ class SubscriptionDisplayConnectorSpec extends IntegrationTestSpec with ScalaFut
         requestEori,
         requestAcknowledgementReference
       )
-      await(connector.call(reqEori)) mustBe expectedResponse
+      await(connector.call(reqEori)) mustBe Right(expectedResponse)
+    }
+
+
+    "return Service Unavailable Response when subscription display service returns an exception" in {
+
+      SubscriptionDisplay.returnSubscriptionDisplayWhenReceiveRequest(
+        requestTaxPayerId,
+        requestAcknowledgementReference,
+        returnedStatus = SERVICE_UNAVAILABLE
+      )
+      await(connector.call(reqTaxPayerId)) mustBe Left(ServiceUnavailableResponse)
     }
 
   }
