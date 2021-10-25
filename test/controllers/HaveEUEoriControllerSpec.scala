@@ -17,7 +17,6 @@
 package controllers
 
 import common.pages.RegistrationPage
-import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject

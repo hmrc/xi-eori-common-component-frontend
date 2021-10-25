@@ -17,21 +17,16 @@
 package controllers
 
 import common.pages.RegistrationPage
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.mockito.MockitoSugar.mock
-import play.api.{inject, Application}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
+import play.api.{inject, Application}
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
 
 import java.util.UUID
-import scala.concurrent.Future
 
 class LogoutControllerSpec extends WordSpec with Matchers {
   val defaultUserId: String = s"user-${UUID.randomUUID}"

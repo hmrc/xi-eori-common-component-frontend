@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import externalservices.EnrolmentStoreProxy
+import externalservices.ExternalServiceConfig._
 import org.scalatest.concurrent.ScalaFutures
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -22,9 +24,6 @@ import play.mvc.Http.Status._
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.EnrolmentStoreProxyConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, EnrolmentStoreProxyResponse}
-import externalservices.EnrolmentStoreProxy
-import externalservices.ExternalServiceConfig._
-import play.api.test.Helpers.status
 
 
 class EnrolmentStoreProxyConnectorSpec extends IntegrationTestSpec with ScalaFutures  {

@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html._
 @import java.time.LocalDate
 @import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewModel
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionInfoVatId
 
 
 @this(govukSummaryList : GovukSummaryList,
@@ -31,19 +32,29 @@ languageUtils: LanguageUtils
 @formatDate(date: LocalDate) = @{
     languageUtils.Dates.formatDate(date)
 }
+@vatIDsHtml(vatIDs: List[SubscriptionInfoVatId]) = {
+    @vatIDs.map( vatID => p(Html(vatID.VATID), classes = "govuk-!-margin-bottom-0 govuk-!-margin-top-0"))
+}
+
+@vatID(vatID: SubscriptionInfoVatId) = {
+    @p(Html(vatID.VATID), classes = "govuk-!-margin-bottom-0 govuk-!-margin-top-0")
+}
+@displayVatRows(vatIDs: Option[List[SubscriptionInfoVatId]]) = {
+ @vatIDs.map(vatList => vatList.map(vatID(_)) )
+}
 
 <div id="vat-details">
     @h2("VAT details")
     @govukSummaryList(SummaryList(
         rows = Seq(SummaryListRow(
             key = Key(content = Text("VAT number")),
-            value = Value(content = HtmlContent(Html("123456789"))
+            value = Value(content = HtmlContent(displayVatRows(model.subscriptionDisplay.VATIDs))
             )),
             SummaryListRow(
                 key = Key(content = Text("VAT registration address postcode")),
                 value = Value(content = HtmlContent(Html("DN18 5GP"))
                 )),
-           SummaryListRow(
+            SummaryListRow(
                 key = Key(content = Text("VAT effective date")),
                 value = Value(content = HtmlContent(formatDate(LocalDate.now()))
                 )),
