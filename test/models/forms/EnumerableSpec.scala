@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models
+package models.forms
 
 import org.scalatest.{EitherValues, MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json._

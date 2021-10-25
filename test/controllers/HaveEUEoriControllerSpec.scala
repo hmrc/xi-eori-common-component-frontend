@@ -26,6 +26,7 @@ import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, KeyValue}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.HaveEUEori
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.HaveEUEori.{No, Yes}
 import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
@@ -66,7 +67,7 @@ class HaveEUEoriControllerSpec extends BaseSpec {
           "POST",
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.submit().url,
           defaultUserId,
-          Map("value" -> HaveEUEori.values.head.toString)
+          Map("value" -> Yes.toString)
         )
 
         val result = route(application, request).get
@@ -92,7 +93,7 @@ class HaveEUEoriControllerSpec extends BaseSpec {
           "POST",
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.submit().url,
           defaultUserId,
-          Map("value" -> HaveEUEori.values.last.toString)
+          Map("value" -> No.toString)
         )
 
         val result = route(application, request).get

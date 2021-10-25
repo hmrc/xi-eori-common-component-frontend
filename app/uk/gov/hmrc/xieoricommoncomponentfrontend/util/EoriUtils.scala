@@ -23,7 +23,4 @@ import javax.inject.{Inject, Singleton}
 class EoriUtils @Inject() () {
 
   def generateUUIDAsString: String = UUID.randomUUID().toString.replace("-", "")
-
-  def is2xx: Int => Boolean = status => status >= 200 && status < 300
-
 }

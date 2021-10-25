@@ -20,6 +20,7 @@
 @import java.time.LocalDate
 @import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewModel
 @import uk.gov.hmrc.xieoricommoncomponentfrontend.models.EstablishmentAddress
+@import uk.gov.hmrc.auth.core.AffinityGroup
 
 
 @this(govukSummaryList : GovukSummaryList,
@@ -58,26 +59,34 @@ languageUtils: LanguageUtils
   @p(Html(transformCountryCodeToOptionalLabel(Some(address.countryCode))))
 }
 
+@nameLabel = @{
+    if(model.affinityGroup == AffinityGroup.Organisation) {
+        messages("confirmDetails.company-name.label")
+    } else
+  {
+      messages("confirmDetails.trader-name.label")
+  }
+}
 
 
 <div id="company-details">
     @h2("Company details")
     @govukSummaryList(SummaryList(
         rows = Seq(Some(SummaryListRow(
-            key = Key(content = Text("Registered name")),
+            key = Key(content = Text(if(model.affinityGroup == AffinityGroup.Organisation) messages("confirmDetails.company-name.label") else messages("confirmDetails.trader-name.label")),classes = "govuk-!-width-one-half"),
             value = Value(content = HtmlContent(Html(model.subscriptionDisplay.CDSFullName))
         ))),
         Some(SummaryListRow(
-            key = Key(content = Text("Corporation tax UTR")),
+            key = Key(content = Text(if(model.affinityGroup == AffinityGroup.Organisation) messages("confirmDetails.company-name.utr.label") else messages("confirmDetails.trader-name.utr.label")),classes = "govuk-!-width-one-half"),
             value = Value(content = HtmlContent(Html("1234567890"))
         ))),
         Some(SummaryListRow(
-            key = Key(content = Text("Registered company address")),
+            key = Key(content = Text(if(model.affinityGroup == AffinityGroup.Organisation) messages("confirmDetails.company-name.address.label") else messages("confirmDetails.trader-name.address.label")),classes = "govuk-!-width-one-half"),
             value = Value(content = HtmlContent(addressHtml(model.subscriptionDisplay.CDSEstablishmentAddress))
         ))),
         model.subscriptionDisplay.dateOfEstablishment.map { cd => {
             SummaryListRow(
-                key = Key(content = Text("Date of establishment")),
+                key = Key(content = Text(if(model.affinityGroup == AffinityGroup.Organisation) messages("confirmDetails.company-name.doe.label") else messages("confirmDetails.trader-name.dob.label")),classes = "govuk-!-width-one-half"),
                 value = Value(content = HtmlContent(formatDate(cd))
                 ))
         }
@@ -86,5 +95,5 @@ languageUtils: LanguageUtils
             key = Key(content = Text("GB EORI number")),
             value = Value(content = HtmlContent(model.subscriptionDisplay.EORINo.getOrElse(""))
         )))
-    ).flatten))
+    ).flatten,"govuk-!-margin-bottom-9 govuk-summary-list--wide",attributes = Map("id"->"confirm-details")))
 </div>

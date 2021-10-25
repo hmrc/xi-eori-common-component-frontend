@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models
+package models.forms
 
 import org.scalatest.{MustMatchers, WordSpec}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.WithName

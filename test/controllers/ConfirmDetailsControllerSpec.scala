@@ -24,6 +24,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.SubscriptionDisplayConnector
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ConfirmDetails._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, SubscriptionDisplayResponseDetail}
 import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
@@ -98,5 +99,61 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
       }
     }
 
+    "redirect to the HaveEUEori page when user selects Yes to confirm details" in {
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+
+        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
+          "POST",
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.submit().url,
+          defaultUserId,
+          Map("value" -> confirmedDetails.toString)
+        )
+
+        val result = route(application, request).get
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(
+          result
+        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.onPageLoad().url
+      }
+    }
+
+    "redirect to the HaveEUEori page when user selects No and wants to use different login credentials" in {
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+
+        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
+          "POST",
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.submit().url,
+          defaultUserId,
+          Map("value" -> changeCredentials.toString)
+        )
+
+        val result = route(application, request).get
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(
+          result
+        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded().url
+      }
+    }
+
+    "redirect to the HaveEUEori page when user selects No for changing the details" in {
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+
+        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
+          "POST",
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.submit().url,
+          defaultUserId,
+          Map("value" -> changeDetails.toString)
+        )
+
+        val result = route(application, request).get
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(
+          result
+        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded().url
+      }
+    }
   }
 }
