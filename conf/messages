@@ -86,6 +86,7 @@ confirmDetails.vat-number.label=VAT number
 confirmDetails.vat-address.label=VAT registration address postcode
 confirmDetails.vat-effective-date.label=VAT effective date
 confirmDetails.xi-vat-number.label=XI VAT number
+confirmDetails.do-you-need-xi-vat-number.label=Do we need a Northern Ireland VAT number?
 
 #======================================
 # Countries
