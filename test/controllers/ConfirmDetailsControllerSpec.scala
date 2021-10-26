@@ -54,7 +54,8 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
     CDSEstablishmentAddress = establishmentAddress,
     VATIDs = None,
     shortName = Some("Short Name"),
-    dateOfEstablishment = Some(LocalDate.now())
+    dateOfEstablishment = Some(LocalDate.now()),
+    XIEORINo = Some("XIE9XSDF10BCKEYAX")
   )
 
   override def application = new GuiceApplicationBuilder().overrides(

@@ -43,6 +43,10 @@ languageUtils: LanguageUtils
     @vatIDs.map(vatList => vatList.filter(_.countryCode == Some("GB")).map(vat => vatID(vat.VATID)) )
 }
 
+@xiEori(eori:Option[String]) = @{
+  eori.getOrElse("Do we need a Northern Ireland VAT number?")
+}
+
 <div id="vat-details">
     @h2("VAT details")
     @govukSummaryList(SummaryList(
@@ -60,7 +64,7 @@ languageUtils: LanguageUtils
                 )),
             SummaryListRow(
                 key = Key(content = Text(messages("confirmDetails.xi-vat-number.label")),classes = "govuk-!-width-one-half"),
-                value = Value(content = HtmlContent("GB123456789000")
+                value = Value(content = HtmlContent(xiEori(model.subscriptionDisplay.XIEORINo))
                 ))
         )))
 </div>

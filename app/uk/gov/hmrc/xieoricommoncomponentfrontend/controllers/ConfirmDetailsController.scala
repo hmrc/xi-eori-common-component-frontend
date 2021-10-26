@@ -20,15 +20,14 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.SubscriptionDisplayConnector
-import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
-import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
+import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{AuthAction, GroupEnrolmentExtractor}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{ExistingEori, LoggedInUserWithEnrolments}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.ConfirmDetailsFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ConfirmDetails
 import uk.gov.hmrc.xieoricommoncomponentfrontend.util.EoriUtils
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewModel
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.confirm_details
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.error_template
-
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -39,12 +38,19 @@ class ConfirmDetailsController @Inject() (
   mcc: MessagesControllerComponents,
   connector: SubscriptionDisplayConnector,
   utils: EoriUtils,
-  errorTemplateView: error_template
+  errorTemplateView: error_template,
+  groupEnrolment: GroupEnrolmentExtractor
 )(implicit val ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  val queryParameters =
-    List("EORI" -> "GB123456789012", "regime" -> "CDS", "acknowledgementReference" -> utils.generateUUIDAsString)
+  def buildQueryParameters(eori: Option[ExistingEori]) = {
+    val existingEori = eori.map(_.id)
+    List(
+      "EORI"                     -> existingEori.getOrElse(""),
+      "regime"                   -> "CDS",
+      "acknowledgementReference" -> utils.generateUUIDAsString
+    )
+  }
 
   private val form = formProvider()
 
@@ -52,7 +58,8 @@ class ConfirmDetailsController @Inject() (
     authAction.ggAuthorisedUserWithEnrolmentsAction {
       implicit request => loggedInUser: LoggedInUserWithEnrolments =>
         for {
-          subscriptionDisplay <- connector.call(queryParameters)
+          eori                <- groupEnrolment.existingEori(loggedInUser)
+          subscriptionDisplay <- connector.call(buildQueryParameters(eori))
         } yield subscriptionDisplay match {
           case Right(response) =>
             Ok(confirmDetailsView(form, ConfirmDetailsViewModel(response, loggedInUser.affinityGroup.get)))
@@ -68,7 +75,8 @@ class ConfirmDetailsController @Inject() (
         .fold(
           formWithErrors =>
             for {
-              subscriptionDisplay <- connector.call(queryParameters)
+              eori                <- groupEnrolment.existingEori(loggedInUser)
+              subscriptionDisplay <- connector.call(buildQueryParameters(eori))
             } yield subscriptionDisplay match {
               case Right(response) =>
                 BadRequest(

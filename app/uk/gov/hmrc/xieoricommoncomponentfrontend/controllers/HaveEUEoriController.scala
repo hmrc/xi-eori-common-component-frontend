@@ -65,19 +65,11 @@ class HaveEUEoriController @Inject() (
                   )
                 )
               case HaveEUEori.No =>
-                existingEori(loggedInUser).map(destinationsByExistingEori(_))
+                groupEnrolment.existingEori(loggedInUser).map(destinationsByExistingEori(_))
             }
         )
 
   }
-
-  private def existingEori(
-    user: LoggedInUserWithEnrolments
-  )(implicit headerCarrier: HeaderCarrier): Future[Option[ExistingEori]] =
-    groupEnrolment.groupIdEnrolments(user.groupId.getOrElse(throw MissingGroupId())).map {
-      groupEnrolments =>
-        existingEoriForUserOrGroup(user.enrolments.enrolments, groupEnrolments)
-    }
 
   private def destinationsByExistingEori(existingEori: Option[ExistingEori]): Result = existingEori match {
     case Some(_) =>

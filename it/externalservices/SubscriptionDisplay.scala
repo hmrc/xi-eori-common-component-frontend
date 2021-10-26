@@ -82,7 +82,8 @@ object SubscriptionDisplay {
        |      "consentToDisclosureOfPersonalData": "1",
        |      "shortName": "Doe",
        |      "typeOfPerson": "1",
-       |      "principalEconomicActivity": "2000"
+       |      "principalEconomicActivity": "2000",
+       |      "XI_EORI" : "XIE9XSDF10BCKEYAX"
        |    }
        |  }
        |}

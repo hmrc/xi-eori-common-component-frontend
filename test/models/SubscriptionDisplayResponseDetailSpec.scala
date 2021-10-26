@@ -88,7 +88,8 @@ class SubscriptionDisplayResponseDetailSpec extends WordSpec with MustMatchers {
                                                               |      "shortName": "Doe",
                                                               |      "dateOfEstablishment": "1963-04-01",
                                                               |      "typeOfPerson": "1",
-                                                              |      "principalEconomicActivity": "2000"
+                                                              |      "principalEconomicActivity": "2000",
+                                                              |      "XI_EORI" : "XIE9XSDF10BCKEYAX"
                                                               |    }
                                                               |  }
                                                               |}
@@ -104,7 +105,8 @@ class SubscriptionDisplayResponseDetailSpec extends WordSpec with MustMatchers {
           List(SubscriptionInfoVatId(Some("GB"), Some("999999")), SubscriptionInfoVatId(Some("ES"), Some("888888")))
         ),
         Some("Doe"),
-        Some(LocalDate.of(1963, 4, 1))
+        Some(LocalDate.of(1963, 4, 1)),
+        Some("XIE9XSDF10BCKEYAX")
       )
 
       result.get mustBe expectedModel

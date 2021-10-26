@@ -25,7 +25,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolment
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.EnrolmentResponse
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.EnrolmentStoreProxyService
 import util.BaseSpec
-
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class GroupEnrolmentExtractorSpec extends BaseSpec with BeforeAndAfterEach {
