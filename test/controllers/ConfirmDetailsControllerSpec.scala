@@ -25,6 +25,8 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthRedirectSupport
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.SubscriptionDisplayConnector
+import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
+import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, ExistingEori, KeyValue}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ConfirmDetails._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
   EstablishmentAddress,
@@ -41,6 +43,7 @@ import scala.concurrent.Future
 class ConfirmDetailsControllerSpec extends BaseSpec with AuthRedirectSupport {
 
   val subscriptionDisplayConnector = mock[SubscriptionDisplayConnector]
+  val mockGroupEnrolmentExtractor  = mock[GroupEnrolmentExtractor]
 
   val establishmentAddress = EstablishmentAddress(
     streetAndNumber = "line1",
@@ -59,9 +62,16 @@ class ConfirmDetailsControllerSpec extends BaseSpec with AuthRedirectSupport {
     XIEORINo = Some("XIE9XSDF10BCKEYAX")
   )
 
+  private def groupEnrolment() =
+    List(EnrolmentResponse("HMRC-ATAR-ORG", "Activated", List(KeyValue("EORINumber", "GB123456463324"))))
+
+  private def existingEori() =
+    Some(ExistingEori("XIE9XSDF10BCKEYAX", "HMRC-ATAR-ORG"))
+
   override def application = new GuiceApplicationBuilder().overrides(
     inject.bind[AuthConnector].to(mockAuthConnector),
-    inject.bind[SubscriptionDisplayConnector].to(subscriptionDisplayConnector)
+    inject.bind[SubscriptionDisplayConnector].to(subscriptionDisplayConnector),
+    inject.bind[GroupEnrolmentExtractor].to(mockGroupEnrolmentExtractor)
   ).configure("auditing.enabled" -> "false", "metrics.jvm" -> false, "metrics.enabled" -> false).build()
 
   "ConfirmDetails controller" should {
@@ -71,6 +81,10 @@ class ConfirmDetailsControllerSpec extends BaseSpec with AuthRedirectSupport {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(subscriptionDisplayConnector.call(any())(any()))
           .thenReturn(Future.successful(Right(subscriptionDisplayResponse)))
+        when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
+          .thenReturn(Future.successful(groupEnrolment))
+        when(mockGroupEnrolmentExtractor.existingEori(any())(any()))
+          .thenReturn(Future.successful(existingEori))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad().url,
           defaultUserId
@@ -90,6 +104,10 @@ class ConfirmDetailsControllerSpec extends BaseSpec with AuthRedirectSupport {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(subscriptionDisplayConnector.call(any())(any()))
           .thenReturn(Future.successful(Right(subscriptionDisplayResponse)))
+        when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
+          .thenReturn(Future.successful(groupEnrolment))
+        when(mockGroupEnrolmentExtractor.existingEori(any())(any()))
+          .thenReturn(Future.successful(existingEori))
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.submit().url,
@@ -110,6 +128,10 @@ class ConfirmDetailsControllerSpec extends BaseSpec with AuthRedirectSupport {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(subscriptionDisplayConnector.call(any())(any()))
           .thenReturn(Future.successful(Left(ServiceUnavailableResponse)))
+        when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
+          .thenReturn(Future.successful(groupEnrolment))
+        when(mockGroupEnrolmentExtractor.existingEori(any())(any()))
+          .thenReturn(Future.successful(existingEori))
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.submit().url,

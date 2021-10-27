@@ -35,7 +35,7 @@ class TradeWithNIViewSpec extends ViewSpec {
   private lazy val tradeWithNIDoc: Document          = Jsoup.parse(contentAsString(tradeWithNIView))
   private lazy val tradeWithNIDocWithError: Document = Jsoup.parse(contentAsString(tradeWithNIViewError))
 
-  "You cannot use this service page for users of type standard org" should {
+  "Trade With NI page" should {
 
     "display correct title" in {
       tradeWithNIDoc.title must startWith("Do you move goods in or out of Northern Ireland?")

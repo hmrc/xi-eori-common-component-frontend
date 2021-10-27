@@ -69,23 +69,27 @@ haveEUEori.coutries.list=Austria, Belgium, Bulgaria, Croatia, Republic of Cyprus
 
 #confirm-details
 confirmDetails.page.title=Confirm details
+confirmDetails.company-details.heading=Company details
+confirmDetails.trader-details.heading=Trader details
 confirmDetails.page.options.heading=Are these details correct?
 confirmDetails.confirmedDetails=Yes, these are the details I want to use
 confirmDetails.changeCredentials=No, I need to sign in as a different user
 confirmDetails.changeDetails=No, I need to change my details
 confirmDetails.error.required=Tell us if these details are correct
 confirmDetails.company-name.label=Registered company name
-confirmDetails.trader-name.label=Trader name
+confirmDetails.trader-name.label=Full name
 confirmDetails.company-name.doe.label=Date of establishment
 confirmDetails.trader-name.dob.label=Date of birth
 confirmDetails.company-name.address.label=Registered company address
-confirmDetails.trader-name.address.label=Trader address
+confirmDetails.trader-name.address.label=Your address
 confirmDetails.company-name.utr.label=Corporation tax UTR
-confirmDetails.trader-name.utr.label=Self assessment UTR
+confirmDetails.trader-name.nino.label=National insurance number
+confirmDetails.gb-eori-number.label=GB EORI number
 confirmDetails.vat-number.label=VAT number
 confirmDetails.vat-address.label=VAT registration address postcode
 confirmDetails.vat-effective-date.label=VAT effective date
 confirmDetails.xi-vat-number.label=XI VAT number
+confirmDetails.do-you-need-xi-vat-number.label=Do we need a Northern Ireland VAT number?
 
 #======================================
 # Countries
