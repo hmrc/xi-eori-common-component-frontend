@@ -40,7 +40,7 @@ vatDetails: components.vat_details
 @main_template(title,form = Some(confirmDetailsForm)) {
     @h1("confirmDetails.page.title")
     @companyDetails(model)
-    @vatDetails(model)
+    @if(model.affinityGroup == AffinityGroup.Organisation){ @vatDetails(model)}
     @formHelper(action = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.submit, 'autoComplete -> "off") {
 
         @errorSummary(confirmDetailsForm.errors)
@@ -48,7 +48,8 @@ vatDetails: components.vat_details
             confirmDetailsForm("value"),
             legend = messages("confirmDetails.page.options.heading"),
             items = ConfirmDetails.options(confirmDetailsForm),
-            classes = "govuk-fieldset__legend--l"
+            classes = "govuk-fieldset__legend--l",
+            legendAsHeading = false
         )
 
         @govukButton(Button(
