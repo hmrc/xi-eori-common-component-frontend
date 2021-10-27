@@ -23,6 +23,7 @@ import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AuthConnector
+import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthRedirectSupport
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.SubscriptionDisplayConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ConfirmDetails._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
@@ -37,7 +38,7 @@ import util.builders.SessionBuilder
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class ConfirmDetailsControllerSpec extends BaseSpec {
+class ConfirmDetailsControllerSpec extends BaseSpec with AuthRedirectSupport {
 
   val subscriptionDisplayConnector = mock[SubscriptionDisplayConnector]
 
@@ -121,7 +122,7 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
       }
     }
 
-    "redirect to the HaveEUEori page when user selects Yes to confirm details" in {
+    "redirect to the Consent page when user selects Yes to confirm details" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
@@ -140,7 +141,7 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
       }
     }
 
-    "redirect to the HaveEUEori page when user selects No and wants to use different login credentials" in {
+    "redirect to the Sign in page when user selects No and wants to use different login credentials" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
@@ -153,13 +154,11 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
 
         val result = route(application, request).get
         status(result) shouldBe SEE_OTHER
-        redirectLocation(
-          result
-        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded().url
+        redirectLocation(result).get should startWith("/bas-gateway/sign-in")
       }
     }
 
-    "redirect to the HaveEUEori page when user selects No for changing the details" in {
+    "redirect to the Change Details page when user selects No for changing the details" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 

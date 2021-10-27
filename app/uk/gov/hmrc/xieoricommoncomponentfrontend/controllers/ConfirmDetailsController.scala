@@ -16,11 +16,17 @@
 
 package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 
+import play.api.{Configuration, Environment}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.SubscriptionDisplayConnector
-import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{AuthAction, GroupEnrolmentExtractor}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{
+  AuthAction,
+  AuthRedirectSupport,
+  GroupEnrolmentExtractor
+}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{ExistingEori, LoggedInUserWithEnrolments}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.ConfirmDetailsFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ConfirmDetails
@@ -28,11 +34,15 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.util.EoriUtils
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewModel
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.confirm_details
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.error_template
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ConfirmDetailsController @Inject() (
+  override val config: Configuration,
+  override val env: Environment,
   authAction: AuthAction,
+  appConfig: AppConfig,
   confirmDetailsView: confirm_details,
   formProvider: ConfirmDetailsFormProvider,
   mcc: MessagesControllerComponents,
@@ -41,7 +51,7 @@ class ConfirmDetailsController @Inject() (
   errorTemplateView: error_template,
   groupEnrolment: GroupEnrolmentExtractor
 )(implicit val ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends FrontendController(mcc) with I18nSupport with AuthRedirectSupport {
 
   def buildQueryParameters(eori: Option[ExistingEori]) = {
     val existingEori = eori.map(_.id)
@@ -94,9 +104,7 @@ class ConfirmDetailsController @Inject() (
         Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.onPageLoad())
       )
     case ConfirmDetails.changeCredentials =>
-      Future.successful(
-        Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded())
-      )
+      Future.successful(toGGLogin(appConfig.loginContinueUrl).withNewSession)
     case ConfirmDetails.changeDetails =>
       Future.successful(
         Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded())
