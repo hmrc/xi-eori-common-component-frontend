@@ -24,13 +24,13 @@ import play.api.i18n.MessagesApi
 import play.api.mvc._
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{client_error_template, notFound, ErrorTemplate}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{client_error_template, error_template, notFound}
 
 import scala.concurrent.Future
 
 @Singleton
 class ErrorHandler @Inject() (
-  errorTemplate: ErrorTemplate,
+  errorTemplate: error_template,
   notFoundView: notFound,
   clientErrorTemplateView: client_error_template,
   val messagesApi: MessagesApi
@@ -40,8 +40,7 @@ class ErrorHandler @Inject() (
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit
     request: Request[_]
-  ): Html =
-    errorTemplate(pageTitle, heading, message)
+  ): Html = errorTemplate()
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
 

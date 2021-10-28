@@ -19,45 +19,66 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
-import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
+import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{
+  AuthAction,
+  EnrolmentExtractor,
+  GroupEnrolmentExtractor
+}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{ExistingEori, LoggedInUserWithEnrolments}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.HaveEUEoriFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.HaveEUEori
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.HaveEUEori.{No, Yes}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.have_eu_eori
 
 import javax.inject.Inject
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class HaveEUEoriController @Inject() (
   authAction: AuthAction,
   haveEUEoriView: have_eu_eori,
   formProvider: HaveEUEoriFormProvider,
+  groupEnrolment: GroupEnrolmentExtractor,
   mcc: MessagesControllerComponents
-) extends FrontendController(mcc) with I18nSupport {
+)(implicit val ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport with EnrolmentExtractor {
 
   private val form = formProvider()
 
-  // Note: permitted for user with service enrolment
   def onPageLoad: Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
       implicit request => _: LoggedInUserWithEnrolments =>
         Future.successful(Ok(haveEUEoriView(form)))
     }
 
-  def submit: Action[AnyContent] = Action { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(formWithErrors => BadRequest(haveEUEoriView(formWithErrors)), value => destinationsByAnswer(value))
+  def submit: Action[AnyContent] = authAction.ggAuthorisedUserWithEnrolmentsAction {
+    implicit request => loggedInUser: LoggedInUserWithEnrolments =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(haveEUEoriView(formWithErrors))),
+          value =>
+            value match {
+              case HaveEUEori.Yes =>
+                Future.successful(
+                  Redirect(
+                    uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded()
+                  )
+                )
+              case HaveEUEori.No =>
+                groupEnrolment.existingEori(loggedInUser).map(destinationsByExistingEori(_))
+            }
+        )
+
   }
 
-  private def destinationsByAnswer(haveEUEori: HaveEUEori): Result = haveEUEori match {
-    case Yes =>
-      Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded())
-    case No =>
+  private def destinationsByExistingEori(existingEori: Option[ExistingEori]): Result = existingEori match {
+    case Some(_) =>
+      Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad())
+    case None =>
       Redirect(
         uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.YouAlreadyHaveEoriController.eoriAlreadyExists()
       )
   }
 
 }
+
+case class MissingGroupId() extends Exception(s"User doesn't have groupId")

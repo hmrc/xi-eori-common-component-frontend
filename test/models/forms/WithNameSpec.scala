@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package config
+package models.forms
 
-import util.BaseSpec
-import play.api.Configuration
+import org.scalatest.{MustMatchers, WordSpec}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.WithName
 
-class SessionTimeoutSpec extends BaseSpec {
+class WithNameSpec extends WordSpec with MustMatchers {
 
-  private val configuration = instanceOf[Configuration]
+  object Foo extends WithName("bar")
 
-  "Configuration" should {
-
-    "have 20 min session timeout" in {
-
-      configuration.get[String]("session.timeout") shouldBe "20m"
+  ".toString" must {
+    "return the correct string" in {
+      Foo.toString mustEqual "bar"
     }
   }
 }

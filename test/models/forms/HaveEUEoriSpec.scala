@@ -14,46 +14,42 @@
  * limitations under the License.
  */
 
-package models
+package models.forms
 
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json._
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.TradeWithNI
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.HaveEUEori
 
-class TradeWithNISpec extends WordSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues {
-
-  "TradeWithNI" must {
+class HaveEUEoriSpec extends WordSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues {
+  val gen = Gen.oneOf(HaveEUEori.values)
+  "HaveEUEori" must {
 
     "deserialise valid values" in {
 
-      val gen = Gen.oneOf(TradeWithNI.values.toSeq)
-
       forAll(gen) {
-        tradeWithNI =>
-          JsString(tradeWithNI.toString).validate[TradeWithNI].asOpt.value mustEqual tradeWithNI
+        haveEUEori =>
+          JsString(haveEUEori.toString).validate[HaveEUEori].asOpt.value mustEqual haveEUEori
       }
     }
 
     "fail to deserialise invalid values" in {
 
-      val gen = arbitrary[String] suchThat (!TradeWithNI.values.map(_.toString).contains(_))
+      val gen = arbitrary[String] suchThat (!HaveEUEori.values.map(_.toString).contains(_))
 
       forAll(gen) {
         invalidValue =>
-          JsString(invalidValue).validate[TradeWithNI] mustEqual JsError("error.invalid")
+          JsString(invalidValue).validate[HaveEUEori] mustEqual JsError("error.invalid")
       }
     }
 
     "serialise" in {
 
-      val gen = Gen.oneOf(TradeWithNI.values.toSeq)
-
       forAll(gen) {
-        tradeWithNI =>
-          Json.toJson(tradeWithNI)(TradeWithNI.writes) mustEqual JsString(tradeWithNI.toString)
+        haveEUEori =>
+          Json.toJson(haveEUEori)(HaveEUEori.writes) mustEqual JsString(haveEUEori.toString)
       }
     }
   }

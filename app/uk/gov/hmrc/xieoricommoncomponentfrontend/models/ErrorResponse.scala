@@ -14,20 +14,10 @@
  * limitations under the License.
  */
 
-package config
+package uk.gov.hmrc.xieoricommoncomponentfrontend.models
 
-import util.BaseSpec
-import play.api.Configuration
+sealed trait ErrorResponse { val msg: String }
 
-class SessionTimeoutSpec extends BaseSpec {
-
-  private val configuration = instanceOf[Configuration]
-
-  "Configuration" should {
-
-    "have 20 min session timeout" in {
-
-      configuration.get[String]("session.timeout") shouldBe "20m"
-    }
-  }
-}
+case object NotFoundResponse           extends ErrorResponse { val msg = "Not Found Response"  }
+case object InvalidResponse            extends ErrorResponse { val msg = "Invalid Response"    }
+case object ServiceUnavailableResponse extends ErrorResponse { val msg = "Service Unavailable" }

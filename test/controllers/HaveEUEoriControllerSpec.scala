@@ -17,15 +17,30 @@
 package controllers
 
 import common.pages.RegistrationPage
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import play.api.inject
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.HaveEUEori
-import util.ControllerSpec
+import uk.gov.hmrc.auth.core.AuthConnector
+import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
+import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, ExistingEori, KeyValue}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.HaveEUEori.{No, Yes}
+import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
 
-class HaveEUEoriControllerSpec extends ControllerSpec {
+import scala.concurrent.Future
 
-  val paragraphXpath = "//*[@id='para1']"
+class HaveEUEoriControllerSpec extends BaseSpec {
+
+  private def groupEnrolment() =
+    List(EnrolmentResponse("HMRC-ATAR-ORG", "Activated", List(KeyValue("EORINumber", "GB123456463324"))))
+
+  private def existingEori() =
+    Some(ExistingEori("XIE9XSDF10BCKEYAX", "HMRC-ATAR-ORG"))
+
+  val mockGroupEnrolmentExtractor = mock[GroupEnrolmentExtractor]
   "HaveEUEori controller" should {
     "return OK and the correct view for a GET" in {
 
@@ -46,7 +61,7 @@ class HaveEUEoriControllerSpec extends ControllerSpec {
         )
       }
     }
-    "redirect to the next page when valid data is submitted" in {
+    "redirect to the XIEoriNotNeeded page when user selects Yes" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
@@ -54,7 +69,7 @@ class HaveEUEoriControllerSpec extends ControllerSpec {
           "POST",
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.submit().url,
           defaultUserId,
-          Map("value" -> HaveEUEori.values.head.toString)
+          Map("value" -> Yes.toString)
         )
 
         val result = route(application, request).get
@@ -62,6 +77,34 @@ class HaveEUEoriControllerSpec extends ControllerSpec {
         redirectLocation(
           result
         ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded().url
+      }
+
+    }
+
+    "redirect to the Confirm details page when user has GBEori and selects No" in {
+      def application = new GuiceApplicationBuilder().overrides(
+        inject.bind[AuthConnector].to(mockAuthConnector),
+        inject.bind[GroupEnrolmentExtractor].to(mockGroupEnrolmentExtractor)
+      ).configure("auditing.enabled" -> "false", "metrics.jvm" -> false, "metrics.enabled" -> false).build()
+
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+        when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
+          .thenReturn(Future.successful(groupEnrolment))
+        when(mockGroupEnrolmentExtractor.existingEori(any())(any()))
+          .thenReturn(Future.successful(existingEori))
+        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
+          "POST",
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.submit().url,
+          defaultUserId,
+          Map("value" -> No.toString)
+        )
+
+        val result = route(application, request).get
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(
+          result
+        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad().url
       }
 
     }

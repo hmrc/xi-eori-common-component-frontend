@@ -17,16 +17,31 @@
 package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth
 
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, GroupId}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{
+  EnrolmentResponse,
+  ExistingEori,
+  GroupId,
+  LoggedInUserWithEnrolments
+}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.EnrolmentStoreProxyService
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class GroupEnrolmentExtractor @Inject() (enrolmentStoreProxyService: EnrolmentStoreProxyService) {
+class GroupEnrolmentExtractor @Inject() (enrolmentStoreProxyService: EnrolmentStoreProxyService)(implicit
+  val ec: ExecutionContext
+) extends EnrolmentExtractor {
 
   def groupIdEnrolments(groupId: String)(implicit hc: HeaderCarrier): Future[List[EnrolmentResponse]] =
     enrolmentStoreProxyService.enrolmentsForGroup(GroupId(groupId))
+
+  def existingEori(
+    user: LoggedInUserWithEnrolments
+  )(implicit headerCarrier: HeaderCarrier): Future[Option[ExistingEori]] =
+    groupIdEnrolments(user.groupId.getOrElse(throw MissingGroupId())).map {
+      groupEnrolments =>
+        existingEoriForUserOrGroup(user.enrolments.enrolments, groupEnrolments)
+    }
 
 }

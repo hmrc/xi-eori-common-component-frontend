@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-package config
+package uk.gov.hmrc.xieoricommoncomponentfrontend.util
 
-import util.BaseSpec
-import play.api.Configuration
+import java.util.UUID
+import javax.inject.{Inject, Singleton}
 
-class SessionTimeoutSpec extends BaseSpec {
+@Singleton
+class EoriUtils @Inject() () {
 
-  private val configuration = instanceOf[Configuration]
-
-  "Configuration" should {
-
-    "have 20 min session timeout" in {
-
-      configuration.get[String]("session.timeout") shouldBe "20m"
-    }
-  }
+  def generateUUIDAsString: String = UUID.randomUUID().toString.replace("-", "")
 }

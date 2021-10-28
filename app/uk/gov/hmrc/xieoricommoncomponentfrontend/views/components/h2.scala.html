@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,22 +12,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package config
+@this()
 
-import util.BaseSpec
-import play.api.Configuration
+@(msg: String, id: Option[String] = None)(implicit messages: Messages)
 
-class SessionTimeoutSpec extends BaseSpec {
+<h2 @{id.fold("")(id => s"id=$id")} class="govuk-heading-m">@messages(msg)</h2>
 
-  private val configuration = instanceOf[Configuration]
-
-  "Configuration" should {
-
-    "have 20 min session timeout" in {
-
-      configuration.get[String]("session.timeout") shouldBe "20m"
-    }
-  }
-}

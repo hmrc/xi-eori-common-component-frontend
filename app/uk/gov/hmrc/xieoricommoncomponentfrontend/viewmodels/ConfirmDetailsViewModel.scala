@@ -14,20 +14,9 @@
  * limitations under the License.
  */
 
-package config
+package uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels
 
-import util.BaseSpec
-import play.api.Configuration
+import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail
 
-class SessionTimeoutSpec extends BaseSpec {
-
-  private val configuration = instanceOf[Configuration]
-
-  "Configuration" should {
-
-    "have 20 min session timeout" in {
-
-      configuration.get[String]("session.timeout") shouldBe "20m"
-    }
-  }
-}
+case class ConfirmDetailsViewModel(subscriptionDisplay: SubscriptionDisplayResponseDetail, affinityGroup: AffinityGroup)
