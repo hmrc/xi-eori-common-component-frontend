@@ -20,7 +20,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.contentAsString
 import uk.gov.hmrc.auth.core.AffinityGroup
-import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.{ConfirmDetailsFormProvider, TradeWithNIFormProvider}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.ConfirmDetailsFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ConfirmDetails.confirmedDetails
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
   EstablishmentAddress,
@@ -28,7 +28,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
   SubscriptionInfoVatId
 }
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewModel
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{confirm_details, trade_with_ni}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.confirm_details
 import util.ViewSpec
 
 import java.time.LocalDate

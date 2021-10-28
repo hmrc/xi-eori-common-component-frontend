@@ -17,7 +17,6 @@
 package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth
 
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.MissingGroupId
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{
   EnrolmentResponse,
   ExistingEori,
