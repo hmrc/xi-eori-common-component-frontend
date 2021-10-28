@@ -22,8 +22,8 @@
 @title = @{
     messages("disclosePersonalDetails.page.title")
 }
-@hintHtml = {
-    <p id="disclose-personal-details-hint" class="govuk-hint">@messages("disclosePersonalDetails.hint")</p>
+@hintHtml = @{
+    messages("disclosePersonalDetails.hint")
 }
 
 @main_template(title, form = Some(disclosePersonalDetailsForm)) {
