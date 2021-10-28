@@ -95,7 +95,7 @@ object SubscriptionDisplay {
     returnedStatus: Int = OK
   ): Unit =
     stubFor(
-      get(urlEqualTo(s"/subscription-display?regime=CDS&EORI=$id&acknowledgementReference=$requestAcknowledgementReference"))
+      get(urlEqualTo(s"/xi-eori-common-component/subscription-display?regime=CDS&EORI=$id&acknowledgementReference=$requestAcknowledgementReference"))
         .willReturn(
           aResponse()
             .withStatus(returnedStatus)

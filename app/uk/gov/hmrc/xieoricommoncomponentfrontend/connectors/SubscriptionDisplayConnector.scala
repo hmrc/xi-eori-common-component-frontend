@@ -33,7 +33,9 @@ import scala.util.control.NonFatal
 class SubscriptionDisplayConnector @Inject() (http: HttpClient, appConfig: AppConfig)(implicit ec: ExecutionContext) {
 
   private val logger = Logger(this.getClass)
-  private val url    = s"${appConfig.subscriptionDisplayBaseUrl}/${appConfig.subscriptionDisplayServiceContext}"
+
+  private val url =
+    s"${appConfig.subscriptionDisplayBaseUrl}/${appConfig.subscriptionDisplayServiceContext}/subscription-display"
 
   def call(
     sub09Request: Seq[(String, String)]

@@ -37,9 +37,9 @@ class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig
     config.get[String]("microservice.services.enrolment-store-proxy.context")
 
   //handle subscription service
-  val subscriptionDisplayBaseUrl: String = servicesConfig.baseUrl("subscription-display")
+  val subscriptionDisplayBaseUrl: String = servicesConfig.baseUrl("xi-eori-common-component")
 
   val subscriptionDisplayServiceContext: String =
-    config.get[String]("microservice.services.subscription-display.context")
+    config.get[String]("microservice.services.xi-eori-common-component.context")
 
 }

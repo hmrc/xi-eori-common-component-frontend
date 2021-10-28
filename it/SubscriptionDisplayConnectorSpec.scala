@@ -30,9 +30,9 @@ class SubscriptionDisplayConnectorSpec extends IntegrationTestSpec with ScalaFut
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
       Map(
-        "microservice.services.subscription-display.host"                         -> Host,
-        "microservice.services.subscription-display.port"                         -> Port,
-        "microservice.services.subscription-display.context"                      -> "subscription-display",
+        "microservxi-eori-common-componentice.services.xi-eori-common-component.host"                         -> Host,
+        "microservice.services.xi-eori-common-component.port"                         -> Port,
+        "microservice.services.xi-eori-common-component.context"                      -> "xi-eori-common-component",
         "auditing.enabled"                                                        -> false,
         "auditing.consumer.baseUri.host"                                          -> Host,
         "auditing.consumer.baseUri.port"                                          -> Port
