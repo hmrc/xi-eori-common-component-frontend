@@ -91,6 +91,20 @@ confirmDetails.vat-effective-date.label=VAT effective date
 confirmDetails.xi-vat-number.label=XI VAT number
 confirmDetails.do-you-need-xi-vat-number.label=Do we need a Northern Ireland VAT number?
 
+#change-details
+changeDetails.you-cannot-continue.title=We''re sorry you cannot continue with your registration
+changeDetails.you-cannot-continue.heading=We''re sorry you cannot continue with your registration
+changeDetails.details-list.heading=You have told us that the details we hold about you are incorrect. You need to contact one of the following to correct the information before you can continue:
+changeDetails.details-list.text1=Companies house (organisations only)
+changeDetails.details-list.text2=HMRC VAT
+changeDetails.details-list.text3=Your personal tax account (sole traders and individuals)
+
+#If you need help
+ecc.if.you.need.help.heading=If you need help
+ecc.if.you.need.help.telephone=Telephone: 0300 322 7067
+ecc.if.you.need.help.working-hours=Monday to Friday, 8am to 6pm (except public holidays)
+ecc.if.you.need.help.call-charges=Find out about call charges
+
 #======================================
 # Countries
 #======================================

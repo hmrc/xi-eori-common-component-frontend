@@ -18,6 +18,7 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.config
 
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
+import play.api.i18n.Messages
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
@@ -41,5 +42,20 @@ class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig
 
   val subscriptionDisplayServiceContext: String =
     config.get[String]("microservice.services.xi-eori-common-component.context")
+
+  private def languageKey(implicit messages: Messages) = messages.lang.language match {
+    case "cy" => "cy"
+    case _    => "en"
+  }
+
+  def callCharges()(implicit messages: Messages): String =
+    config.get[String](s"external-urls.call-charges-$languageKey")
+
+  def getServiceUrl(proxyServiceName: String): String = {
+    val baseUrl = servicesConfig.baseUrl("xi-eori-common-component")
+    val serviceContext =
+      config.get[String](s"microservice.services.xi-eori-common-component.$proxyServiceName.context")
+    s"$baseUrl/$serviceContext"
+  }
 
 }
