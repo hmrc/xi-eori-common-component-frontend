@@ -39,10 +39,10 @@ class AdditionalHelpViewSpec extends ViewSpec {
         .text mustBe "Telephone: 0300 322 7067"
       additionalHelpDoc.body
         .getElementById("working-hours")
-        .text mustBe "Monday to Friday, 8am to 6pm (except public holidays)"
+        .text mustBe "Monday to Friday, 9am to 5pm (except public holidays)"
       additionalHelpDoc.body
         .getElementById("call-charges")
-        .text mustBe "Find out about call charges"
+        .text mustBe "Find out about call charges."
 
     }
   }
