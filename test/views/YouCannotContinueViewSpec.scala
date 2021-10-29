@@ -19,8 +19,7 @@ package views
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.contentAsString
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Organisation}
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{you_cannot_continue, you_cant_use_service}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.you_cannot_continue
 import util.ViewSpec
 
 class YouCannotContinueViewSpec extends ViewSpec {

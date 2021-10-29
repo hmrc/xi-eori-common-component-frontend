@@ -20,7 +20,6 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.contentAsString
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.helpers.additional_help
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.you_cannot_continue
 import util.ViewSpec
 
 class AdditionalHelpViewSpec extends ViewSpec {

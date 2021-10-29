@@ -1,10 +1,12 @@
 service.name = Apply for an XI EORI
 service.text = This is your new service
+ecc.end-of-title=GOV.UK
 
 ecc.sign.out=Sign out
 ecc.navigation.continue=Continue
 ecc.navigation.back=Back
 ecc.help-and-support.text=Get help with this page
+ecc.error.page-title=Error
 
 #timeout dialog
 ecc.timeout.message=For your security, we will delete your answers and you will be signed out in
