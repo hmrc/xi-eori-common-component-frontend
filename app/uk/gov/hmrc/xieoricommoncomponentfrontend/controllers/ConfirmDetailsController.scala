@@ -99,7 +99,9 @@ class ConfirmDetailsController @Inject() (
       )
     case ConfirmDetails.changeDetails =>
       Future.successful(
-        Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded())
+        Redirect(
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ChangeDetailsController.incorrectDetails()
+        )
       )
   }
 

@@ -30,3 +30,7 @@ POST       /have-eu-eori                      @uk.gov.hmrc.xieoricommoncomponent
 #confirm-details
 GET        /confirm-details                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ConfirmDetailsController.onPageLoad
 POST       /confirm-details                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ConfirmDetailsController.submit
+
+#change-details
+GET        /incorrect-data-held                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ChangeDetailsController.incorrectDetails
+
