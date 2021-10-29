@@ -31,6 +31,10 @@ POST       /have-eu-eori                      @uk.gov.hmrc.xieoricommoncomponent
 GET        /confirm-details                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ConfirmDetailsController.onPageLoad
 POST       /confirm-details                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ConfirmDetailsController.submit
 
+#disclose-personal-details
+GET        /disclose-personal-details-consent                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.DisclosePersonalDetailsController.onPageLoad
+POST       /disclose-personal-details-consent                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.DisclosePersonalDetailsController.submit
+
 #change-details
 GET        /incorrect-data-held                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ChangeDetailsController.incorrectDetails
 

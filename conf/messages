@@ -358,3 +358,10 @@ ecc.country.ZM=Zambia
 ecc.country.ZW=Zimbabwe
 ecc.country.AX=Åland Islands
 
+#disclose-personal-details
+disclosePersonalDetails.page.title=Do you want to include the name and address on the EORI checker?
+disclosePersonalDetails.error.required=Tell us if you want to include the name and address on the EORI checker
+disclosePersonalDetails.yes=Yes - I want to help identify my shipments quickly to minimise delays
+disclosePersonalDetails.no=No - Just show my EORI number
+disclosePersonalDetails.hint=<br>HMRC adds your XI EORI number to a <a href="https://ec.europa.eu/taxation_customs/dds2/eos/eori_validation.jsp?Lang=en" class="govuk-link" target="_blank" rel="noopener noreferrer">public checker</a>. You can also include your or your organisation’s name and address.<br/><br/>Adding your EORI name and address to the checker will help customs and freight agents identify you and process your shipments quickly to minimise delays.
+
