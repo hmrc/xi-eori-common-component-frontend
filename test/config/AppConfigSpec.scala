@@ -43,6 +43,18 @@ class AppConfigSpec extends BaseSpec with BeforeAndAfterEach {
       appConfig.enrolmentStoreProxyServiceContext shouldBe "enrolment-store-proxy"
     }
 
+    "have subscriptionDisplayBaseUrl defined" in {
+      appConfig.subscriptionDisplayBaseUrl shouldBe "http://localhost:6756"
+    }
+
+    "have subscriptionDisplayServiceContext defined" in {
+      appConfig.subscriptionDisplayServiceContext shouldBe "xi-eori-common-component"
+    }
+
+    "have Xi vat registration url defined" in {
+      appConfig.xiVatRegisterUrl shouldBe "https://www.gov.uk/vat-registration/selling-or-moving-goods-in-northern-ireland"
+    }
+
   }
 
 }

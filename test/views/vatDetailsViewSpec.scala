@@ -45,9 +45,15 @@ class vatDetailsViewSpec extends ViewSpec {
     Some("XIE9XSDF10BCKEYAX")
   )
 
-  private val viewModel               = ConfirmDetailsViewModel(response, AffinityGroup.Organisation)
-  private val vatDetailsView          = instanceOf[vat_details].apply(viewModel)
-  private val vatDetailsDoc: Document = Jsoup.parse(contentAsString(vatDetailsView))
+  private val viewWithoutXIVATModel = ConfirmDetailsViewModel(response, AffinityGroup.Organisation)
+
+  private val viewWithXIVATModel =
+    ConfirmDetailsViewModel(response.copy(XIVatNo = Some("XIVATNumber")), AffinityGroup.Organisation)
+
+  private val vatDetailsWithXIVATView             = instanceOf[vat_details].apply(viewWithXIVATModel)
+  private val vatDetailsWithoutXIVATView          = instanceOf[vat_details].apply(viewWithoutXIVATModel)
+  private val vatDetailsDoc: Document             = Jsoup.parse(contentAsString(vatDetailsWithXIVATView))
+  private val vatDetailsWithoutXIVATDoc: Document = Jsoup.parse(contentAsString(vatDetailsWithoutXIVATView))
 
   "Vat Details page " should {
 
@@ -56,16 +62,32 @@ class vatDetailsViewSpec extends ViewSpec {
         vatDetailsDoc.body.getElementsByTag("h2").text mustBe "VAT details"
       }
       "display VAT number" in {
-        vatDetailsDoc.body.getElementsByClass("vat-number").text mustBe "VAT number"
+        val vatNumber = vatDetailsDoc.body.getElementsByClass("vat-number").get(0)
+        vatNumber.getElementsByClass("govuk-summary-list__key").text mustBe "VAT number"
+        vatNumber.getElementsByClass("govuk-summary-list__value").text mustBe "999999"
       }
       "display VAT registered address postcode" in {
-        vatDetailsDoc.body.getElementsByClass("postcode").text mustBe "VAT registration address postcode"
+        val vatNumber = vatDetailsDoc.body.getElementsByClass("postcode").get(0)
+        vatNumber.getElementsByClass("govuk-summary-list__key").text mustBe "VAT registration address postcode"
+        vatNumber.getElementsByClass("govuk-summary-list__value").text mustBe "DN18 5GP"
       }
-      "display GB Eori number" in {
-        vatDetailsDoc.body.getElementsByClass("date").text mustBe "VAT effective date"
+      "display VAT effective date" in {
+        val vatNumber = vatDetailsDoc.body.getElementsByClass("date").get(0)
+        vatNumber.getElementsByClass("govuk-summary-list__key").text mustBe "VAT effective date"
+        vatNumber.getElementsByClass("govuk-summary-list__value").text mustBe "3 April 1980"
       }
-      "display date of establishment" in {
-        vatDetailsDoc.body.getElementsByClass("xi-vat-number").text mustBe "XI VAT number"
+      "display XI VAT number if XI VAT number is present" in {
+        val vatNumber = vatDetailsDoc.body.getElementsByClass("xi-vat-number").get(0)
+        vatNumber.getElementsByClass("govuk-summary-list__key").text mustBe "XI VAT number"
+        vatNumber.getElementsByClass("govuk-summary-list__value").text mustBe "XIVATNumber"
+      }
+
+      "display XI VAT register link if XI Vat number is not present" in {
+        val vatNumber = vatDetailsWithoutXIVATDoc.body.getElementsByClass("xi-vat-number").get(0)
+        vatNumber.getElementsByClass("govuk-summary-list__key").text mustBe "XI VAT number"
+        vatNumber.getElementsByTag("a").attr(
+          "href"
+        ) mustBe "https://www.gov.uk/vat-registration/selling-or-moving-goods-in-northern-ireland"
       }
     }
 
