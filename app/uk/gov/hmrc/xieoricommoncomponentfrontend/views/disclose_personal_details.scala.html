@@ -20,31 +20,31 @@
 @this(main_template: Layout, formHelper: FormWithCSRF, govukButton: GovukButton, govukDetails: GovukDetails, inputRadioGroup: components.inputRadioGroup, errorSummary: components.errorSummary)
 @(disclosePersonalDetailsForm: Form[DisclosePersonalDetails])(implicit messages: Messages, request: Request[_])
 @title = @{
-messages("disclosePersonalDetails.page.title")
+    messages("disclosePersonalDetails.page.title")
 }
 @hintHtml = @{
-messages("disclosePersonalDetails.hint")
+    messages("disclosePersonalDetails.hint")
 }
 
 @main_template(title, form = Some(disclosePersonalDetailsForm)) {
 
-@formHelper(action = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.submit(), 'autoComplete -> "off") {
 
-@errorSummary(disclosePersonalDetailsForm.errors)
-@inputRadioGroup(
-disclosePersonalDetailsForm("value"),
-legend = title,
-items = DisclosePersonalDetails.options(disclosePersonalDetailsForm),
-hint = Some(Hint(content = HtmlContent(hintHtml), classes = "govuk-body-s")),
-classes = "govuk-fieldset__legend--l"
-)
+        @errorSummary(disclosePersonalDetailsForm.errors)
+        @inputRadioGroup(
+            disclosePersonalDetailsForm("value"),
+            legend = title,
+            items = DisclosePersonalDetails.options(disclosePersonalDetailsForm),
+            hint = Some(Hint(content = HtmlContent(hintHtml), classes = "govuk-body-s")),
+            classes = "govuk-fieldset__legend--l"
+        )
 
-@govukButton(Button(
-content = Text(messages("ecc.navigation.continue"))
-))
+        @govukButton(Button(
+            content = Text(messages("ecc.navigation.continue"))
+        ))
 
 
-@helpers.helpAndSupport()
+        @helpers.helpAndSupport()
 
-}
+    }
 }
