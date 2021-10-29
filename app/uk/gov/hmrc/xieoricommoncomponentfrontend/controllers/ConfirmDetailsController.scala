@@ -100,7 +100,9 @@ class ConfirmDetailsController @Inject() (
   private def destinationsByAnswer(confirmDetails: ConfirmDetails): Future[Result] = confirmDetails match {
     case ConfirmDetails.confirmedDetails =>
       Future.successful(
-        Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.onPageLoad())
+        Redirect(
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.onPageLoad()
+        )
       )
     case ConfirmDetails.changeCredentials =>
       Future.successful(toGGLogin(appConfig.loginContinueUrl).withNewSession)

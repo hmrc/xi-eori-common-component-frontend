@@ -143,7 +143,7 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
       }
     }
 
-    "redirect to the HaveEUEori page when user selects Yes to confirm details" in {
+    "redirect to the Disclose Personal Details Consent page when user selects Yes to confirm details" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
@@ -158,7 +158,7 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
         status(result) shouldBe SEE_OTHER
         redirectLocation(
           result
-        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.onPageLoad().url
+        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.onPageLoad().url
       }
     }
 
