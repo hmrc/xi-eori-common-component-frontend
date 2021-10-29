@@ -44,20 +44,20 @@ class DisclosePersonalDetailsViewSpec extends ViewSpec {
 
     "display correct title" in {
       disclosePersonalDetailsDoc.title must startWith(
-        "Do you want to include the company name and address on the EORI checker?"
+        "Do you want to include the name and address on the EORI checker?"
       )
     }
 
     "display correct heading" in {
       disclosePersonalDetailsDoc.body.getElementsByTag(
         "h1"
-      ).text mustBe "Do you want to include the company name and address on the EORI checker?"
+      ).text mustBe "Do you want to include the name and address on the EORI checker?"
     }
 
     "display errors while empty form is submitted" in {
       disclosePersonalDetailsDocWithError.body.getElementsByClass("govuk-error-summary__list").get(
         0
-      ).text mustBe "Tell us if you want to include the company name and address on the EORI checker"
+      ).text mustBe "Tell us if you want to include the name and address on the EORI checker"
     }
 
     "display yes no radio buttons" in {

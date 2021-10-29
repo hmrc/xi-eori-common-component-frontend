@@ -41,7 +41,7 @@ class DisclosePersonalDetailsControllerSpec extends BaseSpec {
 
         val page = RegistrationPage(contentAsString(result))
 
-        page.title should startWith("Do you want to include the company name and address on the EORI checker?")
+        page.title should startWith("Do you want to include the name and address on the EORI checker?")
       }
     }
     "redirect to the next page when valid data is submitted" in {
@@ -80,7 +80,7 @@ class DisclosePersonalDetailsControllerSpec extends BaseSpec {
         status(result) shouldBe BAD_REQUEST
 
         val page = RegistrationPage(contentAsString(result))
-        page.errors should startWith("Tell us if you want to include the company name and address on the EORI checker")
+        page.errors should startWith("Tell us if you want to include the name and address on the EORI checker")
       }
     }
 
