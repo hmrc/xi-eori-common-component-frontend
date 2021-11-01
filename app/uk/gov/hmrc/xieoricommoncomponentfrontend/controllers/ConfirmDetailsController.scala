@@ -108,7 +108,9 @@ class ConfirmDetailsController @Inject() (
       Future.successful(toGGLogin(appConfig.loginContinueUrl).withNewSession)
     case ConfirmDetails.changeDetails =>
       Future.successful(
-        Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded())
+        Redirect(
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ChangeDetailsController.incorrectDetails()
+        )
       )
   }
 
