@@ -5,7 +5,7 @@ ecc.end-of-title=GOV.UK
 ecc.sign.out=Sign out
 ecc.navigation.continue=Continue
 ecc.navigation.back=Back
-ecc.help-and-support.text=Get help with this page
+ecc.help-and-support.text=Get help with this page.
 ecc.error.page-title=Error
 
 #timeout dialog
@@ -91,7 +91,7 @@ confirmDetails.vat-number.label=VAT number
 confirmDetails.vat-address.label=VAT registration address postcode
 confirmDetails.vat-effective-date.label=VAT effective date
 confirmDetails.xi-vat-number.label=XI VAT number
-confirmDetails.do-you-need-xi-vat-number.label=Do we need a Northern Ireland VAT number?
+confirmDetails.do-you-need-xi-vat-number.label=Do you need a Northern Ireland VAT number?
 
 #change-details
 changeDetails.you-cannot-continue.title=We''re sorry you cannot continue with your registration
