@@ -91,6 +91,15 @@ confirmDetails.vat-effective-date.label=VAT effective date
 confirmDetails.xi-vat-number.label=XI VAT number
 confirmDetails.do-you-need-xi-vat-number.label=Do we need a Northern Ireland VAT number?
 
+#xi-vat-register
+xiVatRegister.page.title=Registering for an XI VAT number
+xiVatRegister.page.heading=Registering for an XI VAT number
+xiVatRegister.details-list.heading=As a VAT-registered business, you need to register to use an XI VAT number if any of the following apply:
+xi-vat-register.details-list.text1=your goods are located in Northern Ireland at the time of sale
+xi-vat-register.details-list.text2=you receive goods in Northern Ireland from VAT-registered EU businesses for business purposes
+xi-vat-register.details-list.text3=you sell or move goods from Northern Ireland to an EU country
+xi-vat-register.how-to-register.link=How to register for an XI VAT number (opens in new tab)
+
 #======================================
 # Countries
 #======================================

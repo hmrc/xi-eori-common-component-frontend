@@ -47,11 +47,11 @@ appConfig: AppConfig
 
 @xiVatNumber(xiVatNumber:Option[String],message: String) = @{
     if(xiVatNumber.isDefined) Html(xiVatNumber.get)
-    else link(message,appConfig.xiVatRegisterUrl)
+    else link(message,uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiVatRegisterController.onPageLoad().url)
 }
 
 @link(text: String, url: String) = {
-    <a href="@url" id="vat-register-link" class="govuk-link">@messages(text)</a>
+    <a href="@url" id="vat-register-link" target="_blank" class="govuk-link">@messages(text)</a>
 }
 
 <div id="vat-details">

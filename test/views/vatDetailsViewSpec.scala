@@ -87,7 +87,7 @@ class vatDetailsViewSpec extends ViewSpec {
         vatNumber.getElementsByClass("govuk-summary-list__key").text mustBe "XI VAT number"
         vatNumber.getElementsByTag("a").attr(
           "href"
-        ) mustBe "https://www.gov.uk/vat-registration/selling-or-moving-goods-in-northern-ireland"
+        ) mustBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiVatRegisterController.onPageLoad().url
       }
     }
 
