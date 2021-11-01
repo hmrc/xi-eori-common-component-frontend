@@ -37,6 +37,17 @@
     !request.session.isEmpty && request.session.get("authToken").isDefined
 }
 
+@titleWithEnding = @{
+    pageTitle + " - " + messages("service.name") + " - " + messages("ecc.end-of-title")
+}
+
+@titleErr = @{
+    form match {
+        case Some(f) if f.errors.nonEmpty => s"%s: %s".format(messages("ecc.error.page-title"), titleWithEnding)
+        case _ => titleWithEnding
+    }
+}
+
 @serviceUrl = @{
     "/xi-customs-registration-services/trade-with-ni"
 }
@@ -70,7 +81,7 @@
 }
 
 @hmrcLayout(
-    pageTitle = Some(pageTitle),
+    pageTitle = Some(titleErr),
     nonce = CSPNonce.get,
     isWelshTranslationAvailable = appConfig.welshLanguageSupportEnabled,
     serviceUrl = Some(serviceUrl),

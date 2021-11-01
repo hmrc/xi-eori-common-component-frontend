@@ -1,10 +1,12 @@
 service.name = Apply for an XI EORI
 service.text = This is your new service
+ecc.end-of-title=GOV.UK
 
 ecc.sign.out=Sign out
 ecc.navigation.continue=Continue
 ecc.navigation.back=Back
 ecc.help-and-support.text=Get help with this page
+ecc.error.page-title=Error
 
 #timeout dialog
 ecc.timeout.message=For your security, we will delete your answers and you will be signed out in
@@ -90,6 +92,20 @@ confirmDetails.vat-address.label=VAT registration address postcode
 confirmDetails.vat-effective-date.label=VAT effective date
 confirmDetails.xi-vat-number.label=XI VAT number
 confirmDetails.do-you-need-xi-vat-number.label=Do we need a Northern Ireland VAT number?
+
+#change-details
+changeDetails.you-cannot-continue.title=We''re sorry you cannot continue with your registration
+changeDetails.you-cannot-continue.heading=We''re sorry you cannot continue with your registration
+changeDetails.details-list.heading=You have told us that the details we hold about you are incorrect. You need to contact one of the following to correct the information before you can continue:
+changeDetails.details-list.text1=Companies house (organisations only)
+changeDetails.details-list.text2=HMRC VAT
+changeDetails.details-list.text3=Your personal tax account (sole traders and individuals)
+
+#If you need help
+ecc.if.you.need.help.heading=If you need help
+ecc.if.you.need.help.telephone=Telephone: 0300 322 7067
+ecc.if.you.need.help.working-hours=Monday to Friday, 9am to 5pm (except public holidays)
+ecc.if.you.need.help.call-charges=Find out about call charges.
 
 #======================================
 # Countries

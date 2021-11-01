@@ -34,3 +34,7 @@ POST       /confirm-details                      @uk.gov.hmrc.xieoricommoncompon
 #disclose-personal-details
 GET        /disclose-personal-details-consent                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.DisclosePersonalDetailsController.onPageLoad
 POST       /disclose-personal-details-consent                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.DisclosePersonalDetailsController.submit
+
+#change-details
+GET        /incorrect-data-held                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ChangeDetailsController.incorrectDetails
+
