@@ -20,7 +20,7 @@
 @this(main_template: Layout, appConfig: AppConfig,govukButton: GovukButton,h1: components.h1,p: components.p)
 @()(implicit messages: Messages, request: Request[_])
 @link(text: String, url: String) = {
-    <a href="@url" id="vat-register-link" target="_blank" class="govuk-link">@messages(text)</a>
+    <a href="@url" id="vat-register-link" target="_blank" class="govuk-link govuk-!-font-size-19">@messages(text)</a>
 }
 @main_template(messages("xiVatRegister.page.title")) {
     <div>
@@ -36,6 +36,8 @@
         </ul>
 
         @link(messages("xi-vat-register.how-to-register.link"),appConfig.xiVatRegisterUrl)
+
+        @helpers.helpAndSupport()
 
    </div>
 }
