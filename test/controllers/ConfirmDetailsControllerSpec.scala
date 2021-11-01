@@ -27,7 +27,11 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.SubscriptionDisplayC
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, ExistingEori, KeyValue}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ConfirmDetails._
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, ServiceUnavailableResponse, SubscriptionDisplayResponseDetail}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
+  EstablishmentAddress,
+  ServiceUnavailableResponse,
+  SubscriptionDisplayResponseDetail
+}
 import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
