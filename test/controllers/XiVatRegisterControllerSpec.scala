@@ -22,7 +22,7 @@ import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
 
-class XiVatregisterControllerSpec extends BaseSpec {
+class XiVatRegisterControllerSpec extends BaseSpec {
   val registerXpath = "//*[@id='vat-register-link']"
   "XIVatRegister controller" should {
     "display XI VAT Register page" in {
