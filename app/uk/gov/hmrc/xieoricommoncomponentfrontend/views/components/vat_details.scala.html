@@ -20,12 +20,14 @@
 @import java.time.LocalDate
 @import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewModel
 @import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionInfoVatId
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
 
 
 @this(govukSummaryList : GovukSummaryList,
 h2:components.h2,
 p: components.p,
-languageUtils: LanguageUtils
+languageUtils: LanguageUtils,
+appConfig: AppConfig
 )
 @(model:ConfirmDetailsViewModel)(implicit messages: Messages, request: Request[_])
 
@@ -43,28 +45,36 @@ languageUtils: LanguageUtils
     @vatIDs.map(vatList => vatList.filter(_.countryCode == Some("GB")).map(vat => vatID(vat.VATID)) )
 }
 
-@xiVatNumber(xiVatNumber:Option[String]) = @{
-    xiVatNumber.getOrElse(messages("confirmDetails.do-you-need-xi-vat-number.label"))
+@xiVatNumber(xiVatNumber:Option[String],message: String) = @{
+    if(xiVatNumber.isDefined) Html(xiVatNumber.get)
+    else link(message,uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiVatRegisterController.onPageLoad().url)
+}
+
+@link(text: String, url: String) = {
+    <a href="@url" id="vat-register-link" class="govuk-link">@messages(text)</a>
 }
 
 <div id="vat-details">
     @h2("VAT details")
     @govukSummaryList(SummaryList(
         rows = Seq(SummaryListRow(
-            key = Key(content = Text(messages("confirmDetails.vat-number.label")),classes = "govuk-!-width-one-half vat-number"),
-            value = Value(content = HtmlContent(displayGBVatNumber(model.subscriptionDisplay.VATIDs))
-            )),
+            key = Key(content = Text(messages("confirmDetails.vat-number.label")),classes = "govuk-!-width-one-half"),
+            value = Value(content = HtmlContent(displayGBVatNumber(model.subscriptionDisplay.VATIDs))),
+            classes = "vat-number"
+        ),
             SummaryListRow(
-                key = Key(content = Text(messages("confirmDetails.vat-address.label")),classes = "govuk-!-width-one-half postcode"),
-                value = Value(content = HtmlContent(Html("DN18 5GP"))
-                )),
+                key = Key(content = Text(messages("confirmDetails.vat-address.label")),classes = "govuk-!-width-one-half"),
+                value = Value(content = HtmlContent(Html("DN18 5GP"))),
+                classes = "postcode"
+            ),
             SummaryListRow(
-                key = Key(content = Text(messages("confirmDetails.vat-effective-date.label")),classes = "govuk-!-width-one-half date"),
-                value = Value(content = HtmlContent(formatDate(LocalDate.of(1980,4,3)))
-                )),
+                key = Key(content = Text(messages("confirmDetails.vat-effective-date.label")),classes = "govuk-!-width-one-half"),
+                value = Value(content = HtmlContent(formatDate(LocalDate.of(1980,4,3)))),
+                classes = "date"
+            ),
             SummaryListRow(
-                key = Key(content = Text(messages("confirmDetails.xi-vat-number.label")),classes = "govuk-!-width-one-half xi-vat-number"),
-                value = Value(content = HtmlContent(messages("confirmDetails.do-you-need-xi-vat-number.label"))
-                ))
+                key = Key(content = Text(messages("confirmDetails.xi-vat-number.label")),classes = "govuk-!-width-one-half"),
+                value = Value(content = HtmlContent(xiVatNumber(model.subscriptionDisplay.XIVatNo,messages("confirmDetails.do-you-need-xi-vat-number.label")))),
+                classes = "xi-vat-number")
         ), "govuk-!-margin-bottom-9 govuk-summary-list--wide",attributes = Map("id"->"vat-details")))
 </div>

@@ -51,7 +51,8 @@ case class SubscriptionDisplayResponseDetail(
   VATIDs: Option[List[SubscriptionInfoVatId]],
   shortName: Option[String],
   dateOfEstablishment: Option[LocalDate] = None,
-  XIEORINo: Option[String]
+  XIEORINo: Option[String],
+  XIVatNo: Option[String] = None
 )
 
 object SubscriptionDisplayResponseDetail {
@@ -70,7 +71,8 @@ object SubscriptionDisplayResponseDetail {
       ] and
       (JsPath \ "subscriptionDisplayResponse" \ "responseDetail" \ "shortName").readNullable[String] and
       (JsPath \ "subscriptionDisplayResponse" \ "responseDetail" \ "dateOfEstablishment").readNullable[LocalDate] and
-      (JsPath \ "subscriptionDisplayResponse" \ "responseDetail" \ "XI_EORI").readNullable[String]
+      (JsPath \ "subscriptionDisplayResponse" \ "responseDetail" \ "XI_EORI").readNullable[String] and
+      (JsPath \ "subscriptionDisplayResponse" \ "responseDetail" \ "XI EORI" \ "XI_VAT_Number").readNullable[String]
   )(SubscriptionDisplayResponseDetail.apply _)
 
 }

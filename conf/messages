@@ -5,7 +5,7 @@ ecc.end-of-title=GOV.UK
 ecc.sign.out=Sign out
 ecc.navigation.continue=Continue
 ecc.navigation.back=Back
-ecc.help-and-support.text=Get help with this page
+ecc.help-and-support.text=Get help with this page.
 ecc.error.page-title=Error
 
 #timeout dialog
@@ -91,7 +91,7 @@ confirmDetails.vat-number.label=VAT number
 confirmDetails.vat-address.label=VAT registration address postcode
 confirmDetails.vat-effective-date.label=VAT effective date
 confirmDetails.xi-vat-number.label=XI VAT number
-confirmDetails.do-you-need-xi-vat-number.label=Do we need a Northern Ireland VAT number?
+confirmDetails.do-you-need-xi-vat-number.label=Do you need a Northern Ireland VAT number?
 
 #change-details
 changeDetails.you-cannot-continue.title=We''re sorry you cannot continue with your registration
@@ -106,6 +106,15 @@ ecc.if.you.need.help.heading=If you need help
 ecc.if.you.need.help.telephone=Telephone: 0300 322 7067
 ecc.if.you.need.help.working-hours=Monday to Friday, 9am to 5pm (except public holidays)
 ecc.if.you.need.help.call-charges=Find out about call charges.
+
+#xi-vat-register
+xiVatRegister.page.title=Registering for an XI VAT number
+xiVatRegister.page.heading=Registering for an XI VAT number
+xiVatRegister.details-list.heading=As a VAT-registered business, you need to register to use an XI VAT number if any of the following apply:
+xi-vat-register.details-list.text1=your goods are located in Northern Ireland at the time of sale
+xi-vat-register.details-list.text2=you receive goods in Northern Ireland from VAT-registered EU businesses for business purposes
+xi-vat-register.details-list.text3=you sell or move goods from Northern Ireland to an EU country
+xi-vat-register.how-to-register.link=How to register for an XI VAT number (opens in new tab)
 
 #======================================
 # Countries

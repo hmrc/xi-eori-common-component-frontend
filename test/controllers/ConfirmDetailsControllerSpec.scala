@@ -73,6 +73,7 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
     inject.bind[GroupEnrolmentExtractor].to(mockGroupEnrolmentExtractor)
   ).configure("auditing.enabled" -> "false", "metrics.jvm" -> false, "metrics.enabled" -> false).build()
 
+  val registerLinkXpath: String = "//*[@id='vat-register-link']"
   "ConfirmDetails controller" should {
     "return OK and the correct view for a GET" in {
 
@@ -159,6 +160,28 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
         redirectLocation(
           result
         ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.onPageLoad().url
+      }
+    }
+
+    "redirect to the XiVatRegister page when user clicks on XI Vat register link" in {
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+        when(subscriptionDisplayConnector.call(any())(any()))
+          .thenReturn(Future.successful(Right(subscriptionDisplayResponse)))
+        when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
+          .thenReturn(Future.successful(groupEnrolment))
+        when(mockGroupEnrolmentExtractor.existingEori(any())(any()))
+          .thenReturn(Future.successful(existingEori))
+        val request = SessionBuilder.buildRequestWithSessionAndPath(
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad().url,
+          defaultUserId
+        )
+
+        val result = route(application, request).get
+        val page   = RegistrationPage(contentAsString(result))
+        page.getElementsHref(
+          registerLinkXpath
+        ) shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiVatRegisterController.onPageLoad().url
       }
     }
 
