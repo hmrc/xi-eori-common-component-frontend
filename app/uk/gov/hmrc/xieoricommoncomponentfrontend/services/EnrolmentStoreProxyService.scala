@@ -41,8 +41,10 @@ class EnrolmentStoreProxyService @Inject() (
             .getEnrolmentByGroupId(groupId.id)
             .map(_.enrolments)
             .map(enrolment => enrolment.filter(x => x.state == activatedState))
-          _ <- sessionCache.saveGroupEnrolment(groupEnrolments)
-        } yield groupEnrolments
+        } yield {
+          if (groupEnrolments.nonEmpty) sessionCache.saveGroupEnrolment(groupEnrolments)
+          groupEnrolments
+        }
     }
 
 }

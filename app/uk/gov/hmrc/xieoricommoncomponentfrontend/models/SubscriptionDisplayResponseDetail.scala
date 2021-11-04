@@ -18,6 +18,7 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.models
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Json, Reads}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.SubscriptionDisplayMongo
 
 import java.time.{Clock, LocalDate, LocalDateTime, ZoneId}
 
@@ -54,7 +55,20 @@ case class SubscriptionDisplayResponseDetail(
   dateOfEstablishment: Option[LocalDate] = None,
   XIEORINo: Option[String],
   XIVatNo: Option[String] = None
-)
+) {
+
+  def toSubscriptionDisplayMongo() = SubscriptionDisplayMongo(
+    EORINo,
+    CDSFullName,
+    CDSEstablishmentAddress,
+    VATIDs,
+    shortName,
+    dateOfEstablishment,
+    XIEORINo,
+    XIVatNo
+  )
+
+}
 
 object SubscriptionDisplayResponseDetail {
   implicit val addressFormat            = Json.format[EstablishmentAddress]

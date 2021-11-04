@@ -47,8 +47,13 @@ class SubscriptionDisplayService @Inject() (
       case _ =>
         val subscriptionDisplayResponse = subscriptionDisplayConnector.call(buildQueryParameters(gbEori))
         subscriptionDisplayResponse.map {
-          case Right(resp) => sessionCache.saveSubscriptionDisplay(resp)
-          case Left(_)     => logger.debug("SubscriptionDisplay SUB09 details retrieved successfully")
+          case Right(resp) =>
+            sessionCache.saveSubscriptionDisplay(resp).map(
+              successfulWrite =>
+                if (!successfulWrite)
+                  logger.debug("SubscriptionDisplay SUB09 details retrieved successfully and saved into cache")
+            )
+          case Left(_) => logger.debug("SubscriptionDisplay SUB09 call failed and details are not saved into cache")
         }
         subscriptionDisplayResponse
     }

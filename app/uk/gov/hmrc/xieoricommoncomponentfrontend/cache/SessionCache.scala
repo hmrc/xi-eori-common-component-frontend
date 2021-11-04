@@ -17,7 +17,7 @@
 package uk.gov.hmrc.xieoricommoncomponentfrontend.cache
 
 import play.api.Logger
-import play.api.libs.json.{JsError, JsSuccess, Json}
+import play.api.libs.json.{JsError, JsSuccess, Json, Reads}
 import play.modules.reactivemongo.ReactiveMongoComponent
 import uk.gov.hmrc.cache.model.{Cache, Id}
 import uk.gov.hmrc.cache.repository.CacheMongoRepository
@@ -26,6 +26,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.CachedData._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, Eori}
 import uk.gov.hmrc.cache._
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.SubscriptionDisplayMongo
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, SubscriptionDisplayResponseDetail}
 
 import javax.inject.{Inject, Singleton}
@@ -35,7 +36,7 @@ import scala.util.control.NoStackTrace
 sealed case class CachedData(
   groupEnrolment: Option[List[EnrolmentResponse]] = None,
   eori: Option[String] = None,
-  subscriptionDisplay: Option[SubscriptionDisplayResponseDetail] = None
+  subscriptionDisplay: Option[SubscriptionDisplayMongo] = None
 ) {
 
   def eori(sessionId: Id): String =
@@ -44,8 +45,19 @@ sealed case class CachedData(
   def groupEnrolment(sessionId: Id): List[EnrolmentResponse] =
     groupEnrolment.getOrElse(throwException(groupEnrolmentKey, sessionId))
 
-  def subscriptionDisplay(sessionId: Id): SubscriptionDisplayResponseDetail =
-    subscriptionDisplay.getOrElse(emptySubscriptionDisplay())
+  def subscriptionDisplayMongo(): SubscriptionDisplayResponseDetail = {
+    val resp = subscriptionDisplay.getOrElse(emptySubscriptionDisplay())
+    SubscriptionDisplayResponseDetail(
+      resp.EORINo,
+      resp.CDSFullName,
+      resp.CDSEstablishmentAddress,
+      resp.VATIDs,
+      resp.shortName,
+      resp.dateOfEstablishment,
+      resp.XIEORINo,
+      resp.XIVatNo
+    )
+  }
 
   private def throwException(name: String, sessionId: Id) =
     throw new IllegalStateException(s"$name is not cached in data for the sessionId: ${sessionId.id}")
@@ -59,7 +71,7 @@ object CachedData {
   implicit val format        = Json.format[CachedData]
 
   def emptySubscriptionDisplay() =
-    SubscriptionDisplayResponseDetail(None, "", EstablishmentAddress("", "", None, ""), None, None, None, None, None)
+    SubscriptionDisplayMongo(None, "", EstablishmentAddress("", "", None, ""), None, None, None, None, None)
 
 }
 
@@ -85,7 +97,11 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
   def saveSubscriptionDisplay(
     subscriptionDisplay: SubscriptionDisplayResponseDetail
   )(implicit hc: HeaderCarrier): Future[Boolean] =
-    createOrUpdate(sessionId, subscriptionDisplayKey, Json.toJson(subscriptionDisplay)) map (_ => true)
+    createOrUpdate(
+      sessionId,
+      subscriptionDisplayKey,
+      Json.toJson(subscriptionDisplay.toSubscriptionDisplayMongo())
+    ) map (_ => true)
 
   private def getCached[T](sessionId: Id, t: (CachedData, Id) => T): Future[Option[T]] =
     findById(sessionId.id).map {
@@ -108,7 +124,7 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
     getCached[List[EnrolmentResponse]](sessionId, (cachedData, id) => cachedData.groupEnrolment(id))
 
   def subscriptionDisplay(implicit hc: HeaderCarrier): Future[Option[SubscriptionDisplayResponseDetail]] =
-    getCached[SubscriptionDisplayResponseDetail](sessionId, (cachedData, id) => cachedData.subscriptionDisplay(id))
+    getCached[SubscriptionDisplayResponseDetail](sessionId, (cachedData, id) => cachedData.subscriptionDisplayMongo)
 
   def remove(implicit hc: HeaderCarrier): Future[Boolean] =
     removeById(sessionId.id) map (x => x.writeErrors.isEmpty && x.writeConcernError.isEmpty)
