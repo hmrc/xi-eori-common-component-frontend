@@ -17,6 +17,7 @@
 package uk.gov.hmrc.xieoricommoncomponentfrontend.services
 
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.EnrolmentStoreProxyConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, GroupId}
 
@@ -24,16 +25,24 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EnrolmentStoreProxyService @Inject() (enrolmentStoreProxyConnector: EnrolmentStoreProxyConnector)(implicit
-  ec: ExecutionContext
-) {
+class EnrolmentStoreProxyService @Inject() (
+  enrolmentStoreProxyConnector: EnrolmentStoreProxyConnector,
+  sessionCache: SessionCache
+)(implicit ec: ExecutionContext) {
 
   private val activatedState = "Activated"
 
   def enrolmentsForGroup(groupId: GroupId)(implicit hc: HeaderCarrier): Future[List[EnrolmentResponse]] =
-    enrolmentStoreProxyConnector
-      .getEnrolmentByGroupId(groupId.id)
-      .map(_.enrolments)
-      .map(enrolment => enrolment.filter(x => x.state == activatedState))
+    sessionCache.groupEnrolment flatMap {
+      case Some(value) => Future.successful(value)
+      case None =>
+        for {
+          groupEnrolments <- enrolmentStoreProxyConnector
+            .getEnrolmentByGroupId(groupId.id)
+            .map(_.enrolments)
+            .map(enrolment => enrolment.filter(x => x.state == activatedState))
+          _ <- sessionCache.saveGroupEnrolment(groupEnrolments)
+        } yield groupEnrolments
+    }
 
 }

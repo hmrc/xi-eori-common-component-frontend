@@ -20,23 +20,32 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
-import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.EnrolmentResponse
+import uk.gov.hmrc.xieoricommoncomponentfrontend.domain._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.EnrolmentStoreProxyService
 import util.BaseSpec
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class GroupEnrolmentExtractorSpec extends BaseSpec with BeforeAndAfterEach {
 
   private val enrolmentStoreProxyService = mock[EnrolmentStoreProxyService]
+  private val sessionCache               = mock[SessionCache]
 
   private val enrolmentResponse = EnrolmentResponse("HMRC-CUS-ORG", "ACTIVATED", List.empty)
 
   private val hc = HeaderCarrier()
 
-  private val groupEnrolmentExtractor = new GroupEnrolmentExtractor(enrolmentStoreProxyService)
+  private val groupEnrolmentExtractor = new GroupEnrolmentExtractor(enrolmentStoreProxyService, sessionCache)
+
+  private def loggedInUser(enrolments: Set[Enrolment]) =
+    LoggedInUserWithEnrolments(None, None, Enrolments(enrolments), None, Some("groupId"))
+
+  private val eori = Eori("GB123456789012")
 
   override protected def afterEach(): Unit = {
     reset(enrolmentStoreProxyService)
@@ -56,6 +65,16 @@ class GroupEnrolmentExtractorSpec extends BaseSpec with BeforeAndAfterEach {
         val result = await(groupEnrolmentExtractor.groupIdEnrolments("groupId")(hc))
 
         result shouldBe List(enrolmentResponse)
+      }
+
+      "user's group has enrolment with an EORI" in {
+        val response = enrolmentResponse.copy(identifiers = List(KeyValue("EORINumber", eori.id)))
+        when(enrolmentStoreProxyService.enrolmentsForGroup(any())(any()))
+          .thenReturn(Future.successful(List(response)))
+        val enrolments = Set(Enrolment("HMRC-CUS-ORG").withIdentifier("EORINumber", eori.id))
+        val result     = await(groupEnrolmentExtractor.existingEoriForGroup(loggedInUser(enrolments))(hc))
+
+        result shouldBe Some(eori.id)
       }
     }
   }

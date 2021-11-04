@@ -64,8 +64,7 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
   private def groupEnrolment() =
     List(EnrolmentResponse("HMRC-ATAR-ORG", "Activated", List(KeyValue("EORINumber", "GB123456463324"))))
 
-  private def existingEori() =
-    Some(ExistingEori("XIE9XSDF10BCKEYAX", "HMRC-ATAR-ORG"))
+  val existingEori = Some("XIE9XSDF10BCKEYAX")
 
   override def application = new GuiceApplicationBuilder().overrides(
     inject.bind[AuthConnector].to(mockAuthConnector),
@@ -83,7 +82,7 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
           .thenReturn(Future.successful(Right(subscriptionDisplayResponse)))
         when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
           .thenReturn(Future.successful(groupEnrolment))
-        when(mockGroupEnrolmentExtractor.existingEori(any())(any()))
+        when(mockGroupEnrolmentExtractor.getEori(any())(any()))
           .thenReturn(Future.successful(existingEori))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad().url,
@@ -106,7 +105,7 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
           .thenReturn(Future.successful(Right(subscriptionDisplayResponse)))
         when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
           .thenReturn(Future.successful(groupEnrolment))
-        when(mockGroupEnrolmentExtractor.existingEori(any())(any()))
+        when(mockGroupEnrolmentExtractor.getEori(any())(any()))
           .thenReturn(Future.successful(existingEori))
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
@@ -130,7 +129,7 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
           .thenReturn(Future.successful(Left(ServiceUnavailableResponse)))
         when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
           .thenReturn(Future.successful(groupEnrolment))
-        when(mockGroupEnrolmentExtractor.existingEori(any())(any()))
+        when(mockGroupEnrolmentExtractor.getEori(any())(any()))
           .thenReturn(Future.successful(existingEori))
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
@@ -170,7 +169,7 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
           .thenReturn(Future.successful(Right(subscriptionDisplayResponse)))
         when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
           .thenReturn(Future.successful(groupEnrolment))
-        when(mockGroupEnrolmentExtractor.existingEori(any())(any()))
+        when(mockGroupEnrolmentExtractor.getEori(any())(any()))
           .thenReturn(Future.successful(existingEori))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad().url,

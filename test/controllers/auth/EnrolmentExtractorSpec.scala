@@ -98,15 +98,14 @@ class EnrolmentExtractorSpec extends BaseSpec {
 
       "user has enrolment with an EORI" in {
 
-        val userEnrolments                           = Set(Enrolment("HMRC-TEST-ORG").withIdentifier("EORINumber", eori.id))
-        val groupEnrolments: List[EnrolmentResponse] = List.empty
+        val userEnrolments = Set(Enrolment("HMRC-TEST-ORG").withIdentifier("EORINumber", eori.id))
 
-        val result = enrolmentExtractor.existingEoriForUserOrGroup(userEnrolments, groupEnrolments)
+        val result = enrolmentExtractor.existingEoriForUser(userEnrolments)
 
         result shouldBe Some(ExistingEori(eori.id, "HMRC-TEST-ORG"))
       }
 
-      "user's group has enrolment with an EORI" in {
+      /* "user's group has enrolment with an EORI" in {
 
         val userEnrolments = Set(Enrolment("HMRC-NI").withIdentifier("NINO", nino.id))
         val groupEnrolments: List[EnrolmentResponse] =
@@ -115,25 +114,22 @@ class EnrolmentExtractorSpec extends BaseSpec {
         val result = enrolmentExtractor.existingEoriForUserOrGroup(userEnrolments, groupEnrolments)
 
         result shouldBe Some(ExistingEori(eori.id, "HMRC-GROUP-ORG"))
-      }
+      }*/
 
-      "user has no enrolment with EORI nor group enrolment with EORI" in {
+      "user has no enrolment with EORI " in {
 
         val userEnrolments = Set(Enrolment("HMRC-NI").withIdentifier("NINO", nino.id))
-        val groupEnrolments =
-          List(EnrolmentResponse("HMRC-GROUP-ORG", "Active", List(KeyValue("OtherIdentifierKey", "SomeValue"))))
 
-        val result = enrolmentExtractor.existingEoriForUserOrGroup(userEnrolments, groupEnrolments)
+        val result = enrolmentExtractor.existingEoriForUser(userEnrolments)
 
         result shouldBe None
       }
 
-      "user enrolments or group enrolments" in {
+      "user has no enrolments" in {
 
-        val userEnrolments: Set[Enrolment]           = Set.empty
-        val groupEnrolments: List[EnrolmentResponse] = List.empty
+        val userEnrolments: Set[Enrolment] = Set.empty
 
-        val result = enrolmentExtractor.existingEoriForUserOrGroup(userEnrolments, groupEnrolments)
+        val result = enrolmentExtractor.existingEoriForUser(userEnrolments)
 
         result shouldBe None
       }

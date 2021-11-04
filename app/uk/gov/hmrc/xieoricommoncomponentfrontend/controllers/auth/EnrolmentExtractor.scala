@@ -52,16 +52,10 @@ trait EnrolmentExtractor {
   def enrolledNino(loggedInUser: LoggedInUserWithEnrolments): Option[Nino] =
     identifierFor("HMRC-NI", "NINO", loggedInUser).map(Nino)
 
-  def existingEoriForUserOrGroup(
-    userEnrolments: Set[Enrolment],
-    groupEnrolments: List[EnrolmentResponse]
-  ): Option[ExistingEori] = {
+  def existingEoriForUser(userEnrolments: Set[Enrolment]): Option[ExistingEori] = {
     val userEnrolmentWithEori = userEnrolments.find(_.identifiers.exists(_.key == EoriIdentifier))
-    val existingEoriForUser = userEnrolmentWithEori.map(
+    userEnrolmentWithEori.map(
       enrolment => ExistingEori(enrolment.getIdentifier(EoriIdentifier).map(_.value), enrolment.key)
-    )
-    existingEoriForUser.orElse(
-      groupEnrolments.find(_.eori.exists(_.nonEmpty)).map(enrolment => ExistingEori(enrolment.eori, enrolment.service))
     )
   }
 

@@ -16,9 +16,12 @@
 
 package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth
 
+import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{
   EnrolmentResponse,
+  Eori,
   ExistingEori,
   GroupId,
   LoggedInUserWithEnrolments
@@ -29,19 +32,36 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class GroupEnrolmentExtractor @Inject() (enrolmentStoreProxyService: EnrolmentStoreProxyService)(implicit
-  val ec: ExecutionContext
-) extends EnrolmentExtractor {
+class GroupEnrolmentExtractor @Inject() (
+  enrolmentStoreProxyService: EnrolmentStoreProxyService,
+  sessionCache: SessionCache
+)(implicit val ec: ExecutionContext)
+    extends EnrolmentExtractor {
 
   def groupIdEnrolments(groupId: String)(implicit hc: HeaderCarrier): Future[List[EnrolmentResponse]] =
     enrolmentStoreProxyService.enrolmentsForGroup(GroupId(groupId))
 
-  def existingEori(
+  def getEori(user: LoggedInUserWithEnrolments)(implicit headerCarrier: HeaderCarrier): Future[Option[String]] =
+    sessionCache.eori flatMap {
+      case Some(value) => Future.successful(Some(value))
+      case None =>
+        existingEoriForUser(user.enrolments.enrolments) match {
+          case Some(eori) =>
+            sessionCache.saveEori(Eori(eori.id))
+            Future.successful(Some(eori.id))
+          case None => existingEoriForGroup(user)
+        }
+    }
+
+  def existingEoriForGroup(
     user: LoggedInUserWithEnrolments
-  )(implicit headerCarrier: HeaderCarrier): Future[Option[ExistingEori]] =
-    groupIdEnrolments(user.groupId.getOrElse(throw MissingGroupId())).map {
-      groupEnrolments =>
-        existingEoriForUserOrGroup(user.enrolments.enrolments, groupEnrolments)
+  )(implicit headerCarrier: HeaderCarrier): Future[Option[String]] =
+    for {
+      groupEnrolment <- groupIdEnrolments(user.groupId.getOrElse(throw MissingGroupId()))
+      mayBeEori = groupEnrolment.find(_.eori.exists(_.nonEmpty)).flatMap(enrolment => enrolment.eori)
+    } yield {
+      if (mayBeEori.isDefined) sessionCache.saveEori(Eori(mayBeEori.get))
+      mayBeEori
     }
 
 }

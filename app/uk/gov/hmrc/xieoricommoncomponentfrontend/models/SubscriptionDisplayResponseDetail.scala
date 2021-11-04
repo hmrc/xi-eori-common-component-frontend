@@ -16,8 +16,9 @@
 
 package uk.gov.hmrc.xieoricommoncomponentfrontend.models
 
-import play.api.libs.json.{JsPath, Json, Reads}
 import play.api.libs.functional.syntax._
+import play.api.libs.json.{JsPath, Json, Reads}
+
 import java.time.{Clock, LocalDate, LocalDateTime, ZoneId}
 
 case class SubscriptionInfoVatId(countryCode: Option[String], VATID: Option[String])
@@ -75,4 +76,5 @@ object SubscriptionDisplayResponseDetail {
       (JsPath \ "subscriptionDisplayResponse" \ "responseDetail" \ "XI EORI" \ "XI_VAT_Number").readNullable[String]
   )(SubscriptionDisplayResponseDetail.apply _)
 
+  implicit val subscriptionDisplayWrites = Json.writes[SubscriptionDisplayResponseDetail]
 }

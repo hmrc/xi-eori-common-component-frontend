@@ -21,6 +21,8 @@ import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import play.api.i18n.Messages
 
+import scala.concurrent.duration.Duration
+
 @Singleton
 class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig) {
 
@@ -32,6 +34,8 @@ class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig
   lazy val signOutUrl: String       = config.get[String]("external-urls.signOut")
   lazy val xiVatRegisterUrl: String = config.get[String]("external-urls.xiVatRegisterUrl")
   lazy val appName: String          = config.get[String]("appName")
+
+  val ttl: Duration = Duration.create(config.get[String]("ecc-frontend-cache.ttl"))
 
   val enrolmentStoreProxyBaseUrl: String = servicesConfig.baseUrl("enrolment-store-proxy")
 
