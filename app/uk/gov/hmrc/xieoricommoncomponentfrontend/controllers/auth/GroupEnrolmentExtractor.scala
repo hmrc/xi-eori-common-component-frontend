@@ -17,6 +17,7 @@
 package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth
 
 import play.api.Logger
+import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{
@@ -35,8 +36,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class GroupEnrolmentExtractor @Inject() (
   enrolmentStoreProxyService: EnrolmentStoreProxyService,
   sessionCache: SessionCache
-)(implicit val ec: ExecutionContext)
-    extends EnrolmentExtractor {
+)(implicit val ec: ExecutionContext) {
+  private val EoriIdentifier: String = "EORINumber"
 
   def groupIdEnrolments(groupId: String)(implicit hc: HeaderCarrier): Future[List[EnrolmentResponse]] =
     enrolmentStoreProxyService.enrolmentsForGroup(GroupId(groupId))
@@ -63,5 +64,12 @@ class GroupEnrolmentExtractor @Inject() (
       if (mayBeEori.isDefined) sessionCache.saveEori(Eori(mayBeEori.get))
       mayBeEori
     }
+
+  def existingEoriForUser(userEnrolments: Set[Enrolment]): Option[ExistingEori] = {
+    val userEnrolmentWithEori = userEnrolments.find(_.identifiers.exists(_.key == EoriIdentifier))
+    userEnrolmentWithEori.map(
+      enrolment => ExistingEori(enrolment.getIdentifier(EoriIdentifier).map(_.value), enrolment.key)
+    )
+  }
 
 }

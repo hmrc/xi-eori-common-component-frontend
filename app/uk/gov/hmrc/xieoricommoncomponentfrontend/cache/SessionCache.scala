@@ -124,7 +124,7 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
     getCached[List[EnrolmentResponse]](sessionId, (cachedData, id) => cachedData.groupEnrolment(id))
 
   def subscriptionDisplay(implicit hc: HeaderCarrier): Future[Option[SubscriptionDisplayResponseDetail]] =
-    getCached[SubscriptionDisplayResponseDetail](sessionId, (cachedData, id) => cachedData.subscriptionDisplayMongo)
+    getCached[SubscriptionDisplayResponseDetail](sessionId, (cachedData, _) => cachedData.subscriptionDisplayMongo)
 
   def remove(implicit hc: HeaderCarrier): Future[Boolean] =
     removeById(sessionId.id) map (x => x.writeErrors.isEmpty && x.writeConcernError.isEmpty)

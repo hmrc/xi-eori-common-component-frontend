@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.xieoricommoncomponentfrontend.services
 
+import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.EnrolmentStoreProxyConnector
@@ -31,6 +32,7 @@ class EnrolmentStoreProxyService @Inject() (
 )(implicit ec: ExecutionContext) {
 
   private val activatedState = "Activated"
+  private val logger         = Logger(this.getClass)
 
   def enrolmentsForGroup(groupId: GroupId)(implicit hc: HeaderCarrier): Future[List[EnrolmentResponse]] =
     sessionCache.groupEnrolment flatMap {
@@ -42,7 +44,12 @@ class EnrolmentStoreProxyService @Inject() (
             .map(_.enrolments)
             .map(enrolment => enrolment.filter(x => x.state == activatedState))
         } yield {
-          if (groupEnrolments.nonEmpty) sessionCache.saveGroupEnrolment(groupEnrolments)
+          if (groupEnrolments.nonEmpty)
+            sessionCache.saveGroupEnrolment(groupEnrolments).map(
+              successfulWrite =>
+                if (!successfulWrite)
+                  logger.debug("GroupEnrolment details retrieved successfully and saved into cache")
+            )
           groupEnrolments
         }
     }

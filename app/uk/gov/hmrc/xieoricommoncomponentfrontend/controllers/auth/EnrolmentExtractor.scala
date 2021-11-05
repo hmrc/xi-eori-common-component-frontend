@@ -27,8 +27,6 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{
 
 trait EnrolmentExtractor {
 
-  private val EoriIdentifier: String = "EORINumber"
-
   private def identifierFor(
     enrolmentKey: String,
     identifierName: String,
@@ -51,12 +49,5 @@ trait EnrolmentExtractor {
 
   def enrolledNino(loggedInUser: LoggedInUserWithEnrolments): Option[Nino] =
     identifierFor("HMRC-NI", "NINO", loggedInUser).map(Nino)
-
-  def existingEoriForUser(userEnrolments: Set[Enrolment]): Option[ExistingEori] = {
-    val userEnrolmentWithEori = userEnrolments.find(_.identifiers.exists(_.key == EoriIdentifier))
-    userEnrolmentWithEori.map(
-      enrolment => ExistingEori(enrolment.getIdentifier(EoriIdentifier).map(_.value), enrolment.key)
-    )
-  }
 
 }
