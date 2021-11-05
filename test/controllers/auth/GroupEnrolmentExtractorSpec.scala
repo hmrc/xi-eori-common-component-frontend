@@ -37,7 +37,8 @@ class GroupEnrolmentExtractorSpec extends BaseSpec with BeforeAndAfterEach {
   private val enrolmentExtractor         = mock[EnrolmentExtractor]
   private val sessionCache               = mock[SessionCache]
 
-  private val enrolmentResponse = EnrolmentResponse("HMRC-CUS-ORG", "ACTIVATED", List.empty)
+  private val enrolmentResponse =
+    EnrolmentResponse("HMRC-CUS-ORG", "ACTIVATED", List(KeyValue("EORINumber", "GB123456463324")))
 
   private val hc = HeaderCarrier()
 
@@ -52,7 +53,7 @@ class GroupEnrolmentExtractorSpec extends BaseSpec with BeforeAndAfterEach {
 
   override protected def afterEach(): Unit = {
     reset(enrolmentStoreProxyService)
-
+    reset(sessionCache)
     super.afterEach()
   }
 
@@ -82,7 +83,7 @@ class GroupEnrolmentExtractorSpec extends BaseSpec with BeforeAndAfterEach {
 
     }
 
-    /*"fetch eori from Session Cache if eori is already saved in cache" in {
+    "fetch eori from Session Cache if eori is already saved in cache" in {
       when(
         sessionCache
           .eori(any())
@@ -91,7 +92,39 @@ class GroupEnrolmentExtractorSpec extends BaseSpec with BeforeAndAfterEach {
       await(groupEnrolmentExtractor.getEori(loggedInUser(enrolments))(hc))
       verify(enrolmentStoreProxyService, never()).enrolmentsForGroup(any())(meq(hc))
       verify(sessionCache, never()).saveEori(any())(meq(hc))
-    }*/
+    }
+
+    "fetch eori from user enrolments if eori not present in session cache" in {
+      when(
+        sessionCache
+          .eori(any())
+      ).thenReturn(Future.successful(None))
+      when(
+        sessionCache
+          .saveGroupEnrolment(any())(any())
+      ).thenReturn(Future.successful(true))
+      val enrolments = Set(Enrolment("HMRC-CUS-ORG").withIdentifier("EORINumber", eori.id))
+      await(groupEnrolmentExtractor.getEori(loggedInUser(enrolments))(hc))
+      verify(enrolmentStoreProxyService, never()).enrolmentsForGroup(any())(meq(hc))
+      verify(sessionCache).saveEori(any())(meq(hc))
+    }
+
+    "fetch eori from group enrolments if eori not present in session cache" in {
+      when(enrolmentStoreProxyService.enrolmentsForGroup(any())(any()))
+        .thenReturn(Future.successful(List(enrolmentResponse)))
+      when(
+        sessionCache
+          .eori(any())
+      ).thenReturn(Future.successful(None))
+      when(
+        sessionCache
+          .saveGroupEnrolment(any())(any())
+      ).thenReturn(Future.successful(true))
+      val enrolments = Set(Enrolment("HMRC-CUS-ORG").withIdentifier("NINO", "NINO"))
+      await(groupEnrolmentExtractor.getEori(loggedInUser(enrolments))(hc))
+      verify(enrolmentStoreProxyService).enrolmentsForGroup(any())(meq(hc))
+      verify(sessionCache).saveEori(any())(meq(hc))
+    }
 
     "return existing EORI for user and/or group" when {
 

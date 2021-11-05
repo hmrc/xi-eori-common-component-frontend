@@ -97,6 +97,27 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
       }
     }
 
+    "redirect to Long GB Journey if logged in user doean't have linked GB Eori" in {
+
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+        when(subscriptionDisplayConnector.call(any())(any()))
+          .thenReturn(Future.successful(Right(subscriptionDisplayResponse)))
+        when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
+          .thenReturn(Future.successful(groupEnrolment))
+        when(mockGroupEnrolmentExtractor.getEori(any())(any()))
+          .thenReturn(Future.successful(None))
+        val request = SessionBuilder.buildRequestWithSessionAndPath(
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad().url,
+          defaultUserId
+        )
+
+        val result = route(application, request).get
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+    }
+
     "return a Bad Request and errors when invalid data is submitted" in {
 
       running(application) {
