@@ -16,8 +16,9 @@
 
 package uk.gov.hmrc.xieoricommoncomponentfrontend.forms
 
-import play.api.data.Form
 import play.api.data.Forms.text
+import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
+import play.api.data.{Form, Forms}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.mappings.Mappings
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.SicCode
 
@@ -25,11 +26,16 @@ import javax.inject.Inject
 
 class SicCodeFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[String] =
-    Form(
-      "value" -> text
-        .verifying("sicCode.error.length", _.length < 5)
-        .verifying("sicCode.error.length", _.length > 5)
-    )
+  protected def validSicCode: Constraint[String] =
+    Constraint("sic")({
+      case s if s.trim.isEmpty               => Invalid(ValidationError("sicCode.error.required"))
+      case s if !s.matches("[0-9]*")         => Invalid(ValidationError("sicCode.error.incorrect-format"))
+      case s if s.length < 5 || s.length > 5 => Invalid(ValidationError("sicCode.error.long"))
+      case _                                 => Valid
+    })
+
+  def apply(): Form[SicCode] = Form(
+    Forms.mapping("sic" -> text.verifying(validSicCode))(SicCode.apply)(SicCode.unapply)
+  )
 
 }

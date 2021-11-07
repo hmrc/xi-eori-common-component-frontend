@@ -17,10 +17,11 @@
 @import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
 @import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.SicCode
 
 
 @this(main_template: Layout, appConfig: AppConfig, formHelper: FormWithCSRF,govukButton: GovukButton, inputText: components.inputText, errorSummary: components.errorSummary)
-@(sicCodeForm: Form[String])(implicit messages: Messages, request: Request[_])
+@(sicCodeForm: Form[SicCode])(implicit messages: Messages, request: Request[_])
 @title = @{
 messages("sicCode.page.title")
 }
