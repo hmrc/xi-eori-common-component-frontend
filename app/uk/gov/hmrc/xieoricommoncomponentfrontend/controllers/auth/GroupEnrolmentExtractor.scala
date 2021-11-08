@@ -16,17 +16,10 @@
 
 package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth
 
-import play.api.Logger
 import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
-import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{
-  EnrolmentResponse,
-  Eori,
-  ExistingEori,
-  GroupId,
-  LoggedInUserWithEnrolments
-}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.domain._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.EnrolmentStoreProxyService
 
 import javax.inject.{Inject, Singleton}

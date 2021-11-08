@@ -23,7 +23,6 @@ import util.BaseSpec
 
 class EnrolmentExtractorSpec extends BaseSpec {
 
-  private val eori = Eori("GB123456789012")
   private val utr  = Utr("1111111111K")
   private val nino = Nino("NINO")
 

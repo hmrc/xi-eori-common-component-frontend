@@ -47,6 +47,8 @@ class LogoutControllerSpec extends WordSpec with Matchers {
         defaultUserId
       )
       val result = route(application, request).get
+
+      session(result).isEmpty shouldBe true
       status(result) shouldBe SEE_OTHER
 
     }

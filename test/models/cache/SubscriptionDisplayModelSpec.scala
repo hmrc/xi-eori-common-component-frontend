@@ -17,13 +17,9 @@
 package models.cache
 
 import org.scalatest.{MustMatchers, WordSpec}
-import play.api.libs.json.{JsResult, JsSuccess, JsValue, Json}
+import play.api.libs.json.Json
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.SubscriptionDisplayMongo
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
-  EstablishmentAddress,
-  SubscriptionDisplayResponseDetail,
-  SubscriptionInfoVatId
-}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, SubscriptionInfoVatId}
 
 import java.time.LocalDate
 
@@ -74,7 +70,5 @@ class SubscriptionDisplayModelSpec extends WordSpec with MustMatchers {
     }
 
   }
-
-  private def marshall(data: SubscriptionDisplayMongo): JsValue = Json.toJson(data)
 
 }

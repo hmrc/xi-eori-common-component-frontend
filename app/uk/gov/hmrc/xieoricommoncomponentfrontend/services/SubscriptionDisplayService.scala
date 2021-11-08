@@ -19,11 +19,9 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.services
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
-import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.{EnrolmentStoreProxyConnector, SubscriptionDisplayConnector}
-import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, GroupId}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.SubscriptionDisplayConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{ErrorResponse, SubscriptionDisplayResponseDetail}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.util.EoriUtils
-import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewModel
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

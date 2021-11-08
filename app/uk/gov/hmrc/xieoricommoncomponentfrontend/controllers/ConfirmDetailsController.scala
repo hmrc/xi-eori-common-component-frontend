@@ -16,25 +16,22 @@
 
 package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 
-import play.api.{Configuration, Environment}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
-import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.SubscriptionDisplayConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{
   AuthAction,
   AuthRedirectSupport,
   GroupEnrolmentExtractor
 }
-import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{ExistingEori, LoggedInUserWithEnrolments}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.ConfirmDetailsFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ConfirmDetails
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.SubscriptionDisplayService
-import uk.gov.hmrc.xieoricommoncomponentfrontend.util.EoriUtils
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewModel
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.confirm_details
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.error_template
+import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{confirm_details, error_template}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,7 +44,6 @@ class ConfirmDetailsController @Inject() (
   confirmDetailsView: confirm_details,
   formProvider: ConfirmDetailsFormProvider,
   mcc: MessagesControllerComponents,
-  connector: SubscriptionDisplayConnector,
   errorTemplateView: error_template,
   groupEnrolment: GroupEnrolmentExtractor,
   subscriptionDisplayService: SubscriptionDisplayService

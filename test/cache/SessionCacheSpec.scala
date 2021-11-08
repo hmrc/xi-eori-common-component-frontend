@@ -20,10 +20,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.cache.model.Id
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.CachedData
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, SubscriptionDisplayResponseDetail}
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.SubscriptionDisplayMongo
 import util.BaseSpec
-
-import java.time.{LocalDateTime, ZoneId}
 
 class SessionCacheSpec extends BaseSpec with MockitoSugar {
 

@@ -16,14 +16,7 @@
 
 package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth
 
-import uk.gov.hmrc.auth.core.Enrolment
-import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{
-  EnrolmentResponse,
-  ExistingEori,
-  LoggedInUserWithEnrolments,
-  Nino,
-  Utr
-}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{LoggedInUserWithEnrolments, Nino, Utr}
 
 trait EnrolmentExtractor {
 

@@ -34,7 +34,6 @@ import scala.concurrent.Future
 class GroupEnrolmentExtractorSpec extends BaseSpec with BeforeAndAfterEach {
 
   private val enrolmentStoreProxyService = mock[EnrolmentStoreProxyService]
-  private val enrolmentExtractor         = mock[EnrolmentExtractor]
   private val sessionCache               = mock[SessionCache]
 
   private val enrolmentResponse =
