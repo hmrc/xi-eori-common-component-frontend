@@ -18,12 +18,11 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.DisclosePersonalDetailsFormProvider
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.DisclosePersonalDetails
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.DisclosePersonalDetails.{No, Yes}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.disclose_personal_details
 
 import javax.inject.Inject
@@ -45,21 +44,22 @@ class DisclosePersonalDetailsController @Inject() (
         Future.successful(Ok(disclosePersonalDetailsView(form)))
     }
 
-  def submit: Action[AnyContent] = Action { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => BadRequest(disclosePersonalDetailsView(formWithErrors)),
-        value => destinationsByAnswer(value)
+  def submit: Action[AnyContent] =
+    authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => loggedInUser: LoggedInUserWithEnrolments =>
+      form.bindFromRequest.fold(
+        invalidForm => Future.successful(BadRequest(disclosePersonalDetailsView(invalidForm))),
+        value =>
+          if (loggedInUser.affinityGroup.get equals AffinityGroup.Organisation)
+            Future.successful(
+              Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.onPageLoad())
+            )
+          else
+            Future.successful(
+              Redirect(
+                uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded()
+              )
+            )
       )
-  }
-
-  private def destinationsByAnswer(disclosePersonalDetails: DisclosePersonalDetails): Result =
-    disclosePersonalDetails match {
-      case Yes =>
-        Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.onPageLoad())
-      case No =>
-        Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.onPageLoad())
     }
 
 }
