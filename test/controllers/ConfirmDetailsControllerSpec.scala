@@ -32,6 +32,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
   ServiceUnavailableResponse,
   SubscriptionDisplayResponseDetail
 }
+import uk.gov.hmrc.xieoricommoncomponentfrontend.services.SubscriptionDisplayService
 import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
@@ -41,8 +42,8 @@ import scala.concurrent.Future
 
 class ConfirmDetailsControllerSpec extends BaseSpec {
 
-  val subscriptionDisplayConnector = mock[SubscriptionDisplayConnector]
-  val mockGroupEnrolmentExtractor  = mock[GroupEnrolmentExtractor]
+  val subscriptionDisplayService  = mock[SubscriptionDisplayService]
+  val mockGroupEnrolmentExtractor = mock[GroupEnrolmentExtractor]
 
   val establishmentAddress = EstablishmentAddress(
     streetAndNumber = "line1",
@@ -68,7 +69,7 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
 
   override def application = new GuiceApplicationBuilder().overrides(
     inject.bind[AuthConnector].to(mockAuthConnector),
-    inject.bind[SubscriptionDisplayConnector].to(subscriptionDisplayConnector),
+    inject.bind[SubscriptionDisplayService].to(subscriptionDisplayService),
     inject.bind[GroupEnrolmentExtractor].to(mockGroupEnrolmentExtractor)
   ).configure("auditing.enabled" -> "false", "metrics.jvm" -> false, "metrics.enabled" -> false).build()
 
@@ -78,7 +79,7 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
 
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
-        when(subscriptionDisplayConnector.call(any())(any()))
+        when(subscriptionDisplayService.getSubscriptionDisplay(any())(any()))
           .thenReturn(Future.successful(Right(subscriptionDisplayResponse)))
         when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
           .thenReturn(Future.successful(groupEnrolment))
@@ -97,11 +98,11 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
       }
     }
 
-    "redirect to Long GB Journey if logged in user doean't have linked GB Eori" in {
+    "redirect to Long GB Journey if logged in user doesn't have linked GB Eori" in {
 
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
-        when(subscriptionDisplayConnector.call(any())(any()))
+        when(subscriptionDisplayService.getSubscriptionDisplay(any())(any()))
           .thenReturn(Future.successful(Right(subscriptionDisplayResponse)))
         when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
           .thenReturn(Future.successful(groupEnrolment))
@@ -122,7 +123,7 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
 
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
-        when(subscriptionDisplayConnector.call(any())(any()))
+        when(subscriptionDisplayService.getSubscriptionDisplay(any())(any()))
           .thenReturn(Future.successful(Right(subscriptionDisplayResponse)))
         when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
           .thenReturn(Future.successful(groupEnrolment))
@@ -143,10 +144,31 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
       }
     }
 
-    "redirect InternalServerError when Subscription Display call fails" in {
+    "redirect InternalServerError when Subscription Display call fails onPageLoad" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
-        when(subscriptionDisplayConnector.call(any())(any()))
+        when(subscriptionDisplayService.getSubscriptionDisplay(any())(any()))
+          .thenReturn(Future.successful(Left(ServiceUnavailableResponse)))
+        when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
+          .thenReturn(Future.successful(groupEnrolment))
+        when(mockGroupEnrolmentExtractor.getEori(any())(any()))
+          .thenReturn(Future.successful(existingEori))
+        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
+          "POST",
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad().url,
+          defaultUserId,
+          Map("value" -> "")
+        )
+
+        val result = route(application, request).get
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+    }
+
+    "redirect InternalServerError when Subscription Display call fails during submit" in {
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+        when(subscriptionDisplayService.getSubscriptionDisplay(any())(any()))
           .thenReturn(Future.successful(Left(ServiceUnavailableResponse)))
         when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
           .thenReturn(Future.successful(groupEnrolment))
@@ -186,7 +208,7 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
     "redirect to the XiVatRegister page when user clicks on XI Vat register link" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
-        when(subscriptionDisplayConnector.call(any())(any()))
+        when(subscriptionDisplayService.getSubscriptionDisplay(any())(any()))
           .thenReturn(Future.successful(Right(subscriptionDisplayResponse)))
         when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
           .thenReturn(Future.successful(groupEnrolment))

@@ -40,34 +40,39 @@ class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoS
   val sessionCache = new SessionCache(appConfig, reactiveMongoComponent)
 
   val hc = mock[HeaderCarrier]
+  val subscriptionDisplay = SubscriptionDisplayResponseDetail(
+    Some("EN123456789012345"),
+    "John Doe",
+    EstablishmentAddress("house no Line 1", "city name", Some("SE28 1AA"), "ZZ"),
+    Some(
+      List(SubscriptionInfoVatId(Some("GB"), Some("999999")), SubscriptionInfoVatId(Some("ES"), Some("888888")))
+    ),
+    Some("Doe"),
+    Some(LocalDate.of(1963, 4, 1)),
+    Some("XIE9XSDF10BCKEYAX")
+  )
+  val groupEnrolment =
+    List(EnrolmentResponse("HMRC-ATAR-ORG", "Activated", List(KeyValue("EORINumber", "GB123456463324"))))
+
+  val eori = Eori("GB123456463324")
 
   "Session cache" should {
 
     "store, fetch and update Subscription Display details correctly" in {
       val sessionId: SessionId = setupSession
 
-      val holder = SubscriptionDisplayResponseDetail(
-        Some("EN123456789012345"),
-        "John Doe",
-        EstablishmentAddress("house no Line 1", "city name", Some("SE28 1AA"), "ZZ"),
-        Some(
-          List(SubscriptionInfoVatId(Some("GB"), Some("999999")), SubscriptionInfoVatId(Some("ES"), Some("888888")))
-        ),
-        Some("Doe"),
-        Some(LocalDate.of(1963, 4, 1)),
-        Some("XIE9XSDF10BCKEYAX")
-      )
 
-      await(sessionCache.saveSubscriptionDisplay(holder)(hc))
 
-      val expectedJson                     = toJson(CachedData(subscriptionDisplay = Some(holder.toSubscriptionDisplayMongo())))
+      await(sessionCache.saveSubscriptionDisplay(subscriptionDisplay)(hc))
+
+      val expectedJson                     = toJson(CachedData(subscriptionDisplay = Some(subscriptionDisplay.toSubscriptionDisplayMongo())))
       val cache                            = await(sessionCache.findById(Id(sessionId.value)))
       val Some(Cache(_, Some(json), _, _)) = cache
       json mustBe expectedJson
 
-      await(sessionCache.subscriptionDisplay(hc)) mustBe Some(holder)
+      await(sessionCache.subscriptionDisplay(hc)) mustBe Some(subscriptionDisplay)
 
-      val updatedHolder = holder.copy(
+      val updatedHolder = subscriptionDisplay.copy(
         shortName = Some("different business name"),
         CDSFullName = "Full Name"
       )
@@ -83,23 +88,21 @@ class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoS
     "store, fetch and update Group enrolment details correctly" in {
       val sessionId: SessionId = setupSession
 
-      val holder =
-        List(EnrolmentResponse("HMRC-ATAR-ORG", "Activated", List(KeyValue("EORINumber", "GB123456463324"))))
 
-      await(sessionCache.saveGroupEnrolment(holder)(hc))
+      await(sessionCache.saveGroupEnrolment(groupEnrolment)(hc))
 
-      val expectedJson                     = toJson(CachedData(groupEnrolment = Some(holder)))
+      val expectedJson                     = toJson(CachedData(groupEnrolment = Some(groupEnrolment)))
       val cache                            = await(sessionCache.findById(Id(sessionId.value)))
       val Some(Cache(_, Some(json), _, _)) = cache
       json mustBe expectedJson
 
-      await(sessionCache.groupEnrolment(hc)) mustBe Some(holder)
+      await(sessionCache.groupEnrolment(hc)) mustBe Some(groupEnrolment)
 
-      val updatedHolder = holder.head.copy(service="HMRC-TEST-ORG")
+      val updatedEnrolment = groupEnrolment.head.copy(service="HMRC-TEST-ORG")
 
-      await(sessionCache.saveGroupEnrolment(List(updatedHolder))(hc))
+      await(sessionCache.saveGroupEnrolment(List(updatedEnrolment))(hc))
 
-      val expectedUpdatedJson                     = toJson(CachedData(groupEnrolment = Some(List(updatedHolder))))
+      val expectedUpdatedJson                     = toJson(CachedData(groupEnrolment = Some(List(updatedEnrolment))))
       val updatedCache                            = await(sessionCache.findById(Id(sessionId.value)))
       val Some(Cache(_, Some(updatedJson), _, _)) = updatedCache
       updatedJson mustBe expectedUpdatedJson
@@ -108,22 +111,20 @@ class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoS
     "store, fetch and update Eori details correctly" in {
       val sessionId: SessionId = setupSession
 
-      val holder = Eori("GB123456463324")
+      await(sessionCache.saveEori(eori)(hc))
 
-      await(sessionCache.saveEori(holder)(hc))
-
-      val expectedJson                     = toJson(CachedData(eori = Some(holder.id)))
+      val expectedJson                     = toJson(CachedData(eori = Some(eori.id)))
       val cache                            = await(sessionCache.findById(Id(sessionId.value)))
       val Some(Cache(_, Some(json), _, _)) = cache
       json mustBe expectedJson
 
-      await(sessionCache.eori(hc)) mustBe Some(holder.id)
+      await(sessionCache.eori(hc)) mustBe Some(eori.id)
 
-      val updatedHolder = Eori("GB123456463329")
+      val updatedEori = Eori("GB123456463329")
 
-      await(sessionCache.saveEori(updatedHolder)(hc))
+      await(sessionCache.saveEori(updatedEori)(hc))
 
-      val expectedUpdatedJson                     = toJson(CachedData(eori = Some(updatedHolder.id)))
+      val expectedUpdatedJson                     = toJson(CachedData(eori = Some(updatedEori.id)))
       val updatedCache                            = await(sessionCache.findById(Id(sessionId.value)))
       val Some(Cache(_, Some(updatedJson), _, _)) = updatedCache
       updatedJson mustBe expectedUpdatedJson
@@ -158,6 +159,17 @@ class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoS
       }
       caught.getMessage mustBe s"groupEnrolment is not cached in data for the sessionId: ${s.value}"
     }
+    "provide default when subscription display details holder not in cache" in {
+      val s = setupSession
+      await(
+        sessionCache.insert(
+          Cache(Id(s.value), data = Some(toJson(CachedData(eori = Some(eori.id),groupEnrolment = Some(groupEnrolment)))))
+        )
+      )
+
+      await(sessionCache.subscriptionDisplay(hc)) mustBe Some(SubscriptionDisplayResponseDetail(None,"",EstablishmentAddress("", "", None, ""),None,None,None,None,None))
+    }
+
 
   }
 
