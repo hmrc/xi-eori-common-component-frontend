@@ -57,13 +57,9 @@ class DisclosePersonalDetailsController @Inject() (
   private def destinationsByAnswer(disclosePersonalDetails: DisclosePersonalDetails): Result =
     disclosePersonalDetails match {
       case Yes =>
-        Redirect(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.YouAlreadyHaveEoriController.eoriAlreadyExists()
-        )
+        Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.onPageLoad())
       case No =>
-        Redirect(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.YouAlreadyHaveEoriController.eoriAlreadyExists()
-        )
+        Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.onPageLoad())
     }
 
 }

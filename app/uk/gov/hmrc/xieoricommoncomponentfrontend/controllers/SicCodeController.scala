@@ -49,7 +49,9 @@ class SicCodeController @Inject() (
       .fold(
         formWithErrors => BadRequest(sicCodeView(formWithErrors)),
         value =>
-          Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.YouCannotUseServiceController.page())
+          Redirect(
+            uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded()
+          )
       )
   }
 

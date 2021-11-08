@@ -59,7 +59,7 @@ class DisclosePersonalDetailsControllerSpec extends BaseSpec {
         status(result) shouldBe SEE_OTHER
         redirectLocation(
           result
-        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.YouAlreadyHaveEoriController.eoriAlreadyExists().url
+        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.onPageLoad().url
       }
 
     }
