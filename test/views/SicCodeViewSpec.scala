@@ -25,15 +25,21 @@ import util.ViewSpec
 
 class SicCodeViewSpec extends ViewSpec {
 
-  private implicit val request = withFakeCSRF(fakeRegisterRequest)
-  private val formProvider     = new SicCodeFormProvider
-  private def form             = formProvider.apply()
-  private def formWithError    = form.bind(Map("value" -> ""))
-  private val sicCodeView      = instanceOf[sic_code].apply(form)
-  private val sicCodeViewError = instanceOf[sic_code].apply(formWithError)
+  private implicit val request        = withFakeCSRF(fakeRegisterRequest)
+  private val formProvider            = new SicCodeFormProvider
+  private def form                    = formProvider.apply()
+  private def formWithNoDataError     = form.bind(Map("sic" -> ""))
+  private def formWithNonNumericError = form.bind(Map("sic" -> "asdf."))
+  private def formWithLengthError     = form.bind(Map("sic" -> "123456"))
+  private val sicCodeView             = instanceOf[sic_code].apply(form)
+  private val sicCodeViewError        = instanceOf[sic_code].apply(formWithNoDataError)
+  private val sicCodeViewDataError    = instanceOf[sic_code].apply(formWithNonNumericError)
+  private val sicCodeViewLengthError  = instanceOf[sic_code].apply(formWithLengthError)
 
-  private lazy val sicCodeDoc: Document          = Jsoup.parse(contentAsString(sicCodeView))
-  private lazy val sicCodeDocWithError: Document = Jsoup.parse(contentAsString(sicCodeViewError))
+  private lazy val sicCodeDoc: Document                = Jsoup.parse(contentAsString(sicCodeView))
+  private lazy val sicCodeDocWithError: Document       = Jsoup.parse(contentAsString(sicCodeViewError))
+  private lazy val sicCodeDocWithDataError: Document   = Jsoup.parse(contentAsString(sicCodeViewDataError))
+  private lazy val sicCodeDocWithLengthError: Document = Jsoup.parse(contentAsString(sicCodeViewLengthError))
 
   "SIC Code page" should {
 
@@ -45,9 +51,20 @@ class SicCodeViewSpec extends ViewSpec {
       sicCodeDoc.body.getElementsByTag("h1").text mustBe "What is your Standard Industrial Classification (SIC) code?"
     }
 
-    /*"display errors while empty form is submitted" in {
-      sicCodeDocWithError.body.getElementsByClass("govuk-error-summary__list").get(0).text mustBe "Enter a SIC code"
-    }*/
+    "display errors while empty form is submitted" in {
+      sicCodeDocWithError.body.getElementsByClass("govuk-list govuk-error-summary__list").get(0)
+        .text mustBe "Enter a SIC code"
+    }
+
+    "display errors while non-numeric data is submitted" in {
+      sicCodeDocWithDataError.body.getElementsByClass("govuk-list govuk-error-summary__list").get(0)
+        .text mustBe "Only numerical characters are accepted"
+    }
+
+    "display errors while data length not 5 digits " in {
+      sicCodeDocWithLengthError.body.getElementsByClass("govuk-list govuk-error-summary__list").get(0)
+        .text mustBe "Your SIC Code is limited to 5 numerical characters only"
+    }
 
     "display yes no radio buttons" in {
       sicCodeDoc.body.getElementById("sic").attr("value") mustBe empty
@@ -59,6 +76,10 @@ class SicCodeViewSpec extends ViewSpec {
       ).text() mustBe "A SIC code is a 5-digit number that helps HMRC identify what your organisation does. In some countries it is also known as a trade number."
     }
 
+    "display description" in {
+      sicCodeDoc.body.getElementById(
+        "description"
+      ).text() startsWith "If you do not have one, you can search for a relevant SIC code on"
+    }
   }
-
 }

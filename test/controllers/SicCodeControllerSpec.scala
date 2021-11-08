@@ -24,8 +24,6 @@ import util.builders.SessionBuilder
 
 class SicCodeControllerSpec extends BaseSpec {
 
-  private val pageLevelErrorSummaryListXPath = "//ul[@class='govuk-list govuk-error-summary__list']/li"
-
   "SicCode controller" should {
     "return OK and the correct view for a GET" in {
 
@@ -44,7 +42,7 @@ class SicCodeControllerSpec extends BaseSpec {
         page.title should startWith("What is your Standard Industrial Classification (SIC) code?")
       }
     }
-    /*"redirect to EoriNotNeeded Page when Sic code is entered" in {
+    "redirect to EoriNotNeeded Page when Sic Code is entered" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
@@ -52,7 +50,7 @@ class SicCodeControllerSpec extends BaseSpec {
           "POST",
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.submit().url,
           defaultUserId,
-          Map("value" -> "12345")
+          Map("sic" -> "12345")
         )
 
         val result = route(application, request).get
@@ -62,9 +60,9 @@ class SicCodeControllerSpec extends BaseSpec {
         ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded().url
       }
 
-    }*/
+    }
 
-    /*"return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
@@ -73,7 +71,7 @@ class SicCodeControllerSpec extends BaseSpec {
           "POST",
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.submit().url,
           defaultUserId,
-          Map("value" -> "")
+          Map("sic" -> "")
         )
 
         val result = route(application, request).get
@@ -82,7 +80,7 @@ class SicCodeControllerSpec extends BaseSpec {
         val page = RegistrationPage(contentAsString(result))
         page.errors() shouldEqual "Enter a SIC code"
       }
-    }*/
+    }
 
   }
 }
