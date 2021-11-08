@@ -22,18 +22,14 @@ import util.BaseSpec
 
 class MatchersSpec extends BaseSpec {
 
-  val id           = java.util.UUID.randomUUID.toString
-  val UTR          = Utr(id)
-  val EORI         = Eori(id)
-  val NINO         = Nino(id)
-  val SAFE_ID      = SafeId(id)
-  val TAX_PAYER_ID = TaxPayerId(id)
+  val id   = java.util.UUID.randomUUID.toString
+  val UTR  = Utr(id)
+  val EORI = Eori(id)
+  val NINO = Nino(id)
 
-  val utrJson        = Json.parse(s"""{ "utr": "$id" }""")
-  val eoriJson       = Json.parse(s"""{ "eori": "$id" }""")
-  val ninoJson       = Json.parse(s"""{ "nino": "$id" }""")
-  val safeIdJson     = Json.parse(s"""{ "safeId": "$id" }""")
-  val taxPayerIdJson = Json.parse(s"""{ "taxPayerId": "$id" }""")
+  val utrJson  = Json.parse(s"""{ "utr": "$id" }""")
+  val eoriJson = Json.parse(s"""{ "eori": "$id" }""")
+  val ninoJson = Json.parse(s"""{ "nino": "$id" }""")
 
   "UTR" should {
     passJsonTransformationCheck(UTR, utrJson)
@@ -45,14 +41,6 @@ class MatchersSpec extends BaseSpec {
 
   "NINO" should {
     passJsonTransformationCheck(NINO, ninoJson)
-  }
-
-  "SAFE ID" should {
-    passJsonTransformationCheck(SAFE_ID, safeIdJson)
-  }
-
-  "TAX PAYER ID" should {
-    passJsonTransformationCheck(TAX_PAYER_ID, taxPayerIdJson)
   }
 
   private def passJsonTransformationCheck(customsId: CustomsId, expectedJson: JsValue) {

@@ -32,8 +32,8 @@ class GroupEnrolmentExtractor @Inject() (
 )(implicit val ec: ExecutionContext) {
   private val EoriIdentifier: String = "EORINumber"
 
-  def groupIdEnrolments(groupId: String)(implicit hc: HeaderCarrier): Future[List[EnrolmentResponse]] =
-    enrolmentStoreProxyService.enrolmentsForGroup(GroupId(groupId))
+  def groupIdEnrolments(groupId: GroupId)(implicit hc: HeaderCarrier): Future[List[EnrolmentResponse]] =
+    enrolmentStoreProxyService.enrolmentsForGroup(groupId)
 
   def getEori(user: LoggedInUserWithEnrolments)(implicit headerCarrier: HeaderCarrier): Future[Option[String]] =
     sessionCache.eori flatMap {
@@ -41,8 +41,8 @@ class GroupEnrolmentExtractor @Inject() (
       case None =>
         existingEoriForUser(user.enrolments.enrolments) match {
           case Some(eori) =>
-            sessionCache.saveEori(Eori(eori.id))
-            Future.successful(Some(eori.id))
+            sessionCache.saveEori(Eori(eori))
+            Future.successful(Some(eori))
           case None => existingEoriForGroup(user)
         }
     }
@@ -51,18 +51,16 @@ class GroupEnrolmentExtractor @Inject() (
     user: LoggedInUserWithEnrolments
   )(implicit headerCarrier: HeaderCarrier): Future[Option[String]] =
     for {
-      groupEnrolment <- groupIdEnrolments(user.groupId.getOrElse(throw MissingGroupId()))
+      groupEnrolment <- groupIdEnrolments(GroupId(user.groupId))
       mayBeEori = groupEnrolment.find(_.eori.exists(_.nonEmpty)).flatMap(enrolment => enrolment.eori)
     } yield {
       if (mayBeEori.isDefined) sessionCache.saveEori(Eori(mayBeEori.get))
       mayBeEori
     }
 
-  def existingEoriForUser(userEnrolments: Set[Enrolment]): Option[ExistingEori] = {
+  def existingEoriForUser(userEnrolments: Set[Enrolment]): Option[String] = {
     val userEnrolmentWithEori = userEnrolments.find(_.identifiers.exists(_.key == EoriIdentifier))
-    userEnrolmentWithEori.map(
-      enrolment => ExistingEori(enrolment.getIdentifier(EoriIdentifier).map(_.value), enrolment.key)
-    )
+    userEnrolmentWithEori.flatMap(enrolment => enrolment.getIdentifier(EoriIdentifier).map(_.value))
   }
 
 }

@@ -34,16 +34,12 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NoStackTrace
 
 sealed case class CachedData(
-  groupEnrolment: Option[List[EnrolmentResponse]] = None,
   eori: Option[String] = None,
   subscriptionDisplay: Option[SubscriptionDisplayMongo] = None
 ) {
 
   def eori(sessionId: Id): String =
     eori.getOrElse(throwException(eoriKey, sessionId))
-
-  def groupEnrolment(sessionId: Id): List[EnrolmentResponse] =
-    groupEnrolment.getOrElse(throwException(groupEnrolmentKey, sessionId))
 
   def subscriptionDisplayMongo(): SubscriptionDisplayResponseDetail = {
     val resp = subscriptionDisplay.getOrElse(emptySubscriptionDisplay())
@@ -65,7 +61,6 @@ sealed case class CachedData(
 }
 
 object CachedData {
-  val groupEnrolmentKey      = "groupEnrolment"
   val eoriKey                = "eori"
   val subscriptionDisplayKey = "subscriptionDisplay"
   implicit val format        = Json.format[CachedData]
@@ -90,9 +85,6 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
 
   def saveEori(eori: Eori)(implicit hc: HeaderCarrier): Future[Boolean] =
     createOrUpdate(sessionId, eoriKey, Json.toJson(eori.id)) map (_ => true)
-
-  def saveGroupEnrolment(groupEnrolment: List[EnrolmentResponse])(implicit hc: HeaderCarrier): Future[Boolean] =
-    createOrUpdate(sessionId, groupEnrolmentKey, Json.toJson(groupEnrolment)) map (_ => true)
 
   def saveSubscriptionDisplay(
     subscriptionDisplay: SubscriptionDisplayResponseDetail
@@ -119,9 +111,6 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
 
   def eori(implicit hc: HeaderCarrier): Future[Option[String]] =
     getCached[String](sessionId, (cachedData, id) => cachedData.eori(id))
-
-  def groupEnrolment(implicit hc: HeaderCarrier): Future[Option[List[EnrolmentResponse]]] =
-    getCached[List[EnrolmentResponse]](sessionId, (cachedData, id) => cachedData.groupEnrolment(id))
 
   def subscriptionDisplay(implicit hc: HeaderCarrier): Future[Option[SubscriptionDisplayResponseDetail]] =
     getCached[SubscriptionDisplayResponseDetail](sessionId, (cachedData, _) => cachedData.subscriptionDisplayMongo)

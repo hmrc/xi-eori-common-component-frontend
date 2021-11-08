@@ -77,34 +77,10 @@ class EnrolmentStoreProxyServiceSpec extends WordSpec with BeforeAndAfter with M
       ).thenReturn(
         Future.successful(EnrolmentStoreProxyResponse(List(enrolmentResponse, enrolmentResponseNoHmrcCusOrg)))
       )
-      when(
-        mockSessionCache
-          .groupEnrolment(meq(headerCarrier))
-      ).thenReturn(Future.successful(None))
-      when(
-        mockSessionCache
-          .saveGroupEnrolment(any())(meq(headerCarrier))
-      ).thenReturn(Future.successful(true))
-
       running(application) {
         await(service.enrolmentsForGroup(groupId)) shouldBe List(enrolmentResponse, enrolmentResponseNoHmrcCusOrg)
 
         verify(mockEnrolmentStoreProxyConnector).getEnrolmentByGroupId(any[String])(meq(headerCarrier), any())
-
-      }
-    }
-
-    "return all enrolments for the sessionCache" in {
-
-      when(
-        mockSessionCache
-          .groupEnrolment(meq(headerCarrier))
-      ).thenReturn(Future.successful(Some(List(enrolmentResponse, enrolmentResponseNoHmrcCusOrg))))
-
-      running(application) {
-        await(service.enrolmentsForGroup(groupId)) shouldBe List(enrolmentResponse, enrolmentResponseNoHmrcCusOrg)
-
-        verify(mockEnrolmentStoreProxyConnector, never()).getEnrolmentByGroupId(any[String])(meq(headerCarrier), any())
 
       }
     }
@@ -114,16 +90,6 @@ class EnrolmentStoreProxyServiceSpec extends WordSpec with BeforeAndAfter with M
         mockEnrolmentStoreProxyConnector
           .getEnrolmentByGroupId(any[String])(meq(headerCarrier), any())
       ).thenReturn(Future.successful(EnrolmentStoreProxyResponse(List(enrolmentResponse, enrolmentResponseNotActive))))
-
-      when(
-        mockSessionCache
-          .groupEnrolment(meq(headerCarrier))
-      ).thenReturn(Future.successful(None))
-
-      when(
-        mockSessionCache
-          .saveGroupEnrolment(any())(meq(headerCarrier))
-      ).thenReturn(Future.successful(true))
 
       running(application) {
 

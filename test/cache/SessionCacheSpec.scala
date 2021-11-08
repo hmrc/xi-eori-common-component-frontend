@@ -36,12 +36,6 @@ class SessionCacheSpec extends BaseSpec with MockitoSugar {
         intercept[Exception](CachedData().eori(sessionId)).getMessage shouldBe errorMsg(CachedData.eoriKey)
       }
 
-      "groupEnrolment missing " in {
-        intercept[Exception](CachedData().groupEnrolment(sessionId)).getMessage shouldBe errorMsg(
-          CachedData.groupEnrolmentKey
-        )
-      }
-
     }
 
     "return default" when {

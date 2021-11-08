@@ -26,32 +26,16 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EnrolmentStoreProxyService @Inject() (
-  enrolmentStoreProxyConnector: EnrolmentStoreProxyConnector,
-  sessionCache: SessionCache
-)(implicit ec: ExecutionContext) {
+class EnrolmentStoreProxyService @Inject() (enrolmentStoreProxyConnector: EnrolmentStoreProxyConnector)(implicit
+  ec: ExecutionContext
+) {
 
   private val activatedState = "Activated"
-  private val logger         = Logger(this.getClass)
 
   def enrolmentsForGroup(groupId: GroupId)(implicit hc: HeaderCarrier): Future[List[EnrolmentResponse]] =
-    sessionCache.groupEnrolment flatMap {
-      case Some(value) => Future.successful(value)
-      case None =>
-        for {
-          groupEnrolments <- enrolmentStoreProxyConnector
-            .getEnrolmentByGroupId(groupId.id)
-            .map(_.enrolments)
-            .map(enrolment => enrolment.filter(x => x.state == activatedState))
-        } yield {
-          if (groupEnrolments.nonEmpty)
-            sessionCache.saveGroupEnrolment(groupEnrolments).map(
-              successfulWrite =>
-                if (!successfulWrite)
-                  logger.debug("GroupEnrolment details retrieved successfully and saved into cache")
-            )
-          groupEnrolments
-        }
-    }
+    enrolmentStoreProxyConnector
+      .getEnrolmentByGroupId(groupId.id)
+      .map(_.enrolments)
+      .map(enrolment => enrolment.filter(x => x.state == activatedState))
 
 }
