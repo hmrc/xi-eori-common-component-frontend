@@ -29,17 +29,23 @@ class SicCodeViewSpec extends ViewSpec {
   private val formProvider            = new SicCodeFormProvider
   private def form                    = formProvider.apply()
   private def formWithNoDataError     = form.bind(Map("sic" -> ""))
+  private def formWithSpaceDataError  = form.bind(Map("sic" -> "  "))
   private def formWithNonNumericError = form.bind(Map("sic" -> "asdf."))
-  private def formWithLengthError     = form.bind(Map("sic" -> "123456"))
+  private def formWithMaxLenError     = form.bind(Map("sic" -> "123456"))
+  private def formWithMinLenError     = form.bind(Map("sic" -> "1234"))
   private val sicCodeView             = instanceOf[sic_code].apply(form)
   private val sicCodeViewError        = instanceOf[sic_code].apply(formWithNoDataError)
+  private val sicCodeViewSpaceError   = instanceOf[sic_code].apply(formWithSpaceDataError)
   private val sicCodeViewDataError    = instanceOf[sic_code].apply(formWithNonNumericError)
-  private val sicCodeViewLengthError  = instanceOf[sic_code].apply(formWithLengthError)
+  private val sicCodeViewMaxLenError  = instanceOf[sic_code].apply(formWithMaxLenError)
+  private val sicCodeViewMinLenError  = instanceOf[sic_code].apply(formWithMinLenError)
 
   private lazy val sicCodeDoc: Document                = Jsoup.parse(contentAsString(sicCodeView))
   private lazy val sicCodeDocWithError: Document       = Jsoup.parse(contentAsString(sicCodeViewError))
+  private lazy val sicCodeDocWithSpaceError: Document  = Jsoup.parse(contentAsString(sicCodeViewSpaceError))
   private lazy val sicCodeDocWithDataError: Document   = Jsoup.parse(contentAsString(sicCodeViewDataError))
-  private lazy val sicCodeDocWithLengthError: Document = Jsoup.parse(contentAsString(sicCodeViewLengthError))
+  private lazy val sicCodeDocWithMaxLenError: Document = Jsoup.parse(contentAsString(sicCodeViewMaxLenError))
+  private lazy val sicCodeDocWithMinLenError: Document = Jsoup.parse(contentAsString(sicCodeViewMinLenError))
 
   "SIC Code page" should {
 
@@ -56,13 +62,23 @@ class SicCodeViewSpec extends ViewSpec {
         .text mustBe "Enter a SIC code"
     }
 
+    "display errors while space data is submitted" in {
+      sicCodeDocWithSpaceError.body.getElementsByClass("govuk-list govuk-error-summary__list").get(0)
+        .text mustBe "Enter a SIC code"
+    }
+
     "display errors while non-numeric data is submitted" in {
       sicCodeDocWithDataError.body.getElementsByClass("govuk-list govuk-error-summary__list").get(0)
         .text mustBe "Only numerical characters are accepted"
     }
 
-    "display errors while data length not 5 digits " in {
-      sicCodeDocWithLengthError.body.getElementsByClass("govuk-list govuk-error-summary__list").get(0)
+    "display errors while data length greater than 5 digits " in {
+      sicCodeDocWithMaxLenError.body.getElementsByClass("govuk-list govuk-error-summary__list").get(0)
+        .text mustBe "Your SIC Code is limited to 5 numerical characters only"
+    }
+
+    "display errors while data length less than 5 digits " in {
+      sicCodeDocWithMinLenError.body.getElementsByClass("govuk-list govuk-error-summary__list").get(0)
         .text mustBe "Your SIC Code is limited to 5 numerical characters only"
     }
 
