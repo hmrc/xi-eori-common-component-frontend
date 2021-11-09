@@ -63,18 +63,14 @@ class ErrorHandler @Inject() (
 
     exception match {
       case sessionTimeOut: SessionTimeOutException =>
-        // $COVERAGE-OFF$Loggers
         logger.info("Session time out: " + sessionTimeOut.errorMessage, exception)
-        // $COVERAGE-ON
         Future.successful(
           Redirect(
             uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.timeout()
           ).withNewSession
         )
       case _ =>
-        // $COVERAGE-OFF$Loggers
         logger.error("Internal server error: " + exception.getMessage, exception)
-        // $COVERAGE-ON
         Future.successful(Results.InternalServerError(errorTemplate()))
     }
   }

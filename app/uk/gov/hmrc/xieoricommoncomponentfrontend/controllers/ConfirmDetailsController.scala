@@ -59,7 +59,7 @@ class ConfirmDetailsController @Inject() (
           case Some(gbEori) =>
             subscriptionDisplayService.getSubscriptionDisplay(gbEori).map {
               case Right(response) =>
-                Ok(confirmDetailsView(form, ConfirmDetailsViewModel(response, loggedInUser.affinityGroup.get)))
+                Ok(confirmDetailsView(form, ConfirmDetailsViewModel(response, loggedInUser.userAffinity())))
               case Left(_) => InternalServerError(errorTemplateView())
             }
           case None => Future.successful(InternalServerError(errorTemplateView()))
@@ -78,10 +78,7 @@ class ConfirmDetailsController @Inject() (
                 subscriptionDisplayService.getSubscriptionDisplay(gbEori).map {
                   case Right(response) =>
                     BadRequest(
-                      confirmDetailsView(
-                        formWithErrors,
-                        ConfirmDetailsViewModel(response, loggedInUser.affinityGroup.get)
-                      )
+                      confirmDetailsView(formWithErrors, ConfirmDetailsViewModel(response, loggedInUser.userAffinity()))
                     )
                   case Left(_) => InternalServerError(errorTemplateView())
                 }

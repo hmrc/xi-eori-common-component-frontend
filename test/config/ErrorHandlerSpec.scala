@@ -69,35 +69,5 @@ class ErrorHandlerSpec extends BaseSpec with ScalaFutures {
       status(result) shouldBe INTERNAL_SERVER_ERROR
       page.title should startWith("Something went wrong. Please try again later.")
     }
-
-    /*
-
-
-        "Redirect to the notfound page on 404 error with InvalidPathParameter" in {
-          whenReady(
-            errorHandler.onClientError(mockRequest, statusCode = BAD_REQUEST, message = Constants.INVALID_PATH_PARAM)
-          ) { result =>
-            val page = RegistrationPage(contentAsString(result))
-
-            result.header.status shouldBe NOT_FOUND
-            page.title should startWith("Page not found")
-          }
-        }
-
-        "Redirect to the InternalErrorPage page on 500 error" in {
-          whenReady(errorHandler.onClientError(mockRequest, statusCode = INTERNAL_SERVER_ERROR)) { result =>
-            val page = RegistrationPage(contentAsString(result))
-
-            result.header.status shouldBe INTERNAL_SERVER_ERROR
-            page.title should startWith("Something went wrong. Please try again later.")
-          }
-        }
-
-        "throw exception for unused method" in {
-
-          intercept[IllegalStateException] {
-            errorHandler.standardErrorTemplate("", "", "")(FakeRequest())
-          }
-        }*/
   }
 }
