@@ -18,6 +18,7 @@ package controllers
 
 import common.pages.RegistrationPage
 import play.api.test.Helpers._
+import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.DisclosePersonalDetails
 import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
@@ -25,7 +26,6 @@ import util.builders.SessionBuilder
 
 class DisclosePersonalDetailsControllerSpec extends BaseSpec {
 
-  val paragraphXpath = "//*[@id='para1']"
   "Disclose Personal Details controller" should {
     "return OK and the correct view for a GET" in {
 
@@ -44,9 +44,10 @@ class DisclosePersonalDetailsControllerSpec extends BaseSpec {
         page.title should startWith("Do you want to include the name and address on the EORI checker?")
       }
     }
-    "redirect to the next page when valid data is submitted" in {
+
+    "redirect to the next page when Organisation group with valid data is submitted" in {
       running(application) {
-        withAuthorisedUser(defaultUserId, mockAuthConnector)
+        withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Organisation)
 
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
@@ -64,8 +65,27 @@ class DisclosePersonalDetailsControllerSpec extends BaseSpec {
 
     }
 
-    "return a Bad Request and errors when invalid data is submitted" in {
+    "redirect to the next page when Affinity group is individual" in {
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Individual)
 
+        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
+          "POST",
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.submit().url,
+          defaultUserId,
+          Map("value" -> DisclosePersonalDetails.values.head.toString)
+        )
+
+        val result = route(application, request).get
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(
+          result
+        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded().url
+
+      }
+    }
+
+    "return a Bad Request and errors when invalid data is submitted" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
@@ -83,6 +103,5 @@ class DisclosePersonalDetailsControllerSpec extends BaseSpec {
         page.errors should startWith("Tell us if you want to include the name and address on the EORI checker")
       }
     }
-
   }
 }

@@ -23,9 +23,8 @@
 @this(main_template: Layout, appConfig: AppConfig, formHelper: FormWithCSRF,govukButton: GovukButton, inputText: components.inputText, errorSummary: components.errorSummary)
 @(sicCodeForm: Form[SicCode])(implicit messages: Messages, request: Request[_])
 @title = @{
-messages("sicCode.page.title")
+    messages("sicCode.page.title")
 }
-
 
     @main_template(title,form = Some(sicCodeForm)) {
 
@@ -40,8 +39,11 @@ messages("sicCode.page.title")
        <div id="sic-hint" class="govuk-hint">
            @Html(messages("sicCode.hint"))
        </div>
-       <p class="govuk-body" id="linktosic">@Html(messages("sicCode.details.link"))</p>
-       <p class="govuk-body" id="description">@Html(messages("sicCode.details.desc"))</p>
+
+       <p class="govuk-body" id="link-to-sic"><a href="https://www.gov.uk/get-information-about-a-company" class="govuk-link" target="_blank" rel="noopener noreferrer">@Html(messages("sicCode.details.link"))</a>.</p>
+
+       <p class="govuk-body" id="description">@Html(messages("sicCode.details.desc"))
+           <a href="https://resources.companieshouse.gov.uk/sic/" class="govuk-link" target="_blank" rel="noopener noreferrer">@Html(messages("sicCode.details.desc.link"))</a></p>
 
         @inputText(
             form = sicCodeForm,

@@ -23,6 +23,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.DisclosePersonalDetailsFormProvider
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.DisclosePersonalDetails
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.DisclosePersonalDetails.{No, Yes}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.disclose_personal_details
 
 import javax.inject.Inject
@@ -49,17 +51,25 @@ class DisclosePersonalDetailsController @Inject() (
       form.bindFromRequest.fold(
         invalidForm => Future.successful(BadRequest(disclosePersonalDetailsView(invalidForm))),
         value =>
-          if (loggedInUser.affinityGroup.get equals AffinityGroup.Organisation)
-            Future.successful(
-              Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.onPageLoad())
-            )
-          else
-            Future.successful(
-              Redirect(
-                uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded()
+          loggedInUser.affinityGroup match {
+            case Some(AffinityGroup.Organisation) =>
+              Future.successful(destinationsByAnswer(value))
+            case _ =>
+              Future.successful(
+                Redirect(
+                  uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded()
+                )
               )
-            )
+          }
       )
+    }
+
+  private def destinationsByAnswer(disclosePersonalDetails: DisclosePersonalDetails): Result =
+    disclosePersonalDetails match {
+      case Yes =>
+        Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.onPageLoad())
+      case No =>
+        Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.onPageLoad())
     }
 
 }
