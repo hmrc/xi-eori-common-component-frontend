@@ -108,17 +108,5 @@ class SubscriptionDisplayServiceSpec extends WordSpec with BeforeAndAfter with M
       }
     }
 
-    /*  "exclude non-active enrolments for the groupId" in {
-      when(
-        mockEnrolmentStoreProxyConnector
-          .getEnrolmentByGroupId(any[String])(meq(headerCarrier), any())
-      ).thenReturn(Future.successful(EnrolmentStoreProxyResponse(List(enrolmentResponse, enrolmentResponseNotActive))))
-      running(application) {
-
-        await(service.enrolmentsForGroup(groupId)) shouldBe List(enrolmentResponse)
-
-        verify(mockEnrolmentStoreProxyConnector).getEnrolmentByGroupId(any[String])(meq(headerCarrier), any())
-      }
-    }*/
   }
 }

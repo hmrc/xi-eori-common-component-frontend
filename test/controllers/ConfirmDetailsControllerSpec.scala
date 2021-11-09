@@ -23,15 +23,10 @@ import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.SubscriptionDisplayConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, KeyValue}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ConfirmDetails._
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
-  EstablishmentAddress,
-  ServiceUnavailableResponse,
-  SubscriptionDisplayResponseDetail
-}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, ServiceUnavailableResponse, SubscriptionDisplayResponseDetail}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.SubscriptionDisplayService
 import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser

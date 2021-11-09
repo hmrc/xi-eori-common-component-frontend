@@ -25,7 +25,7 @@ import uk.gov.hmrc.cache.repository.CacheMongoRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.CachedData._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
-import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, Eori}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.Eori
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.SubscriptionDisplayMongo
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, SubscriptionDisplayResponseDetail}
 
