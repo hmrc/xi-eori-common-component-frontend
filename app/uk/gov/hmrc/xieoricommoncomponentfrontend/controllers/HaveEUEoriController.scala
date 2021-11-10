@@ -24,7 +24,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{
   EnrolmentExtractor,
   GroupEnrolmentExtractor
 }
-import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{ExistingEori, LoggedInUserWithEnrolments}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.HaveEUEoriFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.HaveEUEori
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.have_eu_eori
@@ -64,13 +64,13 @@ class HaveEUEoriController @Inject() (
                   )
                 )
               case HaveEUEori.No =>
-                groupEnrolment.existingEori(loggedInUser).map(destinationsByExistingEori(_))
+                groupEnrolment.getEori(loggedInUser).map(destinationsByExistingEori(_))
             }
         )
 
   }
 
-  private def destinationsByExistingEori(existingEori: Option[ExistingEori]): Result = existingEori match {
+  private def destinationsByExistingEori(existingEori: Option[String]): Result = existingEori match {
     case Some(_) =>
       Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad())
     case None =>

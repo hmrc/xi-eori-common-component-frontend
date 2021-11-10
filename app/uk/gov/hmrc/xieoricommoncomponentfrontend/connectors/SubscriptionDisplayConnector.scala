@@ -49,7 +49,6 @@ class SubscriptionDisplayConnector @Inject() (http: HttpClient, appConfig: AppCo
       // $COVERAGE-OFF$Loggers
       logger.debug("SubscriptionDisplay SUB09 details retrieved successfully")
       // $COVERAGE-ON
-
       Right(resp)
     }
   } recover {

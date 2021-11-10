@@ -23,7 +23,6 @@ import util.BaseSpec
 
 class EnrolmentExtractorSpec extends BaseSpec {
 
-  private val eori = Eori("GB123456789012")
   private val utr  = Utr("1111111111K")
   private val nino = Nino("NINO")
 
@@ -94,49 +93,5 @@ class EnrolmentExtractorSpec extends BaseSpec {
       }
     }
 
-    "return existing EORI for user and/or group" when {
-
-      "user has enrolment with an EORI" in {
-
-        val userEnrolments                           = Set(Enrolment("HMRC-TEST-ORG").withIdentifier("EORINumber", eori.id))
-        val groupEnrolments: List[EnrolmentResponse] = List.empty
-
-        val result = enrolmentExtractor.existingEoriForUserOrGroup(userEnrolments, groupEnrolments)
-
-        result shouldBe Some(ExistingEori(eori.id, "HMRC-TEST-ORG"))
-      }
-
-      "user's group has enrolment with an EORI" in {
-
-        val userEnrolments = Set(Enrolment("HMRC-NI").withIdentifier("NINO", nino.id))
-        val groupEnrolments: List[EnrolmentResponse] =
-          List(EnrolmentResponse("HMRC-GROUP-ORG", "Active", List(KeyValue("EORINumber", eori.id))))
-
-        val result = enrolmentExtractor.existingEoriForUserOrGroup(userEnrolments, groupEnrolments)
-
-        result shouldBe Some(ExistingEori(eori.id, "HMRC-GROUP-ORG"))
-      }
-
-      "user has no enrolment with EORI nor group enrolment with EORI" in {
-
-        val userEnrolments = Set(Enrolment("HMRC-NI").withIdentifier("NINO", nino.id))
-        val groupEnrolments =
-          List(EnrolmentResponse("HMRC-GROUP-ORG", "Active", List(KeyValue("OtherIdentifierKey", "SomeValue"))))
-
-        val result = enrolmentExtractor.existingEoriForUserOrGroup(userEnrolments, groupEnrolments)
-
-        result shouldBe None
-      }
-
-      "user enrolments or group enrolments" in {
-
-        val userEnrolments: Set[Enrolment]           = Set.empty
-        val groupEnrolments: List[EnrolmentResponse] = List.empty
-
-        val result = enrolmentExtractor.existingEoriForUserOrGroup(userEnrolments, groupEnrolments)
-
-        result shouldBe None
-      }
-    }
   }
 }

@@ -18,26 +18,30 @@ package services
 
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito._
-import org.scalatest.BeforeAndAfter
+import org.scalatest.{BeforeAndAfter, Matchers, WordSpec}
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.{await, defaultAwaitTimeout, running}
 import play.api.{inject, Application}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.EnrolmentStoreProxyConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.EnrolmentStoreProxyService
-import util.BaseSpec
 
 import scala.concurrent.Future
 
-class EnrolmentStoreProxyServiceSpec extends BaseSpec with BeforeAndAfter {
+class EnrolmentStoreProxyServiceSpec extends WordSpec with BeforeAndAfter with MockitoSugar with Matchers {
 
   private val mockEnrolmentStoreProxyConnector =
     mock[EnrolmentStoreProxyConnector]
 
-  override val application: Application =
+  private val mockSessionCache = mock[SessionCache]
+
+  val application: Application =
     new GuiceApplicationBuilder().overrides(
-      inject.bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
+      inject.bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector),
+      inject.bind[SessionCache].toInstance(mockSessionCache)
     ).configure("metrics.jvm" -> false, "metrics.enabled" -> false)
       .build()
 
@@ -86,6 +90,7 @@ class EnrolmentStoreProxyServiceSpec extends BaseSpec with BeforeAndAfter {
         mockEnrolmentStoreProxyConnector
           .getEnrolmentByGroupId(any[String])(meq(headerCarrier), any())
       ).thenReturn(Future.successful(EnrolmentStoreProxyResponse(List(enrolmentResponse, enrolmentResponseNotActive))))
+
       running(application) {
 
         await(service.enrolmentsForGroup(groupId)) shouldBe List(enrolmentResponse)

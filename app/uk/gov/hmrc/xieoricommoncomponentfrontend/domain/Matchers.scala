@@ -28,32 +28,6 @@ case class Eori(override val id: String) extends CustomsId
 
 case class Nino(override val id: String) extends CustomsId
 
-case class SafeId(override val id: String) extends CustomsId
-
-case class TaxPayerId(override val id: String) extends CustomsId {
-  private val MDGTaxPayerIdLength = 42
-  val mdgTaxPayerId: String       = id + "0" * (MDGTaxPayerIdLength - id.length)
-}
-
-object TaxPayerId {
-  implicit val format = Json.format[TaxPayerId]
-}
-
-object SafeId {
-  implicit val format                                = Json.format[SafeId]
-  implicit def toJsonFormat(safeId: SafeId): JsValue = Json.toJson(safeId)
-}
-
-case class InternalId(id: String)
-
-object InternalId {
-
-  def apply(id: Option[String]): InternalId =
-    new InternalId(id.getOrElse(throw new IllegalArgumentException("InternalId is missing")))
-
-  implicit val format = Json.format[InternalId]
-}
-
 case class GroupId(id: String)
 
 object GroupId {
@@ -65,19 +39,11 @@ object GroupId {
 }
 
 object CustomsId {
-  private val utr        = "utr"
-  private val eori       = "eori"
-  private val nino       = "nino"
-  private val safeId     = "safeId"
-  private val taxPayerId = "taxPayerId"
+  private val utr  = "utr"
+  private val eori = "eori"
+  private val nino = "nino"
 
-  private val idTypeMapping = Map[String, String => CustomsId](
-    utr        -> Utr,
-    eori       -> Eori,
-    nino       -> Nino,
-    safeId     -> (s => SafeId(s)),
-    taxPayerId -> (s => TaxPayerId(s))
-  )
+  private val idTypeMapping = Map[String, String => CustomsId](utr -> Utr, eori -> Eori, nino -> Nino)
 
   implicit val formats = Format[CustomsId](
     fjs = Reads { js =>
@@ -88,31 +54,19 @@ object CustomsId {
         .fold[JsResult[CustomsId]](JsError("No matching id type and value found"))(customsId => JsSuccess(customsId))
     },
     tjs = Writes {
-      case Utr(id)        => Json.obj(utr -> id)
-      case Eori(id)       => Json.obj(eori -> id)
-      case Nino(id)       => Json.obj(nino -> id)
-      case SafeId(id)     => Json.obj(safeId -> id)
-      case TaxPayerId(id) => Json.obj(taxPayerId -> id)
+      case Utr(id)  => Json.obj(utr -> id)
+      case Eori(id) => Json.obj(eori -> id)
+      case Nino(id) => Json.obj(nino -> id)
+
     }
   )
 
   def apply(idType: String, idNumber: String): CustomsId =
     idType match {
-      case "NINO"   => Nino(idNumber)
-      case "UTR"    => Utr(idNumber)
-      case "EORI"   => Eori(idNumber)
-      case "SAFEID" => SafeId(idNumber)
-      case _        => throw new IllegalArgumentException(s"Unknown Identifier $idType")
+      case "NINO" => Nino(idNumber)
+      case "UTR"  => Utr(idNumber)
+      case "EORI" => Eori(idNumber)
+      case _      => throw new IllegalArgumentException(s"Unknown Identifier $idType")
     }
-
-}
-
-case class ExistingEori(id: String, enrolmentKey: String)
-
-object ExistingEori {
-  implicit val jsonFormat = Json.format[ExistingEori]
-
-  def apply(id: Option[String], enrolmentKey: String): ExistingEori =
-    new ExistingEori(id.getOrElse(throw new IllegalArgumentException("EORI is missing")), enrolmentKey)
 
 }
