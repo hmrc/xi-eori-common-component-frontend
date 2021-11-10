@@ -18,6 +18,7 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
@@ -45,25 +46,30 @@ class DisclosePersonalDetailsController @Inject() (
         Future.successful(Ok(disclosePersonalDetailsView(form)))
     }
 
-  def submit: Action[AnyContent] = Action { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => BadRequest(disclosePersonalDetailsView(formWithErrors)),
-        value => destinationsByAnswer(value)
+  def submit: Action[AnyContent] =
+    authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => loggedInUser: LoggedInUserWithEnrolments =>
+      form.bindFromRequest.fold(
+        invalidForm => Future.successful(BadRequest(disclosePersonalDetailsView(invalidForm))),
+        value =>
+          loggedInUser.affinityGroup match {
+            case Some(AffinityGroup.Organisation) =>
+              Future.successful(destinationsByAnswer(value))
+            case _ =>
+              Future.successful(
+                Redirect(
+                  uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded()
+                )
+              )
+          }
       )
-  }
+    }
 
   private def destinationsByAnswer(disclosePersonalDetails: DisclosePersonalDetails): Result =
     disclosePersonalDetails match {
       case Yes =>
-        Redirect(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.YouAlreadyHaveEoriController.eoriAlreadyExists()
-        )
+        Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.onPageLoad())
       case No =>
-        Redirect(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.YouAlreadyHaveEoriController.eoriAlreadyExists()
-        )
+        Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.onPageLoad())
     }
 
 }

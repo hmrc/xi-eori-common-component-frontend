@@ -40,3 +40,7 @@ GET        /incorrect-data-held                      @uk.gov.hmrc.xieoricommonco
 
 #xi-vat-register
 GET        /xi-vat                             @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.XiVatRegisterController.onPageLoad
+
+#xi-vat-register
+GET        /sic-code                            @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.SicCodeController.onPageLoad
+POST       /sic-code                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.SicCodeController.submit

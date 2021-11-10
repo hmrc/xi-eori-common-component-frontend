@@ -18,22 +18,20 @@ package controllers
 
 import common.pages.RegistrationPage
 import play.api.test.Helpers._
-import uk.gov.hmrc.auth.core.AffinityGroup
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.DisclosePersonalDetails
 import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
 
-class DisclosePersonalDetailsControllerSpec extends BaseSpec {
+class SicCodeControllerSpec extends BaseSpec {
 
-  "Disclose Personal Details controller" should {
+  "SicCode controller" should {
     "return OK and the correct view for a GET" in {
 
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.onPageLoad().url,
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.onPageLoad().url,
           defaultUserId
         )
 
@@ -41,39 +39,18 @@ class DisclosePersonalDetailsControllerSpec extends BaseSpec {
 
         val page = RegistrationPage(contentAsString(result))
 
-        page.title should startWith("Do you want to include the name and address on the EORI checker?")
+        page.title should startWith("What is your Standard Industrial Classification (SIC) code?")
       }
     }
-
-    "redirect to the next page when Organisation group with valid data is submitted" in {
+    "redirect to EoriNotNeeded Page when Sic Code is entered" in {
       running(application) {
-        withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Organisation)
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
 
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.submit().url,
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.submit().url,
           defaultUserId,
-          Map("value" -> DisclosePersonalDetails.values.head.toString)
-        )
-
-        val result = route(application, request).get
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(
-          result
-        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.onPageLoad().url
-      }
-
-    }
-
-    "redirect to the next page when Affinity group is individual" in {
-      running(application) {
-        withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Individual)
-
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.submit().url,
-          defaultUserId,
-          Map("value" -> DisclosePersonalDetails.values.head.toString)
+          Map("sic" -> "12345")
         )
 
         val result = route(application, request).get
@@ -81,27 +58,29 @@ class DisclosePersonalDetailsControllerSpec extends BaseSpec {
         redirectLocation(
           result
         ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded().url
-
       }
+
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
+
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.submit().url,
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.submit().url,
           defaultUserId,
-          Map("value" -> "")
+          Map("sic" -> "")
         )
 
         val result = route(application, request).get
         status(result) shouldBe BAD_REQUEST
 
         val page = RegistrationPage(contentAsString(result))
-        page.errors should startWith("Tell us if you want to include the name and address on the EORI checker")
+        page.errors() shouldEqual "Enter a SIC code"
       }
     }
+
   }
 }
