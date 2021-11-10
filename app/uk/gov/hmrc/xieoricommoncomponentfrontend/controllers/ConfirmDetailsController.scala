@@ -16,24 +16,23 @@
 
 package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 
-import play.api.{Configuration, Environment}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
-import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.SubscriptionDisplayConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{
   AuthAction,
   AuthRedirectSupport,
   GroupEnrolmentExtractor
 }
-import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{ExistingEori, LoggedInUserWithEnrolments}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.ConfirmDetailsFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ConfirmDetails
-import uk.gov.hmrc.xieoricommoncomponentfrontend.util.EoriUtils
+import uk.gov.hmrc.xieoricommoncomponentfrontend.services.SubscriptionDisplayService
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewModel
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.confirm_details
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.error_template
+import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{confirm_details, error_template}
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -45,34 +44,25 @@ class ConfirmDetailsController @Inject() (
   confirmDetailsView: confirm_details,
   formProvider: ConfirmDetailsFormProvider,
   mcc: MessagesControllerComponents,
-  connector: SubscriptionDisplayConnector,
-  utils: EoriUtils,
   errorTemplateView: error_template,
-  groupEnrolment: GroupEnrolmentExtractor
+  groupEnrolment: GroupEnrolmentExtractor,
+  subscriptionDisplayService: SubscriptionDisplayService
 )(implicit val ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with AuthRedirectSupport {
-
-  def buildQueryParameters(eori: Option[ExistingEori]) = {
-    val existingEori = eori.map(_.id)
-    List(
-      "EORI"                     -> existingEori.getOrElse(""),
-      "regime"                   -> "CDS",
-      "acknowledgementReference" -> utils.generateUUIDAsString
-    )
-  }
 
   private val form = formProvider()
 
   def onPageLoad: Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
       implicit request => loggedInUser: LoggedInUserWithEnrolments =>
-        for {
-          eori                <- groupEnrolment.existingEori(loggedInUser)
-          subscriptionDisplay <- connector.call(buildQueryParameters(eori))
-        } yield subscriptionDisplay match {
-          case Right(response) =>
-            Ok(confirmDetailsView(form, ConfirmDetailsViewModel(response, loggedInUser.affinityGroup.get)))
-          case Left(_) => InternalServerError(errorTemplateView())
+        groupEnrolment.getEori(loggedInUser).flatMap {
+          case Some(gbEori) =>
+            subscriptionDisplayService.getSubscriptionDisplay(gbEori).map {
+              case Right(response) =>
+                Ok(confirmDetailsView(form, ConfirmDetailsViewModel(response, loggedInUser.userAffinity())))
+              case Left(_) => InternalServerError(errorTemplateView())
+            }
+          case None => Future.successful(InternalServerError(errorTemplateView()))
         }
 
     }
@@ -83,15 +73,16 @@ class ConfirmDetailsController @Inject() (
         .bindFromRequest()
         .fold(
           formWithErrors =>
-            for {
-              eori                <- groupEnrolment.existingEori(loggedInUser)
-              subscriptionDisplay <- connector.call(buildQueryParameters(eori))
-            } yield subscriptionDisplay match {
-              case Right(response) =>
-                BadRequest(
-                  confirmDetailsView(formWithErrors, ConfirmDetailsViewModel(response, loggedInUser.affinityGroup.get))
-                )
-              case Left(_) => InternalServerError(errorTemplateView())
+            groupEnrolment.getEori(loggedInUser).flatMap {
+              case Some(gbEori) =>
+                subscriptionDisplayService.getSubscriptionDisplay(gbEori).map {
+                  case Right(response) =>
+                    BadRequest(
+                      confirmDetailsView(formWithErrors, ConfirmDetailsViewModel(response, loggedInUser.userAffinity()))
+                    )
+                  case Left(_) => InternalServerError(errorTemplateView())
+                }
+              case None => Future.successful(InternalServerError(errorTemplateView()))
             },
           value => destinationsByAnswer(value)
         )

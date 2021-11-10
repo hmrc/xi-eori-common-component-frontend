@@ -21,9 +21,11 @@ import play.api.http.Status._
 
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.MessagesApi
+import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionTimeOutException
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{client_error_template, error_template, notFound}
 
 import scala.concurrent.Future
@@ -52,6 +54,24 @@ class ErrorHandler @Inject() (
     statusCode match {
       case NOT_FOUND => Future.successful(Results.NotFound(notFoundView()))
       case _         => Future.successful(Results.InternalServerError(clientErrorTemplateView(message)))
+    }
+  }
+
+  override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
+
+    implicit val req: Request[_] = Request(request, "")
+
+    exception match {
+      case sessionTimeOut: SessionTimeOutException =>
+        logger.info("Session time out: " + sessionTimeOut.errorMessage, exception)
+        Future.successful(
+          Redirect(
+            uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.timeout()
+          ).withNewSession
+        )
+      case _ =>
+        logger.error("Internal server error: " + exception.getMessage, exception)
+        Future.successful(Results.InternalServerError(errorTemplate()))
     }
   }
 

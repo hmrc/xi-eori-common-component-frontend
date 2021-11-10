@@ -29,6 +29,11 @@ sealed trait LoggedInUser {
     case _        => throw new IllegalStateException("No internal id returned by Government Gateway.")
   }
 
+  def userAffinity(): AffinityGroup = affinityGroup match {
+    case Some(id) => id
+    case _        => throw new IllegalStateException("No affinity group returned by Government Gateway.")
+  }
+
 }
 
 case class LoggedInUserWithEnrolments(

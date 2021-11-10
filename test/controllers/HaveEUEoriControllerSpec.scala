@@ -24,7 +24,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
-import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, ExistingEori, KeyValue}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, KeyValue}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.HaveEUEori.{No, Yes}
 import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
@@ -37,8 +37,7 @@ class HaveEUEoriControllerSpec extends BaseSpec {
   private def groupEnrolment() =
     List(EnrolmentResponse("HMRC-ATAR-ORG", "Activated", List(KeyValue("EORINumber", "GB123456463324"))))
 
-  private def existingEori() =
-    Some(ExistingEori("XIE9XSDF10BCKEYAX", "HMRC-ATAR-ORG"))
+  val existingEori = Some("XIE9XSDF10BCKEYAX")
 
   val mockGroupEnrolmentExtractor = mock[GroupEnrolmentExtractor]
   "HaveEUEori controller" should {
@@ -91,7 +90,7 @@ class HaveEUEoriControllerSpec extends BaseSpec {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
           .thenReturn(Future.successful(groupEnrolment))
-        when(mockGroupEnrolmentExtractor.existingEori(any())(any()))
+        when(mockGroupEnrolmentExtractor.getEori(any())(any()))
           .thenReturn(Future.successful(existingEori))
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",

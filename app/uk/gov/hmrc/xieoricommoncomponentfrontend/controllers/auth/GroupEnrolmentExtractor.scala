@@ -16,32 +16,51 @@
 
 package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth
 
+import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{
-  EnrolmentResponse,
-  ExistingEori,
-  GroupId,
-  LoggedInUserWithEnrolments
-}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
+import uk.gov.hmrc.xieoricommoncomponentfrontend.domain._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.EnrolmentStoreProxyService
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class GroupEnrolmentExtractor @Inject() (enrolmentStoreProxyService: EnrolmentStoreProxyService)(implicit
-  val ec: ExecutionContext
-) extends EnrolmentExtractor {
+class GroupEnrolmentExtractor @Inject() (
+  enrolmentStoreProxyService: EnrolmentStoreProxyService,
+  sessionCache: SessionCache
+)(implicit val ec: ExecutionContext) {
+  private val EoriIdentifier: String = "EORINumber"
 
-  def groupIdEnrolments(groupId: String)(implicit hc: HeaderCarrier): Future[List[EnrolmentResponse]] =
-    enrolmentStoreProxyService.enrolmentsForGroup(GroupId(groupId))
+  def groupIdEnrolments(groupId: GroupId)(implicit hc: HeaderCarrier): Future[List[EnrolmentResponse]] =
+    enrolmentStoreProxyService.enrolmentsForGroup(groupId)
 
-  def existingEori(
-    user: LoggedInUserWithEnrolments
-  )(implicit headerCarrier: HeaderCarrier): Future[Option[ExistingEori]] =
-    groupIdEnrolments(user.groupId.getOrElse(throw MissingGroupId())).map {
-      groupEnrolments =>
-        existingEoriForUserOrGroup(user.enrolments.enrolments, groupEnrolments)
+  def getEori(user: LoggedInUserWithEnrolments)(implicit headerCarrier: HeaderCarrier): Future[Option[String]] =
+    sessionCache.eori flatMap {
+      case Some(value) => Future.successful(Some(value))
+      case None =>
+        existingEoriForUser(user.enrolments.enrolments) match {
+          case Some(eori) =>
+            sessionCache.saveEori(Eori(eori))
+            Future.successful(Some(eori))
+          case None => existingEoriForGroup(user)
+        }
     }
+
+  def existingEoriForGroup(
+    user: LoggedInUserWithEnrolments
+  )(implicit headerCarrier: HeaderCarrier): Future[Option[String]] =
+    for {
+      groupEnrolment <- groupIdEnrolments(GroupId(user.groupId))
+      mayBeEori = groupEnrolment.find(_.eori.exists(_.nonEmpty)).flatMap(enrolment => enrolment.eori)
+    } yield {
+      if (mayBeEori.isDefined) sessionCache.saveEori(Eori(mayBeEori.get))
+      mayBeEori
+    }
+
+  def existingEoriForUser(userEnrolments: Set[Enrolment]): Option[String] = {
+    val userEnrolmentWithEori = userEnrolments.find(_.identifiers.exists(_.key == EoriIdentifier))
+    userEnrolmentWithEori.flatMap(enrolment => enrolment.getIdentifier(EoriIdentifier).map(_.value))
+  }
 
 }

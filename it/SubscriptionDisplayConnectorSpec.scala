@@ -78,6 +78,7 @@ class SubscriptionDisplayConnectorSpec extends IntegrationTestSpec with ScalaFut
         requestEori,
         requestAcknowledgementReference
       )
+
       await(connector.call(reqEori)) mustBe Right(expectedResponse)
     }
 
@@ -89,6 +90,8 @@ class SubscriptionDisplayConnectorSpec extends IntegrationTestSpec with ScalaFut
         requestAcknowledgementReference,
         returnedStatus = SERVICE_UNAVAILABLE
       )
+
+
       await(connector.call(reqTaxPayerId)) mustBe Left(ServiceUnavailableResponse)
     }
 
