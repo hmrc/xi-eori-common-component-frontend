@@ -18,6 +18,7 @@ package controllers
 
 import common.pages.RegistrationPage
 import play.api.test.Helpers._
+import uk.gov.hmrc.auth.core.AffinityGroup
 import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
@@ -42,9 +43,30 @@ class SicCodeControllerSpec extends BaseSpec {
         page.title should startWith("What is your Standard Industrial Classification (SIC) code?")
       }
     }
-    "redirect to EoriNotNeeded Page when Sic Code is entered" in {
+
+    "redirect to the next page when Organisation group with valid data is submitted" in {
       running(application) {
-        withAuthorisedUser(defaultUserId, mockAuthConnector)
+        withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Organisation)
+
+        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
+          "POST",
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.submit().url,
+          defaultUserId,
+          Map("sic" -> "12345")
+        )
+
+        val result = route(application, request).get
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(
+          result
+        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HavePBEController.onPageLoad().url
+      }
+
+    }
+
+    "redirect to the next page when Affinity group is individual" in {
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Individual)
 
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
@@ -58,8 +80,8 @@ class SicCodeControllerSpec extends BaseSpec {
         redirectLocation(
           result
         ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded().url
-      }
 
+      }
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

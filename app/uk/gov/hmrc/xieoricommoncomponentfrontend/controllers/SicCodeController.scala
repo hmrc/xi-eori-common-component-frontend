@@ -18,6 +18,7 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{AuthAction, EnrolmentExtractor}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
@@ -43,16 +44,24 @@ class SicCodeController @Inject() (
         Future.successful(Ok(sicCodeView(form)))
     }
 
-  def submit: Action[AnyContent] = Action { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => BadRequest(sicCodeView(formWithErrors)),
+  def submit: Action[AnyContent] =
+    authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => loggedInUser: LoggedInUserWithEnrolments =>
+      form.bindFromRequest.fold(
+        invalidForm => Future.successful(BadRequest(sicCodeView(invalidForm))),
         value =>
-          Redirect(
-            uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded()
-          )
+          loggedInUser.affinityGroup match {
+            case Some(AffinityGroup.Organisation) =>
+              Future.successful(
+                Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HavePBEController.onPageLoad())
+              )
+            case _ =>
+              Future.successful(
+                Redirect(
+                  uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded()
+                )
+              )
+          }
       )
-  }
+    }
 
 }
