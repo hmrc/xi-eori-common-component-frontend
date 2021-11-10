@@ -374,3 +374,10 @@ disclosePersonalDetails.yes=Yes - I want to help identify my shipments quickly t
 disclosePersonalDetails.no=No - Just show my EORI number
 disclosePersonalDetails.hint=<br>HMRC adds your XI EORI number to a <a href="https://ec.europa.eu/taxation_customs/dds2/eos/eori_validation.jsp?Lang=en" class="govuk-link" target="_blank" rel="noopener noreferrer">public checker</a>. You can also include your or your organisation’s name and address.<br/><br/>Adding your EORI name and address to the checker will help customs and freight agents identify you and process your shipments quickly to minimise delays.
 
+#have-pbe
+havePBE.page.title=Do you have a permanent business establishment in Northern Ireland?
+havePBE.error.required=Select your public business establishment preference
+havePBE.yes=Yes
+havePBE.no=No
+havePBE.hint=This is an address where you carry out customs activities related to moving goods between Northern Ireland and England, Scotland, Wales, the Isle of Man or the Channel Islands.
+

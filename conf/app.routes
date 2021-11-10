@@ -40,3 +40,7 @@ GET        /incorrect-data-held                      @uk.gov.hmrc.xieoricommonco
 
 #xi-vat-register
 GET        /xi-vat                             @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.XiVatRegisterController.onPageLoad
+
+#have-pbe
+GET        /have-pbe                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.HavePBEController.onPageLoad
+POST       /have-pbe                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.HavePBEController.submit
