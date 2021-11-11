@@ -44,3 +44,7 @@ GET        /xi-vat                             @uk.gov.hmrc.xieoricommoncomponen
 #xi-vat-register
 GET        /sic-code                            @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.SicCodeController.onPageLoad
 POST       /sic-code                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.SicCodeController.submit
+
+#have-pbe
+GET        /have-pbe                     @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.HavePBEController.onPageLoad
+POST       /have-pbe                     @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.HavePBEController.submit
