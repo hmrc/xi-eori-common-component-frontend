@@ -53,3 +53,4 @@ POST       /pbe-postcode                      @uk.gov.hmrc.xieoricommoncomponent
 
 #registered-address
 GET        /registered-address                             @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.RegisteredAddressController.onPageLoad
+POST        /registered-address                             @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.RegisteredAddressController.submit

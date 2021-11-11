@@ -42,5 +42,4 @@ trait Constraints {
       case _                     => Valid
     })
 
-
 }

@@ -57,9 +57,8 @@ sealed case class CachedData(
     )
   }
 
-  def getAddressLookupParams(): PBEAddressLookup = {
+  def getAddressLookupParams(): PBEAddressLookup =
     addressLookupParams.getOrElse(emptyAddressLookupParams())
-  }
 
   private def throwException(name: String, sessionId: Id) =
     throw new IllegalStateException(s"$name is not cached in data for the sessionId: ${sessionId.id}")
@@ -69,11 +68,12 @@ sealed case class CachedData(
 object CachedData {
   val eoriKey                = "eori"
   val subscriptionDisplayKey = "subscriptionDisplay"
-  val addressLookupParamsKey           = "addressLookupParams"
+  val addressLookupParamsKey = "addressLookupParams"
   implicit val format        = Json.format[CachedData]
 
   def emptySubscriptionDisplay() =
     SubscriptionDisplayMongo(None, "", EstablishmentAddress("", "", None, ""), None, None, None, None, None)
+
   def emptyAddressLookupParams() = PBEAddressLookup("", None)
 
 }
@@ -105,7 +105,6 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
 
   def saveAddressLookupParams(addressLookupParams: PBEAddressLookup)(implicit hc: HeaderCarrier): Future[Unit] =
     createOrUpdate(sessionId, addressLookupParamsKey, Json.toJson(addressLookupParams)).map(_ => ())
-
 
   private def getCached[T](sessionId: Id, t: (CachedData, Id) => T): Future[Option[T]] =
     findById(sessionId.id).map {

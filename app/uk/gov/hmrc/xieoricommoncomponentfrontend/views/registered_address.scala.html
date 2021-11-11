@@ -45,7 +45,7 @@ h1: components.h1)
 
 @main_template(title,form = Some(pbeAddressResultsForm)) {
 
-    @formHelper(action = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.RegisteredAddressController.submit(), 'autoComplete -> "off") {
 
         @errorSummary(pbeAddressResultsForm.errors)
 

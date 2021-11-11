@@ -20,6 +20,7 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 
 case class PBEAddressResultsFormProvider(address: String)
+
 object PBEAddressResultsFormProvider {
 
   def form(allowedAddresses: Seq[String]): Form[PBEAddressResultsFormProvider] = Form(
@@ -29,4 +30,3 @@ object PBEAddressResultsFormProvider {
   )
 
 }
-

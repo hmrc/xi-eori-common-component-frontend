@@ -30,28 +30,25 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.registered_address
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RegisteredAddressController @Inject()(
-                                             authAction: AuthAction,
-                                             mcc: MessagesControllerComponents,
-                                             addressLookupConnector: AddressLookupConnector,
-                                             sessionCache: SessionCache,
-                                             registeredAddressView: registered_address
+class RegisteredAddressController @Inject() (
+  authAction: AuthAction,
+  mcc: MessagesControllerComponents,
+  addressLookupConnector: AddressLookupConnector,
+  sessionCache: SessionCache,
+  registeredAddressView: registered_address
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-
   def onPageLoad(): Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
-      implicit request =>
-        _: LoggedInUserWithEnrolments =>
-          displayPage()
+      implicit request => _: LoggedInUserWithEnrolments =>
+        displayPage()
     }
 
-  private def displayPage()(implicit request: Request[AnyContent]
-  ): Future[Result] =
+  private def displayPage()(implicit request: Request[AnyContent]): Future[Result] =
     sessionCache.addressLookupParams.flatMap {
       case Some(addressLookupParams) =>
-        addressLookupConnector.lookup("BT274RL", Some("Civic Headquarters")).flatMap { response =>
+        addressLookupConnector.lookup(addressLookupParams.postcode, addressLookupParams.line1).flatMap { response =>
           response match {
             case AddressLookupSuccess(addresses) if addresses.nonEmpty && addresses.forall(_.nonEmpty) =>
               Future.successful(
@@ -67,11 +64,57 @@ class RegisteredAddressController @Inject()(
             case AddressLookupFailure => throw AddressLookupException
           }
         }.recoverWith {
-          case _: AddressLookupException.type => Future.successful(Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.onPageLoad()))
+          case _: AddressLookupException.type =>
+            Future.successful(
+              Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.onPageLoad())
+            )
         }
-      case _ => Future.successful(Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEAddressLookupController.onPageLoad()))
+      case _ =>
+        Future.successful(
+          Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEAddressLookupController.onPageLoad())
+        )
+    }
+
+  def submit(): Action[AnyContent] =
+    authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => _: LoggedInUserWithEnrolments =>
+      sessionCache.addressLookupParams.flatMap {
+        case Some(addressLookupParams) =>
+          addressLookupConnector.lookup(addressLookupParams.postcode, addressLookupParams.line1).flatMap { response =>
+            response match {
+              case AddressLookupSuccess(addresses) if addresses.nonEmpty && addresses.forall(_.nonEmpty) =>
+                val addressesMap  = addresses.map(address => address.dropDownView -> address).toMap
+                val addressesView = addressesMap.keys.toSeq
+
+                PBEAddressResultsFormProvider.form(addressesView).bindFromRequest.fold(
+                  formWithErrors =>
+                    Future.successful(
+                      BadRequest(registeredAddressView(formWithErrors, addressLookupParams, addresses))
+                    ),
+                  validAnswer =>
+                    Future.successful(
+                      Redirect(
+                        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad()
+                      )
+                    )
+                )
+              case AddressLookupFailure => throw AddressLookupException
+            }
+          }.recoverWith {
+            case _: AddressLookupException.type =>
+              Future.successful(
+                Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.onPageLoad())
+              )
+          }
+        case _ =>
+          Future.successful(
+            Redirect(
+              uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEAddressLookupController.onPageLoad()
+            )
+          )
+
+      }
     }
 
 }
-case object AddressLookupException extends Exception("Address Lookup service is not available")
 
+case object AddressLookupException extends Exception("Address Lookup service is not available")

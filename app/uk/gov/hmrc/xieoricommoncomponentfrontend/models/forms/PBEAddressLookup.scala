@@ -20,8 +20,8 @@ import play.api.libs.json.Json
 
 case class PBEAddressLookup(postcode: String, line1: Option[String]) {
 
-  def isEmpty(): Boolean = postcode == "" && line1.forall(_.isEmpty)
-  def nonEmpty(): Boolean = !isEmpty()
+  def isEmpty(): Boolean      = postcode == "" && line1.forall(_.isEmpty)
+  def nonEmpty(): Boolean     = !isEmpty()
   def skippedLine1(): Boolean = line1.forall(_.isEmpty)
 }
 

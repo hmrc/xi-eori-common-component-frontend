@@ -24,14 +24,17 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
 import javax.inject.Inject
 
 class PBEAddressLookupFormProvider @Inject() extends Mappings {
+
   val postcodeRegex: String =
     "^(?i)(GIR 0AA)|((([A-Z][0-9][0-9]?)|(([A-Z][A-HJ-Y][0-9][0-9]?)|(([A-Z][0-9][A-Z])|([A-Z][A-HJ-Y][0-9]?[A-Z])))) ?[0-9][A-Z]{2})$"
 
   def apply(): Form[PBEAddressLookup] =
     Form(
       mapping(
-        "postcode" -> text("pbe-address-lookup.postcode.required").verifying(regexp(postcodeRegex,"postcode.format.invalid")).verifying(postcodeLength(6,"pbe-address-lookup.postcode.length")),
-        "line1"    -> optional(text("").verifying(maxLength(36,"line1.maxlength.invalid"))),
+        "postcode" -> text("pbe-address-lookup.postcode.required").verifying(
+          regexp(postcodeRegex, "postcode.format.invalid")
+        ).verifying(postcodeLength(6, "pbe-address-lookup.postcode.length")),
+        "line1" -> optional(text("").verifying(maxLength(36, "line1.maxlength.invalid")))
       )(PBEAddressLookup.apply)(PBEAddressLookup.unapply)
     )
 

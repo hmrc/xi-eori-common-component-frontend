@@ -37,14 +37,14 @@ class PBEAddressLookupController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
   private val form = formProvider()
+
   def onPageLoad(): Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
-      implicit request =>
-        _: LoggedInUserWithEnrolments =>
-          sessionCache.addressLookupParams.map {
-            case Some(addressLookupParams) => Ok(pbeAddressLookupView(form.fill(addressLookupParams)))
-            case _ => Ok(pbeAddressLookupView(form))
-          }
+      implicit request => _: LoggedInUserWithEnrolments =>
+        sessionCache.addressLookupParams.map {
+          case Some(addressLookupParams) => Ok(pbeAddressLookupView(form.fill(addressLookupParams)))
+          case _                         => Ok(pbeAddressLookupView(form))
+        }
     }
 
   def submit(): Action[AnyContent] =
@@ -53,8 +53,11 @@ class PBEAddressLookupController @Inject() (
         formWithError => Future.successful(BadRequest(pbeAddressLookupView(formWithError))),
         validAddressParams =>
           sessionCache.saveAddressLookupParams(validAddressParams).map { _ =>
-            Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.RegisteredAddressController.onPageLoad())
+            Redirect(
+              uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.RegisteredAddressController.onPageLoad()
+            )
           }
       )
     }
+
 }

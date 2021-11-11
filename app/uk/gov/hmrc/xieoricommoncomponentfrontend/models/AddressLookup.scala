@@ -83,4 +83,3 @@ case class AddressLookupSuccess(addresses: Seq[AddressLookup]) extends AddressLo
 }
 
 case object AddressLookupFailure extends AddressLookupResponse
-

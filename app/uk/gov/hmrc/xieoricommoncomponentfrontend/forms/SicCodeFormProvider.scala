@@ -28,6 +28,7 @@ class SicCodeFormProvider @Inject() extends Mappings {
 
   protected def validSicCode: Constraint[String] =
     Constraint("sic")({
+      case s if s.trim.isEmpty               => Invalid(ValidationError("sicCode.error.required"))
       case s if !s.matches("[0-9]*")         => Invalid(ValidationError("sicCode.error.incorrect-format"))
       case s if s.length < 5 || s.length > 5 => Invalid(ValidationError("sicCode.error.length"))
       case _                                 => Valid

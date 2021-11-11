@@ -48,9 +48,6 @@ class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig
   val xiEoriCommonComponentContext: String =
     config.get[String]("microservice.services.xi-eori-common-component.context")
 
-
-
-
   private def languageKey(implicit messages: Messages) = messages.lang.language match {
     case "cy" => "cy"
     case _    => "en"
