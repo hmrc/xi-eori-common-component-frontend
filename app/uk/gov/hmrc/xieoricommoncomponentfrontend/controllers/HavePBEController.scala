@@ -38,7 +38,6 @@ class HavePBEController @Inject() (
 
   private val form = formProvider()
 
-  // Note: permitted for user with service enrolment
   def onPageLoad: Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
       implicit request => _: LoggedInUserWithEnrolments =>

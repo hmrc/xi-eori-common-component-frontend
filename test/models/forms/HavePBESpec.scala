@@ -32,8 +32,8 @@ class HavePBESpec extends WordSpec with MustMatchers with ScalaCheckPropertyChec
       val gen = Gen.oneOf(HavePBE.values)
 
       forAll(gen) {
-        tradeWithNI =>
-          JsString(tradeWithNI.toString).validate[HavePBE].asOpt.value mustEqual tradeWithNI
+        havePBE =>
+          JsString(havePBE.toString).validate[HavePBE].asOpt.value mustEqual havePBE
       }
     }
 
@@ -52,8 +52,8 @@ class HavePBESpec extends WordSpec with MustMatchers with ScalaCheckPropertyChec
       val gen = Gen.oneOf(HavePBE.values)
 
       forAll(gen) {
-        tradeWithNI =>
-          Json.toJson(tradeWithNI)(HavePBE.writes) mustEqual JsString(tradeWithNI.toString)
+        havePBE =>
+          Json.toJson(havePBE)(HavePBE.writes) mustEqual JsString(havePBE.toString)
       }
     }
   }

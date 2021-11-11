@@ -35,7 +35,7 @@ class HavePBEViewSpec extends ViewSpec {
   private lazy val havePBEDoc: Document          = Jsoup.parse(contentAsString(havePBEView))
   private lazy val havePBEDocWithError: Document = Jsoup.parse(contentAsString(havePBEViewError))
 
-  "Trade With NI page" should {
+  "Have PBE page" should {
 
     "display correct title" in {
       havePBEDoc.title must startWith("Do you have a permanent business establishment in Northern Ireland?")
