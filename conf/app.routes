@@ -3,7 +3,9 @@
 ->         /hmrc-frontend                                hmrcfrontend.Routes
 
 GET        /logout                              @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.LogoutController.logout
-GET        /assets/*file                                 controllers.Assets.versioned(path = "/public", file: Asset)
+GET        /assets/*file                                 @controllers.Assets.versioned(path = "/public", file: Asset)
+GET        /public/*file                                                          @controllers.Assets.versioned(path="/public", file: Asset)
+
 
 #security-sign-out
 GET         /display-sign-out              @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.LogoutController.displayTimeOutPage()
@@ -44,3 +46,10 @@ GET        /xi-vat                             @uk.gov.hmrc.xieoricommoncomponen
 #xi-vat-register
 GET        /sic-code                            @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.SicCodeController.onPageLoad
 POST       /sic-code                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.SicCodeController.submit
+
+#pbe-address-lookup
+GET        /pbe-postcode                             @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.PBEAddressLookupController.onPageLoad
+POST       /pbe-postcode                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.PBEAddressLookupController.submit
+
+#registered-address
+GET        /registered-address                             @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.RegisteredAddressController.onPageLoad

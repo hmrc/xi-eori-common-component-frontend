@@ -35,7 +35,7 @@ class SubscriptionDisplayConnector @Inject() (http: HttpClient, appConfig: AppCo
   private val logger = Logger(this.getClass)
 
   private val url =
-    s"${appConfig.subscriptionDisplayBaseUrl}/${appConfig.subscriptionDisplayServiceContext}/subscription-display"
+    s"${appConfig.xiEoriCommonComponentBaseUrl}/${appConfig.xiEoriCommonComponentContext}/subscription-display"
 
   def call(
     sub09Request: Seq[(String, String)]

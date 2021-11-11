@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.xieoricommoncomponentfrontend.forms.mappings
+package uk.gov.hmrc.xieoricommoncomponentfrontend.models
 
-import play.api.data.FieldMapping
-import play.api.data.Forms._
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.Enumerable
+import play.api.libs.json.Json
 
-trait Mappings extends Formatters  with Constraints {
-  protected def text(errorKey: String = "error.required"): FieldMapping[String] =
-    of(stringFormatter(errorKey))
+case class AddressDetails(street: String, city: String, postcode: Option[String], countryCode: String)
 
-  protected def enumerable[A](requiredKey: String = "error.required", invalidKey: String = "error.invalid")(implicit
-    ev: Enumerable[A]
-  ): FieldMapping[A] =
-    of(enumerableFormatter[A](requiredKey, invalidKey))
-
+object AddressDetails {
+  implicit val jsonFormat = Json.format[AddressDetails]
 }
