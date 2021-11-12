@@ -34,7 +34,7 @@ govukSummaryList : GovukSummaryList,
 h1: components.h1)
 @(pbeAddressResultsForm: Form[PBEAddressResultsFormProvider],addressLookupParams: PBEAddressLookup,addresses: Seq[AddressLookup])(implicit messages: Messages, request: Request[_])
 @title = @{
-    messages("pbe-address-lookup.page.title")
+    messages("registered-address.page.title")
 }
     @propertyName = @{
       addressLookupParams.line1 match {
@@ -65,7 +65,7 @@ h1: components.h1)
                             )
                         ),
                         classes = "review-tbl__postcode_change"
-                    ))),
+                    )), classes="review-tbl__postcode"),
                     SummaryListRow(
                         key = Key(content = Text(messages("registered-address.page.property-name.label")),classes = "govuk-!-width-one-half propertyName"),
                         value = Value(content = HtmlContent(Html(propertyName))),
@@ -77,8 +77,8 @@ h1: components.h1)
                                     visuallyHiddenText = Some(messages("ecc.form.change") + " " + messages("confirmDetails.company-name.label"))
                                 )
                             ),
-                            classes = "review-tbl__postcode_change"
-                        )))
+                            classes = "review-tbl__line1_change"
+                        )),classes = "review-tbl__line1")
                 ),"govuk-!-margin-bottom-9 govuk-summary-list--wide",attributes = Map("id"->"details")))
         </div>
         <div class="govuk-!-margin-bottom-2 govuk-!-width-one-half">

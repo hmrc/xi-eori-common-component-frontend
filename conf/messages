@@ -133,6 +133,7 @@ registered-address.page.title=What is your registered company address?
 registered-address.page.cannot-find-address= I can''t find my address in the list
 registered-address.page.postcode.label=Postcode
 registered-address.page.property-name.label= Property name or number
+registered-address.page.address.required= Select you address from the list
 
 #======================================
 # Countries

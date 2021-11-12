@@ -23,7 +23,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.AddressLookupConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
-import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.PBEAddressResultsFormProvider
+import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.{PBEAddressLookupFormProvider, PBEAddressResultsFormProvider}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{AddressLookupFailure, AddressLookupSuccess}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.registered_address
 

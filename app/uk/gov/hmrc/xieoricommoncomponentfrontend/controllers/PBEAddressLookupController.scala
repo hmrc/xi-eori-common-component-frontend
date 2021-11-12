@@ -22,7 +22,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
-import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.{PBEAddressLookupFormProvider, TradeWithNIFormProvider}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.PBEAddressLookupFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.pbe_address_lookup
 
 import javax.inject.Inject

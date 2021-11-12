@@ -24,6 +24,7 @@ import uk.gov.hmrc.mongo.{MongoConnector, MongoSpecSupport}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.{CachedData, SessionCache, SessionTimeOutException}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, Eori, KeyValue}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, SubscriptionDisplayResponseDetail, SubscriptionInfoVatId}
 
 import java.time.LocalDate
@@ -51,6 +52,8 @@ class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoS
     Some(LocalDate.of(1963, 4, 1)),
     Some("XIE9XSDF10BCKEYAX")
   )
+
+  val addressLookupParams = PBEAddressLookup("SE28 1AA", None)
 
   val eori = Eori("GB123456463324")
 
@@ -101,6 +104,33 @@ class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoS
       await(sessionCache.saveEori(updatedEori)(hc))
 
       val expectedUpdatedJson                     = toJson(CachedData(eori = Some(updatedEori.id)))
+      val updatedCache                            = await(sessionCache.findById(Id(sessionId.value)))
+      val Some(Cache(_, Some(updatedJson), _, _)) = updatedCache
+      updatedJson mustBe expectedUpdatedJson
+    }
+
+    "store, fetch and update Address Lookup param details correctly" in {
+      val sessionId: SessionId = setupSession
+
+
+
+      await(sessionCache.saveAddressLookupParams(addressLookupParams)(hc))
+
+      val expectedJson                     = toJson(CachedData(addressLookupParams = Some(addressLookupParams)))
+      val cache                            = await(sessionCache.findById(Id(sessionId.value)))
+      val Some(Cache(_, Some(json), _, _)) = cache
+      json mustBe expectedJson
+
+      await(sessionCache.addressLookupParams(hc)) mustBe Some(addressLookupParams)
+
+      val updatedHolder = addressLookupParams.copy(
+        postcode = "SE28 1AC",
+        line1 = Some("line1")
+      )
+
+      await(sessionCache.saveAddressLookupParams(updatedHolder)(hc))
+
+      val expectedUpdatedJson                     = toJson(CachedData(addressLookupParams = Some(updatedHolder)))
       val updatedCache                            = await(sessionCache.findById(Id(sessionId.value)))
       val Some(Cache(_, Some(updatedJson), _, _)) = updatedCache
       updatedJson mustBe expectedUpdatedJson

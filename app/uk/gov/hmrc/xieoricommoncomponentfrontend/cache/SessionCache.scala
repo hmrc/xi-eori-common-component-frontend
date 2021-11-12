@@ -103,8 +103,8 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
       Json.toJson(subscriptionDisplay.toSubscriptionDisplayMongo())
     ) map (_ => true)
 
-  def saveAddressLookupParams(addressLookupParams: PBEAddressLookup)(implicit hc: HeaderCarrier): Future[Unit] =
-    createOrUpdate(sessionId, addressLookupParamsKey, Json.toJson(addressLookupParams)).map(_ => ())
+  def saveAddressLookupParams(addressLookupParams: PBEAddressLookup)(implicit hc: HeaderCarrier): Future[Boolean] =
+    createOrUpdate(sessionId, addressLookupParamsKey, Json.toJson(addressLookupParams)).map(_ => true)
 
   private def getCached[T](sessionId: Id, t: (CachedData, Id) => T): Future[Option[T]] =
     findById(sessionId.id).map {

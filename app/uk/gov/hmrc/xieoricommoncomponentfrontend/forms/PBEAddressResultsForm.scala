@@ -24,7 +24,7 @@ case class PBEAddressResultsFormProvider(address: String)
 object PBEAddressResultsFormProvider {
 
   def form(allowedAddresses: Seq[String]): Form[PBEAddressResultsFormProvider] = Form(
-    mapping("address" -> text.verifying("ecc.address-lookup.postcode.address.error", allowedAddresses.contains(_)))(
+    mapping("address" -> text.verifying("registered-address.page.address.required", allowedAddresses.contains(_)))(
       PBEAddressResultsFormProvider.apply
     )(PBEAddressResultsFormProvider.unapply)
   )
