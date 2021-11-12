@@ -68,4 +68,17 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
     }
   }
 
+  "btPostcode" must {
+
+    "return Valid if postcode starts with BT" in {
+      val result = btPostcode("error.invalid")("BT28 1AA")
+      result mustEqual Valid
+    }
+
+    "return Invalid if postcode does not start with BT" in {
+      val result = btPostcode("error.invalid")("SE28 1AA")
+      result mustEqual Invalid("error.invalid")
+    }
+  }
+
 }

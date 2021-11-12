@@ -126,6 +126,9 @@ pbe-address-lookup.line1.hint=For example, The Mill, 116 or Flat 37a.
 pbe-address-lookup.postcode.find-address= Find address
 pbe-address-lookup.postcode.required=Enter postal code
 pbe-address-lookup.postcode.length=Postal code must be 6 characters or more
+pbe-address-lookup.postcode.bt.format=Postcode must start with BT
+pbe-address-lookup.postcode.line1.error= Property name or number cannot have more than 35 characters
+pbe-address-lookup.postcode.format.invalid= Enter a valid postcode
 
 #registered-address
 registered-address.postcode.address.label= Select your address

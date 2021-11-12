@@ -31,10 +31,11 @@ class PBEAddressLookupFormProvider @Inject() extends Mappings {
   def apply(): Form[PBEAddressLookup] =
     Form(
       mapping(
-        "postcode" -> text("pbe-address-lookup.postcode.required").verifying(
-          regexp(postcodeRegex, "postcode.format.invalid")
-        ).verifying(postcodeLength(6, "pbe-address-lookup.postcode.length")),
-        "line1" -> optional(text("").verifying(maxLength(36, "line1.maxlength.invalid")))
+        "postcode" -> text("pbe-address-lookup.postcode.required")
+          .verifying(regexp(postcodeRegex, "pbe-address-lookup.postcode.format.invalid"))
+          .verifying(postcodeLength(6, "pbe-address-lookup.postcode.length"))
+          .verifying(btPostcode("pbe-address-lookup.postcode.bt.format")),
+        "line1" -> optional(text("").verifying(maxLength(36, "pbe-address-lookup.postcode.line1.error")))
       )(PBEAddressLookup.apply)(PBEAddressLookup.unapply)
     )
 

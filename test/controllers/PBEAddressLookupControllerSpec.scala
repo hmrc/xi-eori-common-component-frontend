@@ -79,7 +79,7 @@ class PBEAddressLookupLookupControllerSpec extends BaseSpec {
           "POST",
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEAddressLookupController.submit().url,
           defaultUserId,
-          Map("postcode" -> "SE28 1AA")
+          Map("postcode" -> "BT28 1AA")
         )
 
         val result = route(application, request).get
