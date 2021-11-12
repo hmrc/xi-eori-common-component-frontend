@@ -19,7 +19,7 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.forms
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.mappings.Mappings
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.{PBEAddressLookup, StopOnFirstFail}
 
 import javax.inject.Inject
 
@@ -32,9 +32,12 @@ class PBEAddressLookupFormProvider @Inject() extends Mappings {
     Form(
       mapping(
         "postcode" -> text("pbe-address-lookup.postcode.required")
-          .verifying(regexp(postcodeRegex, "pbe-address-lookup.postcode.format.invalid"))
-          .verifying(postcodeLength(6, "pbe-address-lookup.postcode.length"))
-          .verifying(btPostcode("pbe-address-lookup.postcode.bt.format")),
+          .verifying(
+            StopOnFirstFail(
+              regexp(postcodeRegex, "pbe-address-lookup.postcode.format.invalid"),
+              btPostcode("pbe-address-lookup.postcode.bt.format")
+            )
+          ),
         "line1" -> optional(text("").verifying(maxLength(36, "pbe-address-lookup.postcode.line1.error")))
       )(PBEAddressLookup.apply)(PBEAddressLookup.unapply)
     )
