@@ -407,5 +407,9 @@ sicCode.error.required=Enter a SIC code
 sicCode.error.incorrect-format=Only numerical characters are accepted
 sicCode.error.length=Your SIC Code is limited to 5 numerical characters only
 
-
-
+#have-pbe
+havePBE.page.title=Do you have a permanent business establishment in Northern Ireland?
+havePBE.error.required=Select your public business establishment preference
+havePBE.yes=Yes
+havePBE.no=No
+havePBE.hint=This is an address where you carry out customs activities related to moving goods between Northern Ireland and England, Scotland, Wales, the Isle of Man or the Channel Islands.

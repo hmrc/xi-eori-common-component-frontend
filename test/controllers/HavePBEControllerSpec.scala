@@ -18,21 +18,21 @@ package controllers
 
 import common.pages.RegistrationPage
 import play.api.test.Helpers._
-import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.HavePBE
 import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
 
-class SicCodeControllerSpec extends BaseSpec {
+class HavePBEControllerSpec extends BaseSpec {
 
-  "SicCode controller" should {
+  "HavePBE controller" should {
     "return OK and the correct view for a GET" in {
 
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.onPageLoad().url,
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HavePBEController.onPageLoad().url,
           defaultUserId
         )
 
@@ -40,39 +40,38 @@ class SicCodeControllerSpec extends BaseSpec {
 
         val page = RegistrationPage(contentAsString(result))
 
-        page.title should startWith("What is your Standard Industrial Classification (SIC) code?")
+        page.title should startWith("Do you have a permanent business establishment in Northern Ireland?")
       }
     }
-
-    "redirect to the next page when Organisation group with valid data is submitted" in {
+    "redirect to HaveEuEori Page when Yes is selected" in {
       running(application) {
-        withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Organisation)
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
 
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.submit().url,
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HavePBEController.submit().url,
           defaultUserId,
-          Map("sic" -> "12345")
+          Map("value" -> HavePBE.values.head.toString)
         )
 
         val result = route(application, request).get
         status(result) shouldBe SEE_OTHER
         redirectLocation(
           result
-        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HavePBEController.onPageLoad().url
+        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.onPageLoad().url
       }
 
     }
 
-    "redirect to the next page when Affinity group is individual" in {
+    "redirect to XiEoriNotNeeded Page when No is selected" in {
       running(application) {
-        withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Individual)
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
 
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.submit().url,
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HavePBEController.submit().url,
           defaultUserId,
-          Map("sic" -> "12345")
+          Map("value" -> HavePBE.values.last.toString)
         )
 
         val result = route(application, request).get
@@ -80,8 +79,8 @@ class SicCodeControllerSpec extends BaseSpec {
         redirectLocation(
           result
         ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded().url
-
       }
+
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
@@ -91,16 +90,16 @@ class SicCodeControllerSpec extends BaseSpec {
 
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.submit().url,
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HavePBEController.submit().url,
           defaultUserId,
-          Map("sic" -> "")
+          Map("value" -> "")
         )
 
         val result = route(application, request).get
         status(result) shouldBe BAD_REQUEST
 
         val page = RegistrationPage(contentAsString(result))
-        page.errors() shouldEqual "Enter a SIC code"
+        page.errors should startWith("Select your public business establishment preference")
       }
     }
 
