@@ -42,7 +42,7 @@ class AddressLookupConnector @Inject() (http: HttpClient, appConfig: AppConfig)(
 
     val body = AddressRequestBody(postcode, firstLineOpt)
 
-    val url = s"${appConfig.xiEoriCommonComponentBaseUrl}/${appConfig.xiEoriCommonComponentContext}/address-lookup"
+    val url = appConfig.addressLookup
 
     // $COVERAGE-OFF$Loggers
     logger.debug(s"Address lookup url: $url, body: $body")

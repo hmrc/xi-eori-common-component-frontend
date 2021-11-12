@@ -17,13 +17,14 @@
 package controllers
 
 import common.pages.RegistrationPage
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AuthConnector
+import uk.gov.hmrc.http.UpstreamErrorResponse
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.AddressLookupConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
@@ -35,7 +36,7 @@ import util.builders.SessionBuilder
 import scala.concurrent.Future
 
 class RegisteredAddressControllerSpec extends BaseSpec with BeforeAndAfterEach {
-  val mockSessionCache                   = mock[SessionCache]
+  private val mockSessionCache           = mock[SessionCache]
   private val addressLookupParams        = PBEAddressLookup("postcode", None)
   private val addressLookup              = AddressLookup("line1", "city", "postcode", "GB")
   private val mockAddressLookupConnector = mock[AddressLookupConnector]
@@ -117,10 +118,32 @@ class RegisteredAddressControllerSpec extends BaseSpec with BeforeAndAfterEach {
       }
     }
 
+    "search without line1 if the Address lookup doesn't return any results with line" in {
+      running(application) {
+        when(mockSessionCache.addressLookupParams(any()))
+          .thenReturn(Future.successful(Some(PBEAddressLookup("postcode", Some("line1")))))
+        when(mockAddressLookupConnector.lookup(meq("postcode"), meq(Some("line1")))(any()))
+          .thenReturn(Future.successful(AddressLookupSuccess(Seq.empty)))
+        when(mockAddressLookupConnector.lookup(meq("postcode"), meq(None))(any()))
+          .thenReturn(Future.successful(AddressLookupSuccess(Seq(AddressLookup("lin1", "city", "postcode", "GB")))))
+        when(mockSessionCache.saveAddressLookupParams(any())(any())).thenReturn(Future.successful(true))
+
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+        val request = SessionBuilder.buildRequestWithSessionAndPath(
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.RegisteredAddressController.onPageLoad().url,
+          defaultUserId
+        )
+        val result = route(application, request).get
+        status(result) shouldBe OK
+
+        verify(mockAddressLookupConnector).lookup(meq("postcode"), meq(Some("line1")))(any())
+        verify(mockAddressLookupConnector).lookup(meq("postcode"), meq(None))(any())
+      }
+    }
+
     "redirect to PBE Postcode Lookup if session cache doesn't hold postcode on page load" in {
 
       running(application) {
-
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
         when(mockSessionCache.addressLookupParams(any())).thenReturn(Future.successful(None))
@@ -162,26 +185,6 @@ class RegisteredAddressControllerSpec extends BaseSpec with BeforeAndAfterEach {
           result
         ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEAddressLookupController.onPageLoad().url
       }
-    }
-
-    "redirect when address lookup call fails" in {
-
-      when(mockSessionCache.addressLookupParams(any())).thenReturn(Future.successful(Some(addressLookupParams)))
-      when(mockAddressLookupConnector.lookup(any(), any())(any())).thenReturn(Future.successful(AddressLookupFailure))
-
-      withAuthorisedUser(defaultUserId, mockAuthConnector)
-
-      val request = SessionBuilder.buildRequestWithSessionAndPath(
-        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.RegisteredAddressController.onPageLoad().url,
-        defaultUserId
-      )
-
-      val result = route(application, request).get
-      status(result) shouldBe SEE_OTHER
-
-      redirectLocation(
-        result
-      ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.onPageLoad().url
     }
 
   }

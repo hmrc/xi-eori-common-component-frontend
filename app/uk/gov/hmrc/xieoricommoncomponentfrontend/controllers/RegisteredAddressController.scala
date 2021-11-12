@@ -17,13 +17,15 @@
 package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
+import play.api.mvc._
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.AddressLookupConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
-import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.{PBEAddressLookupFormProvider, PBEAddressResultsFormProvider}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.PBEAddressResultsFormProvider
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{AddressLookupFailure, AddressLookupSuccess}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.registered_address
 
@@ -48,26 +50,20 @@ class RegisteredAddressController @Inject() (
   private def displayPage()(implicit request: Request[AnyContent]): Future[Result] =
     sessionCache.addressLookupParams.flatMap {
       case Some(addressLookupParams) =>
-        addressLookupConnector.lookup(addressLookupParams.postcode, addressLookupParams.line1).flatMap { response =>
-          response match {
-            case AddressLookupSuccess(addresses) if addresses.nonEmpty && addresses.forall(_.nonEmpty) =>
-              Future.successful(
-                Ok(
-                  registeredAddressView(
-                    PBEAddressResultsFormProvider.form(addresses.map(_.dropDownView)),
-                    addressLookupParams,
-                    addresses
-                  )
+        addressLookupConnector.lookup(addressLookupParams.postcode, addressLookupParams.line1).flatMap {
+          case AddressLookupSuccess(addresses) if addresses.nonEmpty && addresses.forall(_.nonEmpty) =>
+            Future.successful(
+              Ok(
+                registeredAddressView(
+                  PBEAddressResultsFormProvider.form(addresses.map(_.dropDownView)),
+                  addressLookupParams,
+                  addresses
                 )
               )
-
-            case AddressLookupFailure => throw AddressLookupException
-          }
-        }.recoverWith {
-          case _: AddressLookupException.type =>
-            Future.successful(
-              Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.onPageLoad())
             )
+          case AddressLookupSuccess(_) if addressLookupParams.line1.exists(_.nonEmpty) =>
+            fetchAddressWithoutLine1(addressLookupParams)
+          case _ => throw AddressLookupException
         }
       case _ =>
         Future.successful(
@@ -75,30 +71,48 @@ class RegisteredAddressController @Inject() (
         )
     }
 
+  private def fetchAddressWithoutLine1(
+    addressLookupParams: PBEAddressLookup
+  )(implicit request: Request[AnyContent], hc: HeaderCarrier): Future[Result] = {
+    val addressLookupParamsWithoutLine1 = PBEAddressLookup(addressLookupParams.postcode, None)
+
+    addressLookupConnector.lookup(addressLookupParamsWithoutLine1.postcode, None).flatMap { secondResponse =>
+      secondResponse match {
+        case AddressLookupSuccess(addresses) if addresses.nonEmpty && addresses.forall(_.nonEmpty) =>
+          sessionCache.saveAddressLookupParams(addressLookupParamsWithoutLine1).map { _ =>
+            Ok(
+              registeredAddressView(
+                PBEAddressResultsFormProvider.form(addresses.map(_.dropDownView)),
+                addressLookupParams,
+                addresses
+              )
+            )
+          }
+        case _ => throw AddressLookupException
+      }
+    }
+  }
+
   def submit(): Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => _: LoggedInUserWithEnrolments =>
       sessionCache.addressLookupParams.flatMap {
         case Some(addressLookupParams) =>
-          addressLookupConnector.lookup(addressLookupParams.postcode, addressLookupParams.line1).flatMap { response =>
-            response match {
-              case AddressLookupSuccess(addresses) if addresses.nonEmpty && addresses.forall(_.nonEmpty) =>
-                val addressesMap  = addresses.map(address => address.dropDownView -> address).toMap
-                val addressesView = addressesMap.keys.toSeq
+          addressLookupConnector.lookup(addressLookupParams.postcode, addressLookupParams.line1).flatMap {
+            case AddressLookupSuccess(addresses) if addresses.nonEmpty && addresses.forall(_.nonEmpty) =>
+              val addressesMap  = addresses.map(address => address.dropDownView -> address).toMap
+              val addressesView = addressesMap.keys.toSeq
 
-                PBEAddressResultsFormProvider.form(addressesView).bindFromRequest.fold(
-                  formWithErrors =>
-                    Future.successful(
-                      BadRequest(registeredAddressView(formWithErrors, addressLookupParams, addresses))
-                    ),
-                  validAnswer =>
-                    Future.successful(
-                      Redirect(
-                        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad()
-                      )
+              PBEAddressResultsFormProvider.form(addressesView).bindFromRequest.fold(
+                formWithErrors =>
+                  Future.successful(BadRequest(registeredAddressView(formWithErrors, addressLookupParams, addresses))),
+                validAnswer =>
+                  Future.successful(
+                    Redirect(
+                      uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad()
                     )
-                )
-              case AddressLookupFailure => throw AddressLookupException
-            }
+                  )
+              )
+            case AddressLookupFailure => throw AddressLookupException
           }.recoverWith {
             case _: AddressLookupException.type =>
               Future.successful(

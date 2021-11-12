@@ -53,23 +53,21 @@ class AddressLookupConnectorSpec
 
   override protected def afterEach(): Unit = {
     reset(httpClient, appConfig)
-    when(appConfig.xiEoriCommonComponentBaseUrl).thenReturn("http://localhost:6756")
-    when(appConfig.xiEoriCommonComponentContext).thenReturn("xi-eori-common-component")
+    when(appConfig.addressLookup).thenReturn("http://localhost:6754/lookup")
     super.afterEach()
   }
 
   "Address Lookup Connector" should {
 
     "build a correct url" in {
-      when(appConfig.xiEoriCommonComponentBaseUrl).thenReturn("http://localhost:6756")
-      when(appConfig.xiEoriCommonComponentContext).thenReturn("xi-eori-common-component")
+      when(appConfig.addressLookup).thenReturn("http://localhost:6754/lookup")
       when(httpClient.POST[AddressRequestBody, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
         .thenReturn(Future.successful(HttpResponse(200, "[]")))
 
       val postcode = "AA11 1AA"
 
       val expectedResponse = AddressLookupSuccess(Seq.empty)
-      val expectedUrl      = "http://localhost:6756/xi-eori-common-component/address-lookup"
+      val expectedUrl      = "http://localhost:6754/lookup"
 
       val urlCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
 
@@ -90,8 +88,6 @@ class AddressLookupConnectorSpec
     "return Address Lookup Success" when {
 
       "address lookup returns list of multiple addresses" in {
-        when(appConfig.xiEoriCommonComponentBaseUrl).thenReturn("http://localhost:6756")
-        when(appConfig.xiEoriCommonComponentContext).thenReturn("xi-eori-common-component")
         val addressLookupResponse = HttpResponse(status = 200, json = jsonResponseWithTwoResults, headers = Map.empty)
 
         when(httpClient.POST[AddressRequestBody, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
@@ -111,8 +107,6 @@ class AddressLookupConnectorSpec
       }
 
       "address lookup returns only one address" in {
-        when(appConfig.xiEoriCommonComponentBaseUrl).thenReturn("http://localhost:6756")
-        when(appConfig.xiEoriCommonComponentContext).thenReturn("xi-eori-common-component")
         val addressLookupResponse = HttpResponse(status = 200, json = jsonResponseWithOneResult, headers = Map.empty)
 
         when(httpClient.POST[AddressRequestBody, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
@@ -129,8 +123,6 @@ class AddressLookupConnectorSpec
       }
 
       "address lookup didn't return any addresses" in {
-        when(appConfig.xiEoriCommonComponentBaseUrl).thenReturn("http://localhost:6756")
-        when(appConfig.xiEoriCommonComponentContext).thenReturn("xi-eori-common-component")
         when(httpClient.POST[AddressRequestBody, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
           .thenReturn(Future.successful(HttpResponse(200, "[]")))
 
@@ -147,8 +139,6 @@ class AddressLookupConnectorSpec
     "return Address Lookup Failure" when {
 
       "address lookup return different status than OK (200)" in {
-        when(appConfig.xiEoriCommonComponentBaseUrl).thenReturn("http://localhost:6756")
-        when(appConfig.xiEoriCommonComponentContext).thenReturn("xi-eori-common-component")
         when(httpClient.POST[AddressRequestBody, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
           .thenReturn(Future.successful(HttpResponse(500, "Internal Server Error")))
 
