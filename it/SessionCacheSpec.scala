@@ -21,9 +21,9 @@ import play.modules.reactivemongo.ReactiveMongoComponent
 import uk.gov.hmrc.cache.model.{Cache, Id}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import uk.gov.hmrc.mongo.{MongoConnector, MongoSpecSupport}
-import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.{CachedData, SessionCache, SessionTimeOutException}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.{CachedData, SessionCache}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
-import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, Eori, KeyValue}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.Eori
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, SubscriptionDisplayResponseDetail, SubscriptionInfoVatId}
 
@@ -33,15 +33,15 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoSpecSupport {
 
-  lazy val appConfig = app.injector.instanceOf[AppConfig]
+  lazy val appConfig: AppConfig = app.injector.instanceOf[AppConfig]
 
   private val reactiveMongoComponent = new ReactiveMongoComponent {
     override def mongoConnector: MongoConnector = mongoConnectorForTest
   }
   val sessionCache = new SessionCache(appConfig, reactiveMongoComponent)
 
-  val hc = mock[HeaderCarrier]
-  val subscriptionDisplay = SubscriptionDisplayResponseDetail(
+  val hc: HeaderCarrier = mock[HeaderCarrier]
+  val subscriptionDisplay: SubscriptionDisplayResponseDetail = SubscriptionDisplayResponseDetail(
     Some("EN123456789012345"),
     "John Doe",
     EstablishmentAddress("house no Line 1", "city name", Some("SE28 1AA"), "ZZ"),
@@ -53,9 +53,9 @@ class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoS
     Some("XIE9XSDF10BCKEYAX")
   )
 
-  val addressLookupParams = PBEAddressLookup("SE28 1AA", None)
+  val addressLookupParams: PBEAddressLookup = PBEAddressLookup("SE28 1AA", None)
 
-  val eori = Eori("GB123456463324")
+  val eori: Eori = Eori("GB123456463324")
 
   "Session cache" should {
 

@@ -17,7 +17,7 @@
 package uk.gov.hmrc.xieoricommoncomponentfrontend.cache
 
 import play.api.Logger
-import play.api.libs.json.{JsError, JsSuccess, Json}
+import play.api.libs.json.{JsError, JsSuccess, Json, OFormat}
 import play.modules.reactivemongo.ReactiveMongoComponent
 import uk.gov.hmrc.cache._
 import uk.gov.hmrc.cache.model.{Cache, Id}
@@ -57,7 +57,7 @@ sealed case class CachedData(
     )
   }
 
-  def getAddressLookupParams(): PBEAddressLookup =
+  def getAddressLookupParams: PBEAddressLookup =
     addressLookupParams.getOrElse(emptyAddressLookupParams())
 
   private def throwException(name: String, sessionId: Id) =
@@ -66,15 +66,15 @@ sealed case class CachedData(
 }
 
 object CachedData {
-  val eoriKey                = "eori"
-  val subscriptionDisplayKey = "subscriptionDisplay"
-  val addressLookupParamsKey = "addressLookupParams"
-  implicit val format        = Json.format[CachedData]
+  val eoriKey                              = "eori"
+  val subscriptionDisplayKey               = "subscriptionDisplay"
+  val addressLookupParamsKey               = "addressLookupParams"
+  implicit val format: OFormat[CachedData] = Json.format[CachedData]
 
-  def emptySubscriptionDisplay() =
+  def emptySubscriptionDisplay(): SubscriptionDisplayMongo =
     SubscriptionDisplayMongo(None, "", EstablishmentAddress("", "", None, ""), None, None, None, None, None)
 
-  def emptyAddressLookupParams() = PBEAddressLookup("", None)
+  def emptyAddressLookupParams(): PBEAddressLookup = PBEAddressLookup("", None)
 
 }
 
@@ -124,7 +124,7 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
     getCached[String](sessionId, (cachedData, id) => cachedData.eori(id))
 
   def subscriptionDisplay(implicit hc: HeaderCarrier): Future[Option[SubscriptionDisplayResponseDetail]] =
-    getCached[SubscriptionDisplayResponseDetail](sessionId, (cachedData, _) => cachedData.subscriptionDisplayMongo)
+    getCached[SubscriptionDisplayResponseDetail](sessionId, (cachedData, _) => cachedData.subscriptionDisplayMongo())
 
   def addressLookupParams(implicit hc: HeaderCarrier): Future[Option[PBEAddressLookup]] =
     getCached[PBEAddressLookup](sessionId, (cachedData, _) => cachedData.getAddressLookupParams)

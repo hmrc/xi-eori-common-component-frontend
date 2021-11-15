@@ -32,8 +32,6 @@ class PBEAddressLookupViewSpec extends ViewSpec {
   private val formProvider           = new PBEAddressLookupFormProvider()
   private def form                   = formProvider.apply()
 
-  private val formWithError = form.bind(Map("postcode" -> "invalid"))
-
   private def doc: Document =
     Jsoup.parse(contentAsString(view(form)))
 

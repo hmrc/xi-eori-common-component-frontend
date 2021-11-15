@@ -91,7 +91,7 @@ class RegisteredAddressControllerSpec extends BaseSpec with BeforeAndAfterEach {
         status(result) shouldBe BAD_REQUEST
 
         val page = RegistrationPage(contentAsString(result))
-        page.errors should startWith("Select you address from the list")
+        page.errors should startWith("Select your address from the list")
       }
     }
 

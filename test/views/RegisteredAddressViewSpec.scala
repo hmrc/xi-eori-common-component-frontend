@@ -112,7 +112,7 @@ class RegisteredAddressViewSpec extends ViewSpec {
       docWithErrorSummary.getElementById("error-summary-title").text() mustBe "There is a problem"
       docWithErrorSummary.getElementsByClass(
         "govuk-error-summary__list"
-      ).text() mustBe "Select you address from the list"
+      ).text() mustBe "Select your address from the list"
     }
   }
 }
