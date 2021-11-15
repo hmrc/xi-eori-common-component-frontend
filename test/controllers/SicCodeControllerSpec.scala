@@ -106,7 +106,7 @@ class SicCodeControllerSpec extends BaseSpec {
     "redirect to the next page when Organisation group with non NI postcode data is submitted" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Organisation)
-        when(subscriptionDisplayService.getSubscriptionAddress(any())(any()))
+        when(subscriptionDisplayService.getSubscriptionDisplay(any())(any()))
           .thenReturn(Future.successful(Right(nonNIsubscriptionDisplayResponse)))
         when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
           .thenReturn(Future.successful(groupEnrolment))
@@ -132,7 +132,7 @@ class SicCodeControllerSpec extends BaseSpec {
     "redirect to the next page when Organisation group with NI postcode data is submitted" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Organisation)
-        when(subscriptionDisplayService.getSubscriptionAddress(any())(any()))
+        when(subscriptionDisplayService.getSubscriptionDisplay(any())(any()))
           .thenReturn(Future.successful(Right(niSubscriptionDisplayResponse)))
         when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
           .thenReturn(Future.successful(groupEnrolment))

@@ -56,23 +56,4 @@ class SubscriptionDisplayService @Inject() (
         subscriptionDisplayResponse
     }
 
-  def getSubscriptionAddress(
-    gbEori: String
-  )(implicit hc: HeaderCarrier): Future[Either[ErrorResponse, SubscriptionDisplayResponseDetail]] =
-    sessionCache.subscriptionDisplay flatMap {
-      case Some(value) if value.CDSEstablishmentAddress.postalCode.isDefined => Future.successful(Right(value))
-      case _ =>
-        val subscriptionDisplayResponse = subscriptionDisplayConnector.call(buildQueryParameters(gbEori))
-        subscriptionDisplayResponse.map {
-          case Right(resp) =>
-            sessionCache.saveSubscriptionDisplay(resp).map(
-              successfulWrite =>
-                if (!successfulWrite)
-                  logger.debug("SubscriptionDisplay SUB09 details retrieved successfully and saved into cache")
-            )
-          case Left(_) => logger.debug("SubscriptionDisplay SUB09 call failed and details are not saved into cache")
-        }
-        subscriptionDisplayResponse
-    }
-
 }

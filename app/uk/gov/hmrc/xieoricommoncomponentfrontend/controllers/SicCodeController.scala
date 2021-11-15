@@ -60,20 +60,9 @@ class SicCodeController @Inject() (
             case Some(AffinityGroup.Organisation) =>
               groupEnrolment.getEori(loggedInUser).flatMap {
                 case Some(gbEori) =>
-                  subscriptionDisplayService.getSubscriptionAddress(gbEori).map {
+                  subscriptionDisplayService.getSubscriptionDisplay(gbEori).map {
                     case Right(response) =>
-                      if (
-                        response.CDSEstablishmentAddress.postalCode.isDefined &&
-                        !response.CDSEstablishmentAddress.postalCode.isEmpty &&
-                        !response.CDSEstablishmentAddress.postalCode.get.startsWith("BT")
-                      )
-                        Redirect(
-                          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HavePBEController.onPageLoad()
-                        )
-                      else
-                        Redirect(
-                          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded()
-                        )
+                      destinationsByNIPostCode(response.CDSEstablishmentAddress.postalCode)
                   }
               }
             case _ =>
@@ -86,5 +75,12 @@ class SicCodeController @Inject() (
           }
       )
     }
+
+  private def destinationsByNIPostCode(regPostcode: Option[String]): Result = regPostcode match {
+    case Some(regPostcode) if !regPostcode.take(2).equalsIgnoreCase("BT") =>
+      Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HavePBEController.onPageLoad())
+    case _ =>
+      Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded())
+  }
 
 }

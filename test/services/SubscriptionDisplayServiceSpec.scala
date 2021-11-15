@@ -108,41 +108,5 @@ class SubscriptionDisplayServiceSpec extends WordSpec with BeforeAndAfter with M
       }
     }
 
-    "return subscription postcode for the gbEori" in {
-      when(
-        mockSubscriptionDisplayConnector
-          .call(any())(meq(headerCarrier))
-      ).thenReturn(Future.successful(Right(subscriptionResponse)))
-      when(
-        mockSessionCache
-          .subscriptionDisplay(meq(headerCarrier))
-      ).thenReturn(Future.successful(None))
-
-      running(application) {
-        await(service.getSubscriptionAddress(eori.id)) shouldBe Right(subscriptionResponse)
-
-        verify(mockSubscriptionDisplayConnector).call(any())(meq(headerCarrier))
-
-      }
-    }
-
-    "return subscription postcode from the sessionCache" in {
-      when(
-        mockSubscriptionDisplayConnector
-          .call(any())(meq(headerCarrier))
-      ).thenReturn(Future.successful(Right(subscriptionResponse)))
-      when(
-        mockSessionCache
-          .subscriptionDisplay(meq(headerCarrier))
-      ).thenReturn(Future.successful(Some(subscriptionResponse)))
-
-      running(application) {
-        await(service.getSubscriptionAddress(eori.id)) shouldBe Right(subscriptionResponse)
-
-        verify(mockSubscriptionDisplayConnector, never()).call(any())(meq(headerCarrier))
-
-      }
-    }
-
   }
 }
