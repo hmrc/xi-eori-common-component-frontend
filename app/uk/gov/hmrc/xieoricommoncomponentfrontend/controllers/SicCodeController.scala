@@ -20,10 +20,15 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{AuthAction, EnrolmentExtractor}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{
+  AuthAction,
+  EnrolmentExtractor,
+  GroupEnrolmentExtractor
+}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.SicCodeFormProvider
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.sic_code
+import uk.gov.hmrc.xieoricommoncomponentfrontend.services.SubscriptionDisplayService
+import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{error_template, sic_code}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,7 +37,10 @@ class SicCodeController @Inject() (
   authAction: AuthAction,
   sicCodeView: sic_code,
   formProvider: SicCodeFormProvider,
-  mcc: MessagesControllerComponents
+  mcc: MessagesControllerComponents,
+  errorTemplateView: error_template,
+  subscriptionDisplayService: SubscriptionDisplayService,
+  groupEnrolment: GroupEnrolmentExtractor
 )(implicit val ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with EnrolmentExtractor {
 
@@ -51,17 +59,31 @@ class SicCodeController @Inject() (
         value =>
           loggedInUser.affinityGroup match {
             case Some(AffinityGroup.Organisation) =>
-              Future.successful(
-                Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HavePBEController.onPageLoad())
-              )
+              groupEnrolment.getEori(loggedInUser).flatMap {
+                case Some(gbEori) =>
+                  subscriptionDisplayService.getSubscriptionDisplay(gbEori).map {
+                    case Right(response) =>
+                      destinationsByNIPostCode(response.CDSEstablishmentAddress.postalCode)
+                    case Left(_) => InternalServerError(errorTemplateView())
+                  }
+                case None => Future.successful(InternalServerError(errorTemplateView()))
+              }
             case _ =>
               Future.successful(
                 Redirect(
                   uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded()
                 )
               )
+
           }
       )
     }
+
+  private def destinationsByNIPostCode(regPostcode: Option[String]): Result = regPostcode match {
+    case Some(regPostcode) if !regPostcode.take(2).equalsIgnoreCase("BT") =>
+      Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HavePBEController.onPageLoad())
+    case _ =>
+      Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded())
+  }
 
 }
