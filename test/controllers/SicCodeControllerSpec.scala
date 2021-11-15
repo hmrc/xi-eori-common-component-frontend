@@ -222,5 +222,27 @@ class SicCodeControllerSpec extends BaseSpec {
 
     }
 
+    "redirect to Error Page if logged in user doesn't have linked GB Eori" in {
+
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Organisation)
+
+        when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
+          .thenReturn(Future.successful(groupEnrolment))
+        when(mockGroupEnrolmentExtractor.getEori(any())(any()))
+          .thenReturn(Future.successful(None))
+        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
+          "POST",
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.submit().url,
+          defaultUserId,
+          Map("sic" -> "12345")
+        )
+
+        val result = route(application, request).get
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+    }
+
   }
 }
