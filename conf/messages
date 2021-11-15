@@ -137,6 +137,7 @@ registered-address.page.cannot-find-address= I can''t find my address in the lis
 registered-address.page.postcode.label=Postcode
 registered-address.page.property-name.label= Property name or number
 registered-address.page.address.required= Select your address from the list
+registered-address.page.property-name.not-known= Not known
 
 #======================================
 # Countries

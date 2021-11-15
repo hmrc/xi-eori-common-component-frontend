@@ -39,7 +39,7 @@ h1: components.h1)
     @propertyName = @{
       addressLookupParams.line1 match {
           case Some(value) => value
-          case _ => "Not Known"
+          case _ => messages("registered-address.page.property-name.not-known")
       }
     }
 

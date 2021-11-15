@@ -69,7 +69,7 @@ class RegisteredAddressViewSpec extends ViewSpec {
     "display summary of params with 'Not known' for property name or number" in {
       val line1 = docWithoutLine1.body().getElementsByClass("review-tbl__line1").get(0)
       line1.getElementsByClass("govuk-summary-list__key").text mustBe "Property name or number"
-      line1.getElementsByClass("govuk-summary-list__value").text mustBe "Not Known"
+      line1.getElementsByClass("govuk-summary-list__value").text mustBe "Not known"
     }
 
     "display change link to params page" in {

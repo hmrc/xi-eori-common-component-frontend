@@ -24,11 +24,6 @@ sealed trait LoggedInUser {
 
   lazy val isAgent: Boolean = affinityGroup.contains(AffinityGroup.Agent)
 
-  def userId(): String = internalId match {
-    case Some(id) => id
-    case _        => throw new IllegalStateException("No internal id returned by Government Gateway.")
-  }
-
   def userAffinity(): AffinityGroup = affinityGroup match {
     case Some(id) => id
     case _        => throw new IllegalStateException("No affinity group returned by Government Gateway.")
