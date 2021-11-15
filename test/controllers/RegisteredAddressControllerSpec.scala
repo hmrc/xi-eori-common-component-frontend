@@ -24,11 +24,10 @@ import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.http.UpstreamErrorResponse
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.AddressLookupConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{AddressLookup, AddressLookupFailure, AddressLookupSuccess}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{AddressLookup, AddressLookupSuccess}
 import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder

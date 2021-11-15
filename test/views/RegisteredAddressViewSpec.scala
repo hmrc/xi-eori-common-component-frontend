@@ -18,7 +18,6 @@ package views
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.mvc.Request
 import play.api.test.Helpers.contentAsString
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.PBEAddressResultsFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.AddressLookup

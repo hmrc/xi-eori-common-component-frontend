@@ -20,7 +20,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.mvc.Request
 import play.api.test.Helpers.contentAsString
-import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.{HaveEUEoriFormProvider, PBEAddressLookupFormProvider}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.PBEAddressLookupFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.pbe_address_lookup
 import util.ViewSpec
 
@@ -36,10 +36,6 @@ class PBEAddressLookupViewSpec extends ViewSpec {
 
   private def doc: Document =
     Jsoup.parse(contentAsString(view(form)))
-
-  private val reviewDoc: Document = Jsoup.parse(contentAsString(view(form)))
-
-  private val docWithErrorSummary = Jsoup.parse(contentAsString(view(formWithError)))
 
   "Address Lookup Postcode page" should {
 

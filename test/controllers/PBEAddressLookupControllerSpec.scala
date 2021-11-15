@@ -18,7 +18,7 @@ package controllers
 
 import common.pages.RegistrationPage
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.when
 import play.api.test.Helpers._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import util.BaseSpec

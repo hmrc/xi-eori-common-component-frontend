@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.xieoricommoncomponentfrontend.forms
 
-import play.api.data.Forms.text
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import play.api.data.{Form, Forms}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.mappings.Mappings
