@@ -20,9 +20,14 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{AuthAction, EnrolmentExtractor}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{
+  AuthAction,
+  EnrolmentExtractor,
+  GroupEnrolmentExtractor
+}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.SicCodeFormProvider
+import uk.gov.hmrc.xieoricommoncomponentfrontend.services.SubscriptionDisplayService
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.sic_code
 
 import javax.inject.Inject
@@ -32,7 +37,9 @@ class SicCodeController @Inject() (
   authAction: AuthAction,
   sicCodeView: sic_code,
   formProvider: SicCodeFormProvider,
-  mcc: MessagesControllerComponents
+  mcc: MessagesControllerComponents,
+  subscriptionDisplayService: SubscriptionDisplayService,
+  groupEnrolment: GroupEnrolmentExtractor
 )(implicit val ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with EnrolmentExtractor {
 
@@ -51,15 +58,31 @@ class SicCodeController @Inject() (
         value =>
           loggedInUser.affinityGroup match {
             case Some(AffinityGroup.Organisation) =>
-              Future.successful(
-                Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HavePBEController.onPageLoad())
-              )
+              groupEnrolment.getEori(loggedInUser).flatMap {
+                case Some(gbEori) =>
+                  subscriptionDisplayService.getSubscriptionAddress(gbEori).map {
+                    case Right(response) =>
+                      if (
+                        response.CDSEstablishmentAddress.postalCode.isDefined &&
+                        !response.CDSEstablishmentAddress.postalCode.isEmpty &&
+                        !response.CDSEstablishmentAddress.postalCode.get.startsWith("BT")
+                      )
+                        Redirect(
+                          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HavePBEController.onPageLoad()
+                        )
+                      else
+                        Redirect(
+                          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded()
+                        )
+                  }
+              }
             case _ =>
               Future.successful(
                 Redirect(
                   uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded()
                 )
               )
+
           }
       )
     }
