@@ -44,8 +44,8 @@ trait Constraints {
 
   protected def btPostcode(errorKey: String): Constraint[String] =
     Constraint({
-      case s if !s.take(2).equals("BT") => Invalid(ValidationError(errorKey))
-      case _                            => Valid
+      case s if !s.take(2).equalsIgnoreCase("BT") => Invalid(ValidationError(errorKey))
+      case _                                      => Valid
     })
 
 }

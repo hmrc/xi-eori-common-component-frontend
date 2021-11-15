@@ -113,11 +113,6 @@ class RegisteredAddressController @Inject() (
                   )
               )
             case AddressLookupFailure => throw AddressLookupException
-          }.recoverWith {
-            case _: AddressLookupException.type =>
-              Future.successful(
-                Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.onPageLoad())
-              )
           }
         case _ =>
           Future.successful(
@@ -125,7 +120,6 @@ class RegisteredAddressController @Inject() (
               uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEAddressLookupController.onPageLoad()
             )
           )
-
       }
     }
 
