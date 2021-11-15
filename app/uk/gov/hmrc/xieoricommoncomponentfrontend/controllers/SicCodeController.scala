@@ -66,6 +66,7 @@ class SicCodeController @Inject() (
                       destinationsByNIPostCode(response.CDSEstablishmentAddress.postalCode)
                     case Left(_) => InternalServerError(errorTemplateView())
                   }
+                case None => Future.successful(InternalServerError(errorTemplateView()))
               }
             case _ =>
               Future.successful(
