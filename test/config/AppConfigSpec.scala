@@ -44,11 +44,11 @@ class AppConfigSpec extends BaseSpec with BeforeAndAfterEach {
     }
 
     "have subscriptionDisplayBaseUrl defined" in {
-      appConfig.subscriptionDisplayBaseUrl shouldBe "http://localhost:6756"
+      appConfig.xiEoriCommonComponentBaseUrl shouldBe "http://localhost:6756"
     }
 
     "have subscriptionDisplayServiceContext defined" in {
-      appConfig.subscriptionDisplayServiceContext shouldBe "xi-eori-common-component"
+      appConfig.xiEoriCommonComponentContext shouldBe "xi-eori-common-component"
     }
 
     "have Xi vat registration url defined" in {

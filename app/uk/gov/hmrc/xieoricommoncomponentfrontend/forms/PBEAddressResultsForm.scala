@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.xieoricommoncomponentfrontend.forms.mappings
+package uk.gov.hmrc.xieoricommoncomponentfrontend.forms
 
-import play.api.data.FieldMapping
-import play.api.data.Forms._
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.Enumerable
+import play.api.data.Form
+import play.api.data.Forms.{mapping, text}
 
-trait Mappings extends Formatters with Constraints {
+case class PBEAddressResultsFormProvider(address: String)
 
-  protected def text(errorKey: String = "error.required"): FieldMapping[String] =
-    of(stringFormatter(errorKey))
+object PBEAddressResultsFormProvider {
 
-  protected def enumerable[A](requiredKey: String = "error.required", invalidKey: String = "error.invalid")(implicit
-    ev: Enumerable[A]
-  ): FieldMapping[A] =
-    of(enumerableFormatter[A](requiredKey, invalidKey))
+  def form(allowedAddresses: Seq[String]): Form[PBEAddressResultsFormProvider] = Form(
+    mapping("address" -> text.verifying("registered-address.page.address.required", allowedAddresses.contains(_)))(
+      PBEAddressResultsFormProvider.apply
+    )(PBEAddressResultsFormProvider.unapply)
+  )
 
 }

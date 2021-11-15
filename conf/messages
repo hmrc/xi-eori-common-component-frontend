@@ -7,6 +7,7 @@ ecc.navigation.continue=Continue
 ecc.navigation.back=Back
 ecc.help-and-support.text=Get help with this page.
 ecc.error.page-title=Error
+ecc.form.change=Change
 
 #timeout dialog
 ecc.timeout.message=For your security, we will delete your answers and you will be signed out in
@@ -116,6 +117,27 @@ xi-vat-register.details-list.text1=your goods are located in Northern Ireland at
 xi-vat-register.details-list.text2=you receive goods in Northern Ireland from VAT-registered EU businesses for business purposes
 xi-vat-register.details-list.text3=you sell or move goods from Northern Ireland to an EU country
 xi-vat-register.how-to-register.link=How to register for an XI VAT number (opens in new tab)
+
+#pbe-address-lookup
+pbe-address-lookup.page.title=What is your permanent business establishment address?
+pbe-address-lookup.postcode.label=Postcode
+pbe-address-lookup.line1.label=Property name or number (optional)
+pbe-address-lookup.line1.hint=For example, The Mill, 116 or Flat 37a
+pbe-address-lookup.postcode.find-address= Find address
+pbe-address-lookup.postcode.required=Enter postal code
+pbe-address-lookup.postcode.length=Postal code must be 6 characters or more
+pbe-address-lookup.postcode.bt.format=Postcode must start with BT
+pbe-address-lookup.postcode.line1.error= Property name or number cannot have more than 35 characters
+pbe-address-lookup.postcode.format.invalid= Enter a valid postcode
+
+#registered-address
+registered-address.postcode.address.label= Select your address
+registered-address.page.title=What is your registered company address?
+registered-address.page.cannot-find-address= I can''t find my address in the list
+registered-address.page.postcode.label=Postcode
+registered-address.page.property-name.label= Property name or number
+registered-address.page.address.required= Select your address from the list
+registered-address.page.property-name.not-known= Not known
 
 #======================================
 # Countries

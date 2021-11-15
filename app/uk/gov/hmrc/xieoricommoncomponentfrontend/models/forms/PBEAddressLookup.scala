@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.xieoricommoncomponentfrontend.forms.mappings
+package uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms
 
-import play.api.data.FieldMapping
-import play.api.data.Forms._
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.Enumerable
+import play.api.libs.json.Json
 
-trait Mappings extends Formatters with Constraints {
+case class PBEAddressLookup(postcode: String, line1: Option[String]) {
 
-  protected def text(errorKey: String = "error.required"): FieldMapping[String] =
-    of(stringFormatter(errorKey))
+  def isEmpty(): Boolean  = postcode == "" && line1.forall(_.isEmpty)
+  def nonEmpty(): Boolean = !isEmpty()
+}
 
-  protected def enumerable[A](requiredKey: String = "error.required", invalidKey: String = "error.invalid")(implicit
-    ev: Enumerable[A]
-  ): FieldMapping[A] =
-    of(enumerableFormatter[A](requiredKey, invalidKey))
-
+object PBEAddressLookup {
+  implicit val format = Json.format[PBEAddressLookup]
 }

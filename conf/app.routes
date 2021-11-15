@@ -48,3 +48,11 @@ POST       /sic-code                      @uk.gov.hmrc.xieoricommoncomponentfron
 #have-pbe
 GET        /have-pbe                     @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.HavePBEController.onPageLoad
 POST       /have-pbe                     @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.HavePBEController.submit
+
+#pbe-address-lookup
+GET        /pbe-postcode                             @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.PBEAddressLookupController.onPageLoad
+POST       /pbe-postcode                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.PBEAddressLookupController.submit
+
+#registered-address
+GET        /pbe-company-address-match                             @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.RegisteredAddressController.onPageLoad
+POST        /pbe-company-address-match                             @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.RegisteredAddressController.submit
