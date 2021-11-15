@@ -44,9 +44,7 @@ class AddressLookupConnector @Inject() (http: HttpClient, appConfig: AppConfig)(
 
     val url = appConfig.addressLookup
 
-    // $COVERAGE-OFF$Loggers
     logger.debug(s"Address lookup url: $url, body: $body")
-    // $COVERAGE-ON
 
     http.POST[AddressRequestBody, HttpResponse](url, body) map { response =>
       response.status match {
