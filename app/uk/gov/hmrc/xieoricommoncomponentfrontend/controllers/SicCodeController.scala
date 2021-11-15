@@ -28,7 +28,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.SicCodeFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.SubscriptionDisplayService
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.sic_code
+import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{error_template, sic_code}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,6 +38,7 @@ class SicCodeController @Inject() (
   sicCodeView: sic_code,
   formProvider: SicCodeFormProvider,
   mcc: MessagesControllerComponents,
+  errorTemplateView: error_template,
   subscriptionDisplayService: SubscriptionDisplayService,
   groupEnrolment: GroupEnrolmentExtractor
 )(implicit val ec: ExecutionContext)
@@ -63,6 +64,7 @@ class SicCodeController @Inject() (
                   subscriptionDisplayService.getSubscriptionDisplay(gbEori).map {
                     case Right(response) =>
                       destinationsByNIPostCode(response.CDSEstablishmentAddress.postalCode)
+                    case Left(_) => InternalServerError(errorTemplateView())
                   }
               }
             case _ =>

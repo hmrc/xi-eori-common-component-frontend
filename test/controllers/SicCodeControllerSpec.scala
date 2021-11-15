@@ -25,7 +25,11 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, KeyValue}
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, SubscriptionDisplayResponseDetail}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
+  EstablishmentAddress,
+  ServiceUnavailableResponse,
+  SubscriptionDisplayResponseDetail
+}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.SubscriptionDisplayService
 import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
@@ -193,6 +197,29 @@ class SicCodeControllerSpec extends BaseSpec {
         val page = RegistrationPage(contentAsString(result))
         page.errors() shouldEqual "Enter a SIC code"
       }
+    }
+
+    "redirect InternalServerError when subscription display call fails" in {
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Organisation)
+        when(subscriptionDisplayService.getSubscriptionDisplay(any())(any()))
+          .thenReturn(Future.successful(Left(ServiceUnavailableResponse)))
+        when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
+          .thenReturn(Future.successful(groupEnrolment))
+        when(mockGroupEnrolmentExtractor.getEori(any())(any()))
+          .thenReturn(Future.successful(existingEori))
+
+        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
+          "POST",
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.submit().url,
+          defaultUserId,
+          Map("sic" -> "12345")
+        )
+
+        val result = route(application, request).get
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+
     }
 
   }
