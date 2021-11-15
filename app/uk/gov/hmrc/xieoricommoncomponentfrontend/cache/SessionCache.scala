@@ -17,7 +17,7 @@
 package uk.gov.hmrc.xieoricommoncomponentfrontend.cache
 
 import play.api.Logger
-import play.api.libs.json.{JsError, JsSuccess, Json}
+import play.api.libs.json.{JsError, JsSuccess, Json, OFormat}
 import play.modules.reactivemongo.ReactiveMongoComponent
 import uk.gov.hmrc.cache._
 import uk.gov.hmrc.cache.model.{Cache, Id}
@@ -27,6 +27,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.CachedData._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.Eori
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.SubscriptionDisplayMongo
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, SubscriptionDisplayResponseDetail}
 
 import javax.inject.{Inject, Singleton}
@@ -35,7 +36,8 @@ import scala.util.control.NoStackTrace
 
 sealed case class CachedData(
   eori: Option[String] = None,
-  subscriptionDisplay: Option[SubscriptionDisplayMongo] = None
+  subscriptionDisplay: Option[SubscriptionDisplayMongo] = None,
+  addressLookupParams: Option[PBEAddressLookup] = None
 ) {
 
   def eori(sessionId: Id): String =
@@ -55,18 +57,24 @@ sealed case class CachedData(
     )
   }
 
+  def getAddressLookupParams: PBEAddressLookup =
+    addressLookupParams.getOrElse(emptyAddressLookupParams())
+
   private def throwException(name: String, sessionId: Id) =
     throw new IllegalStateException(s"$name is not cached in data for the sessionId: ${sessionId.id}")
 
 }
 
 object CachedData {
-  val eoriKey                = "eori"
-  val subscriptionDisplayKey = "subscriptionDisplay"
-  implicit val format        = Json.format[CachedData]
+  val eoriKey                              = "eori"
+  val subscriptionDisplayKey               = "subscriptionDisplay"
+  val addressLookupParamsKey               = "addressLookupParams"
+  implicit val format: OFormat[CachedData] = Json.format[CachedData]
 
-  def emptySubscriptionDisplay() =
+  def emptySubscriptionDisplay(): SubscriptionDisplayMongo =
     SubscriptionDisplayMongo(None, "", EstablishmentAddress("", "", None, ""), None, None, None, None, None)
+
+  def emptyAddressLookupParams(): PBEAddressLookup = PBEAddressLookup("", None)
 
 }
 
@@ -95,6 +103,9 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
       Json.toJson(subscriptionDisplay.toSubscriptionDisplayMongo())
     ) map (_ => true)
 
+  def saveAddressLookupParams(addressLookupParams: PBEAddressLookup)(implicit hc: HeaderCarrier): Future[Boolean] =
+    createOrUpdate(sessionId, addressLookupParamsKey, Json.toJson(addressLookupParams)).map(_ => true)
+
   private def getCached[T](sessionId: Id, t: (CachedData, Id) => T): Future[Option[T]] =
     findById(sessionId.id).map {
       case Some(Cache(_, Some(data), _, _)) =>
@@ -113,7 +124,10 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
     getCached[String](sessionId, (cachedData, id) => cachedData.eori(id))
 
   def subscriptionDisplay(implicit hc: HeaderCarrier): Future[Option[SubscriptionDisplayResponseDetail]] =
-    getCached[SubscriptionDisplayResponseDetail](sessionId, (cachedData, _) => cachedData.subscriptionDisplayMongo)
+    getCached[SubscriptionDisplayResponseDetail](sessionId, (cachedData, _) => cachedData.subscriptionDisplayMongo())
+
+  def addressLookupParams(implicit hc: HeaderCarrier): Future[Option[PBEAddressLookup]] =
+    getCached[PBEAddressLookup](sessionId, (cachedData, _) => cachedData.getAddressLookupParams)
 
   def remove(implicit hc: HeaderCarrier): Future[Boolean] =
     removeById(sessionId.id) map (x => x.writeErrors.isEmpty && x.writeConcernError.isEmpty)

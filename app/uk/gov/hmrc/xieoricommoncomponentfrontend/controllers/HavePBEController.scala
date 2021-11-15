@@ -52,7 +52,7 @@ class HavePBEController @Inject() (
 
   private def destinationsByAnswer(havePBE: HavePBE): Result = havePBE match {
     case Yes =>
-      Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.onPageLoad())
+      Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEAddressLookupController.onPageLoad())
     case No =>
       Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded())
   }

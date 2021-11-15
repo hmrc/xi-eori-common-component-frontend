@@ -19,6 +19,7 @@ package cache
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.cache.model.Id
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.CachedData
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, SubscriptionDisplayResponseDetail}
 import util.BaseSpec
 
@@ -50,9 +51,14 @@ class SessionCacheSpec extends BaseSpec with MockitoSugar {
           None,
           None
         )
+      val emptyAddressLookupParams = PBEAddressLookup("", None)
 
       "subscriptionDisplay missing " in {
         CachedData().subscriptionDisplayMongo() shouldBe emptySubscriptionDisplay
+      }
+
+      "addressLookupParams missing " in {
+        CachedData().getAddressLookupParams shouldBe emptyAddressLookupParams
       }
     }
 

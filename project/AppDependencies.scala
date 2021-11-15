@@ -7,6 +7,7 @@ object AppDependencies {
     "uk.gov.hmrc"             %% "bootstrap-frontend-play-28" % "5.14.0",
     "uk.gov.hmrc"             %% "play-frontend-hmrc"         % "1.14.0-play-28",
     "uk.gov.hmrc"             %% "mongo-caching"              % "7.0.0-play-28",
+    "org.webjars.npm"         % "accessible-autocomplete"     % "2.0.3"
   )
 
   val test = Seq(

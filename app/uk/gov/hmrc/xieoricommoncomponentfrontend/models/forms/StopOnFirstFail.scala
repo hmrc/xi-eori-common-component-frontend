@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.xieoricommoncomponentfrontend.forms.mappings
+package uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms
 
-import play.api.data.FieldMapping
-import play.api.data.Forms._
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.Enumerable
+import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 
-trait Mappings extends Formatters with Constraints {
+object StopOnFirstFail {
 
-  protected def text(errorKey: String = "error.required"): FieldMapping[String] =
-    of(stringFormatter(errorKey))
+  def apply[T](constraints: Constraint[T]*): Constraint[T] = Constraint { field: T =>
+    constraints.toList dropWhile (_(field) == Valid) match {
+      case Nil             => Valid
+      case constraint :: _ => constraint(field)
+    }
+  }
 
-  protected def enumerable[A](requiredKey: String = "error.required", invalidKey: String = "error.invalid")(implicit
-    ev: Enumerable[A]
-  ): FieldMapping[A] =
-    of(enumerableFormatter[A](requiredKey, invalidKey))
+  def constraint[T](message: String, validator: T => Boolean): Constraint[T] =
+    Constraint((data: T) => if (validator(data)) Valid else Invalid(Seq(ValidationError(message))))
 
 }

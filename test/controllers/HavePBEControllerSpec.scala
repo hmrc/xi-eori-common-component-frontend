@@ -43,7 +43,7 @@ class HavePBEControllerSpec extends BaseSpec {
         page.title should startWith("Do you have a permanent business establishment in Northern Ireland?")
       }
     }
-    "redirect to HaveEuEori Page when Yes is selected" in {
+    "redirect to PBE Address Lookup Page when Yes is selected" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
@@ -58,7 +58,7 @@ class HavePBEControllerSpec extends BaseSpec {
         status(result) shouldBe SEE_OTHER
         redirectLocation(
           result
-        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.onPageLoad().url
+        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEAddressLookupController.onPageLoad().url
       }
 
     }

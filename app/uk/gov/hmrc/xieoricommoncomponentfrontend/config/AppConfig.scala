@@ -43,10 +43,15 @@ class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig
     config.get[String]("microservice.services.enrolment-store-proxy.context")
 
   //handle subscription service
-  val subscriptionDisplayBaseUrl: String = servicesConfig.baseUrl("xi-eori-common-component")
+  val xiEoriCommonComponentBaseUrl: String = servicesConfig.baseUrl("xi-eori-common-component")
 
-  val subscriptionDisplayServiceContext: String =
+  val xiEoriCommonComponentContext: String =
     config.get[String]("microservice.services.xi-eori-common-component.context")
+
+  private val addressLookupBaseUrl: String = servicesConfig.baseUrl("address-lookup")
+  private val addressLookupContext: String = config.get[String]("microservice.services.address-lookup.context")
+
+  val addressLookup: String = addressLookupBaseUrl + addressLookupContext
 
   private def languageKey(implicit messages: Messages) = messages.lang.language match {
     case "cy" => "cy"
