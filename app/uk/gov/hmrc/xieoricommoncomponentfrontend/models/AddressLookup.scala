@@ -52,6 +52,8 @@ object AddressLookup {
       (JsPath \ "address" \ "country" \ "code").read[String]
   )(AddressLookup.applyWithLines _)
 
+  implicit val addressWrites: Writes[AddressLookup] = Json.writes[AddressLookup]
+
 }
 
 sealed trait AddressLookupResponse

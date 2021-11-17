@@ -30,7 +30,9 @@ object HavePBE extends Enumerable.Implicits {
 
   val values: Seq[HavePBE] = Seq(Yes, No)
 
-  def fromBoolean(viewPbe: Boolean): HavePBE =
+  def toBoolean(havePBE: HavePBE): Boolean = if (havePBE.equals(Yes)) true else false
+
+  def yesOrNo(viewPbe: Boolean): HavePBE =
     if (viewPbe)
       Yes
     else

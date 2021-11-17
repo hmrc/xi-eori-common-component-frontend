@@ -20,7 +20,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.{SessionCache, UserAnswersCache}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.AddressLookupConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
@@ -33,11 +33,12 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RegisteredAddressController @Inject() (
-  authAction: AuthAction,
-  mcc: MessagesControllerComponents,
-  addressLookupConnector: AddressLookupConnector,
-  sessionCache: SessionCache,
-  registeredAddressView: registered_address
+                                              authAction: AuthAction,
+                                              mcc: MessagesControllerComponents,
+                                              addressLookupConnector: AddressLookupConnector,
+                                              sessionCache: SessionCache,
+                                              userAnswersCache: UserAnswersCache,
+                                              registeredAddressView: registered_address
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -105,12 +106,12 @@ class RegisteredAddressController @Inject() (
               PBEAddressResultsFormProvider.form(addressesView).bindFromRequest.fold(
                 formWithErrors =>
                   Future.successful(BadRequest(registeredAddressView(formWithErrors, addressLookupParams, addresses))),
-                validAnswer =>
-                  Future.successful(
-                    Redirect(
-                      uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad()
-                    )
-                  )
+                validAnswer =>{
+                  val address = addressesMap(validAnswer.address).toAddressViewModel
+                  userAnswersCache.cacheAddressDetails(address).map{ _ =>Redirect(
+                    uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad()
+                  )}
+              }
               )
             case AddressLookupFailure => throw AddressLookupException
           }

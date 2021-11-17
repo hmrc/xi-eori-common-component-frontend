@@ -19,6 +19,7 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.UserAnswersCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.TradeWithNIFormProvider
@@ -27,14 +28,15 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.TradeWithNI.{No, Y
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.trade_with_ni
 
 import javax.inject.Inject
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class TradeWithNIController @Inject() (
   authAction: AuthAction,
   tradeWithNIView: trade_with_ni,
   formProvider: TradeWithNIFormProvider,
+  userAnswersCache: UserAnswersCache,
   mcc: MessagesControllerComponents
-) extends FrontendController(mcc) with I18nSupport {
+)(implicit ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   private val form = formProvider()
 
