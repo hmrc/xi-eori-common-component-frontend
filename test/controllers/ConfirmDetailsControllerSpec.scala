@@ -19,11 +19,11 @@ package controllers
 import common.pages.RegistrationPage
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.inject
+import play.api.{inject, Application}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.{SessionCache, UserAnswersCache}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.UserAnswersCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, KeyValue}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ConfirmDetails._
@@ -42,17 +42,17 @@ import scala.concurrent.Future
 
 class ConfirmDetailsControllerSpec extends BaseSpec {
 
-  val subscriptionDisplayService  = mock[SubscriptionDisplayService]
-  val mockGroupEnrolmentExtractor = mock[GroupEnrolmentExtractor]
+  val subscriptionDisplayService: SubscriptionDisplayService = mock[SubscriptionDisplayService]
+  val mockGroupEnrolmentExtractor: GroupEnrolmentExtractor   = mock[GroupEnrolmentExtractor]
 
-  val establishmentAddress = EstablishmentAddress(
+  val establishmentAddress: EstablishmentAddress = EstablishmentAddress(
     streetAndNumber = "line1",
     city = "City name",
     postalCode = Some("SE28 1AA"),
     countryCode = "GB"
   )
 
-  val subscriptionDisplayResponse = SubscriptionDisplayResponseDetail(
+  val subscriptionDisplayResponse: SubscriptionDisplayResponseDetail = SubscriptionDisplayResponseDetail(
     EORINo = Some("GB123456789012"),
     CDSFullName = "FirstName LastName",
     CDSEstablishmentAddress = establishmentAddress,
@@ -62,12 +62,12 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
     XIEORINo = Some("XIE9XSDF10BCKEYAX")
   )
 
-  private def groupEnrolment() =
+  val groupEnrolment =
     List(EnrolmentResponse("HMRC-ATAR-ORG", "Activated", List(KeyValue("EORINumber", "GB123456463324"))))
 
-  val existingEori = Some("XIE9XSDF10BCKEYAX")
+  val existingEori: Option[String] = Some("XIE9XSDF10BCKEYAX")
 
-  override def application = new GuiceApplicationBuilder().overrides(
+  override def application: Application = new GuiceApplicationBuilder().overrides(
     inject.bind[AuthConnector].to(mockAuthConnector),
     inject.bind[SubscriptionDisplayService].to(subscriptionDisplayService),
     inject.bind[UserAnswersCache].to(mockUserAnswersCache),
@@ -97,6 +97,28 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
         val page = RegistrationPage(contentAsString(result))
 
         page.title should startWith("Confirm details")
+      }
+    }
+
+    "populate View if userAnswersCache has session data" in {
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+        when(subscriptionDisplayService.getSubscriptionDisplay(any())(any()))
+          .thenReturn(Future.successful(Right(subscriptionDisplayResponse)))
+        when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
+          .thenReturn(Future.successful(groupEnrolment))
+        when(mockGroupEnrolmentExtractor.getEori(any())(any()))
+          .thenReturn(Future.successful(existingEori))
+        when(mockUserAnswersCache.getConfirmDetails()(any())).thenReturn(Future.successful(Some("changeDetails")))
+        val request = SessionBuilder.buildRequestWithSessionAndPath(
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad().url,
+          defaultUserId
+        )
+
+        val result = route(application, request).get
+
+        val page = RegistrationPage(contentAsString(result))
+        page.getElementValue("//*[@id='value-3']") shouldBe "changeDetails"
       }
     }
 

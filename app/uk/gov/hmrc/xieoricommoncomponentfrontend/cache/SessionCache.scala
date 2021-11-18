@@ -93,10 +93,6 @@ object CachedData {
   def emptySubscriptionDisplay(): SubscriptionDisplayMongo =
     SubscriptionDisplayMongo(None, "", EstablishmentAddress("", "", None, ""), None, None, None, None, None)
 
-  def emptyAddressLookupParams(): PBEAddressLookup = PBEAddressLookup("", None)
-
-  def emptyAddressLookupResult(): Seq[AddressLookup] = List(AddressLookup("", "", "", ""))
-
   def emptyRegistrationDetails(): RegistrationDetails =
     RegistrationDetails(None)
 
@@ -133,8 +129,8 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
   def saveRegistrationDetails(rdh: RegistrationDetails)(implicit hc: HeaderCarrier): Future[Boolean] =
     createOrUpdate(sessionId, registrationDetailsKey, Json.toJson(rdh)) map (_ => true)
 
-  def saveAddressLookupResult(addressLookup: Seq[AddressLookup])(implicit hc: HeaderCarrier): Future[Boolean] =
-    createOrUpdate(sessionId, addressLookupResultsKey, Json.toJson(addressLookup)).map(_ => true)
+  /*  def saveAddressLookupResult(addressLookup: Seq[AddressLookup])(implicit hc: HeaderCarrier): Future[Boolean] =
+    createOrUpdate(sessionId, addressLookupResultsKey, Json.toJson(addressLookup)).map(_ => true)*/
 
   private def getCached[T](sessionId: Id, t: (CachedData, Id) => T): Future[T] =
     findById(sessionId.id).map {
@@ -167,13 +163,6 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
 
   def registrationDetails(implicit hc: HeaderCarrier): Future[RegistrationDetails] =
     getCached[RegistrationDetails](sessionId, (cachedData, _) => cachedData.getRegistrationDetails)
-
-  def tradeWithNI(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
-    getCached[RegistrationDetails](sessionId, (cachedData, _) => cachedData.getRegistrationDetails)
-      .map(_.tradeWithNI)
-      .recoverWith {
-        case _ => Future.successful(None)
-      }
 
   def remove(implicit hc: HeaderCarrier): Future[Boolean] =
     removeById(sessionId.id) map (x => x.writeErrors.isEmpty && x.writeConcernError.isEmpty)

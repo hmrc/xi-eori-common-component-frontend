@@ -58,10 +58,29 @@ class DisclosePersonalDetailsControllerSpec extends BaseSpec {
       }
     }
 
+    "populate View if userAnswersCache has session data" in {
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Organisation)
+        when(mockUserAnswersCache.getPersonalDataDisclosureConsent()(any())).thenReturn(Future.successful(Some(true)))
+        val request = SessionBuilder.buildRequestWithSessionAndPath(
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.onPageLoad().url,
+          defaultUserId
+        )
+
+        val result = route(app, request).get
+
+        val page = RegistrationPage(contentAsString(result))
+        page.getElementValue("//*[@id='value']") shouldBe "yes"
+      }
+    }
+
     "redirect to the next page when Organisation group with valid data is submitted" in {
       running(app) {
         withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Organisation)
         when(mockUserAnswersCache.getPersonalDataDisclosureConsent()(any())).thenReturn(Future.successful(None))
+        when(mockUserAnswersCache.cacheConsentToDisclosePersonalDetails(any())(any())).thenReturn(
+          Future.successful(true)
+        )
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.submit().url,

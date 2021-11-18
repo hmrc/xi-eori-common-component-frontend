@@ -60,8 +60,7 @@ class DisclosePersonalDetailsController @Inject() (
         value =>
           loggedInUser.affinityGroup match {
             case Some(AffinityGroup.Organisation) =>
-              userAnswersCache.cacheConsentToDisclosePersonalDetails(value)
-              Future.successful(destinationsByAnswer(value))
+              userAnswersCache.cacheConsentToDisclosePersonalDetails(value).map(_ => destinationsByAnswer(value))
             case _ =>
               Future.successful(
                 Redirect(
