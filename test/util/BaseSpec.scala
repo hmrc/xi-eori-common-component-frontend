@@ -32,6 +32,7 @@ import play.api.{inject, Configuration, Environment}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.{SessionCache, UserAnswersCache}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
 import util.builders.{AuthBuilder, SessionBuilder}
 
@@ -160,6 +161,9 @@ trait BaseSpec extends WordSpec with MockitoSugar with Matchers with Injector {
 
   val defaultUserId: String = s"user-${UUID.randomUUID}"
 
+  val mockSessionCache     = mock[SessionCache]
+  val mockUserAnswersCache = mock[UserAnswersCache]
+
   // TODO Extract below methods to some Utils class
   def strim(s: String): String = s.stripMargin.trim.split("\n").mkString(" ")
 
@@ -167,10 +171,10 @@ trait BaseSpec extends WordSpec with MockitoSugar with Matchers with Injector {
 
   def undersizedString(minLength: Int): String = Random.alphanumeric.take(minLength - 1).mkString
 
-  def application = new GuiceApplicationBuilder().overrides(inject.bind[AuthConnector].to(mockAuthConnector)).configure(
-    "auditing.enabled" -> "false",
-    "metrics.jvm"      -> false,
-    "metrics.enabled"  -> false
-  ).build()
+  def application = new GuiceApplicationBuilder().overrides(
+    inject.bind[AuthConnector].to(mockAuthConnector),
+    inject.bind[SessionCache].to(mockSessionCache),
+    inject.bind[UserAnswersCache].to(mockUserAnswersCache)
+  ).configure("auditing.enabled" -> "false", "metrics.jvm" -> false, "metrics.enabled" -> false).build()
 
 }

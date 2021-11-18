@@ -146,14 +146,10 @@ class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoS
       cached mustBe None
     }
 
-    "throw exception when eori requested and not available in cache" in {
+    "return None when eori requested and not available in cache" in {
       val s = setupSession
       await(sessionCache.insert(Cache(Id(s.value), data = Some(toJson(CachedData())))))
-
-      val caught = intercept[IllegalStateException] {
-        await(sessionCache.eori(hc))
-      }
-      caught.getMessage mustBe s"eori is not cached in data for the sessionId: ${s.value}"
+      await(sessionCache.eori(hc)) mustBe None
     }
 
     "provide default when subscription display details holder not in cache" in {

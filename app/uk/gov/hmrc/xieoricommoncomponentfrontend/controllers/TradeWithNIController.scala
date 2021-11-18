@@ -36,7 +36,8 @@ class TradeWithNIController @Inject() (
   formProvider: TradeWithNIFormProvider,
   userAnswersCache: UserAnswersCache,
   mcc: MessagesControllerComponents
-)(implicit ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport {
 
   private val form = formProvider()
 
@@ -53,11 +54,13 @@ class TradeWithNIController @Inject() (
   def submit: Action[AnyContent] = Action { implicit request =>
     form
       .bindFromRequest()
-      .fold(formWithErrors => BadRequest(tradeWithNIView(formWithErrors)),
+      .fold(
+        formWithErrors => BadRequest(tradeWithNIView(formWithErrors)),
         value => {
           userAnswersCache.cacheTradeWithNI(value)
           destinationsByAnswer(value)
-        })
+        }
+      )
   }
 
   private def destinationsByAnswer(tradeWithNI: TradeWithNI): Result = tradeWithNI match {

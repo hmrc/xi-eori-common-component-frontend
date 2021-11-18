@@ -21,7 +21,11 @@ import play.api.mvc._
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.UserAnswersCache
-import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{AuthAction, EnrolmentExtractor, GroupEnrolmentExtractor}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{
+  AuthAction,
+  EnrolmentExtractor,
+  GroupEnrolmentExtractor
+}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.SicCodeFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.{DisclosePersonalDetails, SicCode}

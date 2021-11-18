@@ -34,7 +34,7 @@ class SessionCacheSpec extends BaseSpec with MockitoSugar {
     "throw IllegalStateException" when {
 
       "eori missing " in {
-        intercept[Exception](CachedData().eori(sessionId)).getMessage shouldBe errorMsg(CachedData.eoriKey)
+        CachedData().eori shouldBe None
       }
 
     }
@@ -58,7 +58,7 @@ class SessionCacheSpec extends BaseSpec with MockitoSugar {
       }
 
       "addressLookupParams missing " in {
-        CachedData().getAddressLookupParams shouldBe emptyAddressLookupParams
+        CachedData().addressLookupParams shouldBe None
       }
     }
 

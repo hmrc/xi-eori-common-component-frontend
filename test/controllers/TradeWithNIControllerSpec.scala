@@ -22,6 +22,9 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.TradeWithNI
 import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
+import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.Mockito.{reset, verify, when}
+import scala.concurrent.Future
 
 class TradeWithNIControllerSpec extends BaseSpec {
 
@@ -30,7 +33,7 @@ class TradeWithNIControllerSpec extends BaseSpec {
 
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
-
+        when(mockUserAnswersCache.getTradeWithInNI()(any())).thenReturn(Future.successful(None))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad().url,
           defaultUserId

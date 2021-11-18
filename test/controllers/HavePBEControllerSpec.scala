@@ -17,11 +17,15 @@
 package controllers
 
 import common.pages.RegistrationPage
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import play.api.test.Helpers._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.HavePBE
 import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
+
+import scala.concurrent.Future
 
 class HavePBEControllerSpec extends BaseSpec {
 
@@ -30,7 +34,7 @@ class HavePBEControllerSpec extends BaseSpec {
 
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
-
+        when(mockUserAnswersCache.getHavePBEInNI()(any())).thenReturn(Future.successful(None))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HavePBEController.onPageLoad().url,
           defaultUserId

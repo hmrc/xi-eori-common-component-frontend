@@ -36,7 +36,8 @@ class HavePBEController @Inject() (
   formProvider: HavePBEFormProvider,
   userAnswersCache: UserAnswersCache,
   mcc: MessagesControllerComponents
-)(implicit val ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+)(implicit val ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport {
 
   private val form = formProvider()
 
@@ -53,11 +54,13 @@ class HavePBEController @Inject() (
   def submit: Action[AnyContent] = Action { implicit request =>
     form
       .bindFromRequest()
-      .fold(formWithErrors => BadRequest(havePBEView(formWithErrors)),
+      .fold(
+        formWithErrors => BadRequest(havePBEView(formWithErrors)),
         value => {
           userAnswersCache.cacheHavePBEInNI(value)
           destinationsByAnswer(value)
-    })
+        }
+      )
 
   }
 

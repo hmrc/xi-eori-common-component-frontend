@@ -17,27 +17,40 @@
 package controllers
 
 import common.pages.RegistrationPage
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
-import uk.gov.hmrc.auth.core.AffinityGroup
+import play.api.{inject, Application}
+import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.{SessionCache, UserAnswersCache}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.DisclosePersonalDetails
 import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
 
+import scala.concurrent.Future
+
 class DisclosePersonalDetailsControllerSpec extends BaseSpec {
+
+  def app: Application = new GuiceApplicationBuilder().overrides(
+    inject.bind[AuthConnector].to(mockAuthConnector),
+    inject.bind[UserAnswersCache].to(mockUserAnswersCache),
+    inject.bind[SessionCache].to(mockSessionCache)
+  ).configure("auditing.enabled" -> "false", "metrics.jvm" -> false, "metrics.enabled" -> false).build()
 
   "Disclose Personal Details controller" should {
     "return OK and the correct view for a GET" in {
 
-      running(application) {
-        withAuthorisedUser(defaultUserId, mockAuthConnector)
-
+      running(app) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Organisation)
+        when(mockUserAnswersCache.getPersonalDataDisclosureConsent()(any())).thenReturn(Future.successful(None))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.onPageLoad().url,
           defaultUserId
         )
 
-        val result = route(application, request).get
+        val result = route(app, request).get
 
         val page = RegistrationPage(contentAsString(result))
 
@@ -46,9 +59,9 @@ class DisclosePersonalDetailsControllerSpec extends BaseSpec {
     }
 
     "redirect to the next page when Organisation group with valid data is submitted" in {
-      running(application) {
+      running(app) {
         withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Organisation)
-
+        when(mockUserAnswersCache.getPersonalDataDisclosureConsent()(any())).thenReturn(Future.successful(None))
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.submit().url,
@@ -56,7 +69,7 @@ class DisclosePersonalDetailsControllerSpec extends BaseSpec {
           Map("value" -> DisclosePersonalDetails.values.head.toString)
         )
 
-        val result = route(application, request).get
+        val result = route(app, request).get
         status(result) shouldBe SEE_OTHER
         redirectLocation(
           result
@@ -66,7 +79,7 @@ class DisclosePersonalDetailsControllerSpec extends BaseSpec {
     }
 
     "redirect to the next page when Affinity group is individual" in {
-      running(application) {
+      running(app) {
         withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Individual)
 
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
@@ -76,7 +89,7 @@ class DisclosePersonalDetailsControllerSpec extends BaseSpec {
           Map("value" -> DisclosePersonalDetails.values.head.toString)
         )
 
-        val result = route(application, request).get
+        val result = route(app, request).get
         status(result) shouldBe SEE_OTHER
         redirectLocation(
           result
@@ -86,7 +99,7 @@ class DisclosePersonalDetailsControllerSpec extends BaseSpec {
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
-      running(application) {
+      running(app) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
@@ -96,7 +109,7 @@ class DisclosePersonalDetailsControllerSpec extends BaseSpec {
           Map("value" -> "")
         )
 
-        val result = route(application, request).get
+        val result = route(app, request).get
         status(result) shouldBe BAD_REQUEST
 
         val page = RegistrationPage(contentAsString(result))

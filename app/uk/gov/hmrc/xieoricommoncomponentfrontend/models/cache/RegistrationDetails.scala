@@ -19,13 +19,14 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.AddressViewModel
 
-case class RegistrationDetails(tradeWithNI: Option[Boolean] =None,
-                               haveEUEori: Option[Boolean] =None,
-                               confirmDetails: Option[String] =None,
-                               personalDataDisclosureConsent: Option[Boolean] = None,
-                               sicCode: Option[String] = None,
-                               havePBEInNI: Option[Boolean] = None,
-                               addressDetails: Option[AddressViewModel] = None
+case class RegistrationDetails(
+  tradeWithNI: Option[Boolean] = None,
+  haveEUEori: Option[Boolean] = None,
+  confirmDetails: Option[String] = None,
+  personalDataDisclosureConsent: Option[Boolean] = None,
+  sicCode: Option[String] = None,
+  havePBEInNI: Option[Boolean] = None,
+  addressDetails: Option[AddressViewModel] = None
 )
 
 object RegistrationDetails {

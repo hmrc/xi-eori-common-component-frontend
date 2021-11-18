@@ -24,7 +24,11 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.UserAnswersCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
-import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{AuthAction, AuthRedirectSupport, GroupEnrolmentExtractor}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{
+  AuthAction,
+  AuthRedirectSupport,
+  GroupEnrolmentExtractor
+}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.ConfirmDetailsFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail
@@ -60,7 +64,7 @@ class ConfirmDetailsController @Inject() (
           case Some(gbEori) =>
             subscriptionDisplayService.getSubscriptionDisplay(gbEori).flatMap {
               case Right(response) =>
-                populateView(response,loggedInUser.userAffinity())
+                populateView(response, loggedInUser.userAffinity())
               case Left(_) => Future.successful(InternalServerError(errorTemplateView()))
             }
           case None => Future.successful(InternalServerError(errorTemplateView()))
@@ -69,15 +73,19 @@ class ConfirmDetailsController @Inject() (
     }
 
   def populateView(subscriptionDisplayDetails: SubscriptionDisplayResponseDetail, userAffinity: AffinityGroup)(implicit
-                                                                                                               hc: HeaderCarrier,
-                                                                                                               request: Request[AnyContent]
-  ): Future[Result] = {
-    userAnswersCache.getConfirmDetails().map  {
+    hc: HeaderCarrier,
+    request: Request[AnyContent]
+  ): Future[Result] =
+    userAnswersCache.getConfirmDetails().map {
       case Some(confirmDetails) =>
-       Ok(confirmDetailsView(form.fill(ConfirmDetails.mapValues(confirmDetails)), ConfirmDetailsViewModel(subscriptionDisplayDetails, userAffinity)))
-      case None =>  Ok(confirmDetailsView(form, ConfirmDetailsViewModel(subscriptionDisplayDetails, userAffinity)))
+        Ok(
+          confirmDetailsView(
+            form.fill(ConfirmDetails.mapValues(confirmDetails)),
+            ConfirmDetailsViewModel(subscriptionDisplayDetails, userAffinity)
+          )
+        )
+      case None => Ok(confirmDetailsView(form, ConfirmDetailsViewModel(subscriptionDisplayDetails, userAffinity)))
     }
-  }
 
   def submit(): Action[AnyContent] = authAction.ggAuthorisedUserWithEnrolmentsAction {
     implicit request => loggedInUser: LoggedInUserWithEnrolments =>

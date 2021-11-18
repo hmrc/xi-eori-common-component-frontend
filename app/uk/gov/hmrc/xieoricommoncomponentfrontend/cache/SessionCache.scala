@@ -28,7 +28,11 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.Eori
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.{RegistrationDetails, SubscriptionDisplayMongo}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{AddressLookup, EstablishmentAddress, SubscriptionDisplayResponseDetail}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
+  AddressLookup,
+  EstablishmentAddress,
+  SubscriptionDisplayResponseDetail
+}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +46,7 @@ sealed case class CachedData(
   addressLookupResult: Option[Seq[AddressLookup]] = None
 ) {
 
-/*  def eori(sessionId: Id): String =
+  /*  def eori(sessionId: Id): String =
     eori.getOrElse(throwException(eoriKey, sessionId))*/
 
   def subscriptionDisplayMongo(): SubscriptionDisplayResponseDetail = {
@@ -58,7 +62,8 @@ sealed case class CachedData(
       resp.XIVatNo
     )
   }
-/*
+
+  /*
   def getAddressLookupParams: PBEAddressLookup =
     addressLookupParams.getOrElse(emptyAddressLookupParams())
 
@@ -69,10 +74,11 @@ sealed case class CachedData(
 
   def getRegistrationDetails: RegistrationDetails =
     registrationDetails.getOrElse(emptyRegistrationDetails())
-/*
+
+  /*
   private def throwException(name: String, sessionId: Id) =
     throw new IllegalStateException(s"$name is not cached in data for the sessionId: ${sessionId.id}")
-*/
+   */
 
 }
 
@@ -89,7 +95,7 @@ object CachedData {
 
   def emptyAddressLookupParams(): PBEAddressLookup = PBEAddressLookup("", None)
 
-  def emptyAddressLookupResult(): Seq[AddressLookup] = List(AddressLookup("", "","",""))
+  def emptyAddressLookupResult(): Seq[AddressLookup] = List(AddressLookup("", "", "", ""))
 
   def emptyRegistrationDetails(): RegistrationDetails =
     RegistrationDetails(None)
@@ -148,7 +154,10 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
     getCached[Option[String]](sessionId, (cachedData, _) => cachedData.eori)
 
   def subscriptionDisplay(implicit hc: HeaderCarrier): Future[Option[SubscriptionDisplayResponseDetail]] =
-    getCached[Option[SubscriptionDisplayResponseDetail]](sessionId, (cachedData, _) => Some(cachedData.subscriptionDisplayMongo()))
+    getCached[Option[SubscriptionDisplayResponseDetail]](
+      sessionId,
+      (cachedData, _) => Some(cachedData.subscriptionDisplayMongo())
+    )
 
   def addressLookupParams(implicit hc: HeaderCarrier): Future[Option[PBEAddressLookup]] =
     getCached[Option[PBEAddressLookup]](sessionId, (cachedData, _) => cachedData.addressLookupParams)
@@ -156,20 +165,19 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
   def addressLookupResult(implicit hc: HeaderCarrier): Future[Option[Seq[AddressLookup]]] =
     getCached[Option[Seq[AddressLookup]]](sessionId, (cachedData, _) => cachedData.addressLookupResult)
 
-  def registrationDetails(implicit hc: HeaderCarrier): Future[RegistrationDetails] = {
-   getCached[RegistrationDetails](sessionId, (cachedData, _) => cachedData.getRegistrationDetails)
-  }
+  def registrationDetails(implicit hc: HeaderCarrier): Future[RegistrationDetails] =
+    getCached[RegistrationDetails](sessionId, (cachedData, _) => cachedData.getRegistrationDetails)
 
-  def tradeWithNI(implicit hc: HeaderCarrier): Future[Option[Boolean]] = {
+  def tradeWithNI(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
     getCached[RegistrationDetails](sessionId, (cachedData, _) => cachedData.getRegistrationDetails)
       .map(_.tradeWithNI)
       .recoverWith {
         case _ => Future.successful(None)
-       }
-  }
+      }
 
   def remove(implicit hc: HeaderCarrier): Future[Boolean] =
     removeById(sessionId.id) map (x => x.writeErrors.isEmpty && x.writeConcernError.isEmpty)
-  }
+
+}
 
 case class SessionTimeOutException(errorMessage: String) extends NoStackTrace

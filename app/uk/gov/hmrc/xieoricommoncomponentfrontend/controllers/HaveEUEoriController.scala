@@ -20,7 +20,11 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.UserAnswersCache
-import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{AuthAction, EnrolmentExtractor, GroupEnrolmentExtractor}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{
+  AuthAction,
+  EnrolmentExtractor,
+  GroupEnrolmentExtractor
+}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.HaveEUEoriFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.HaveEUEori
@@ -57,7 +61,7 @@ class HaveEUEoriController @Inject() (
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(haveEUEoriView(formWithErrors))),
-          value =>{
+          value => {
             userAnswersCache.cacheHaveEUEori(value)
             value match {
               case HaveEUEori.Yes =>
@@ -70,7 +74,6 @@ class HaveEUEoriController @Inject() (
                 groupEnrolment.getEori(loggedInUser).map(destinationsByExistingEori)
             }
           }
-
         )
 
   }

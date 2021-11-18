@@ -19,7 +19,10 @@ package controllers
 import common.pages.RegistrationPage
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import play.api.{inject, Application}
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
+import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
@@ -27,16 +30,19 @@ import util.builders.SessionBuilder
 
 import scala.concurrent.Future
 
-class PBEAddressLookupLookupControllerSpec extends BaseSpec {
+class PBEAddressLookupControllerSpec extends BaseSpec {
 
-  val mockSessionCache = mock[SessionCache]
+  override def application: Application = new GuiceApplicationBuilder().overrides(
+    inject.bind[AuthConnector].to(mockAuthConnector),
+    inject.bind[SessionCache].to(mockSessionCache)
+  ).configure("auditing.enabled" -> "false", "metrics.jvm" -> false, "metrics.enabled" -> false).build()
 
   "PBEAddressLookup controller" should {
     "return OK and the correct view for a GET" in {
 
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
-
+        when(mockSessionCache.addressLookupParams(any())).thenReturn(Future.successful(None))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEAddressLookupController.onPageLoad().url,
           defaultUserId
