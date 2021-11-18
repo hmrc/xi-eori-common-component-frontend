@@ -18,7 +18,8 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.cache
 
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.RegistrationDetails
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.{DisclosePersonalDetails, HavePBE, TradeWithNI}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.TradeWithNI.toBoolean
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.{ConfirmDetails, DisclosePersonalDetails, HaveEUEori, HavePBE, TradeWithNI}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.AddressViewModel
 
 import javax.inject.{Inject, Singleton}
@@ -32,10 +33,6 @@ class UserAnswersCache @Inject() (sessionCache: SessionCache)(implicit ec: Execu
   )(implicit hc: HeaderCarrier): Future[Boolean] = sessionCache.registrationDetails flatMap { details =>
     sessionCache.saveRegistrationDetails(insertNewDetails(details))
   }
-
- /* def getRegistrationDetails()(implicit hc: HeaderCarrier)= sessionCache.registrationDetails.map{
-    details => details.getOrElse(throw new IllegalStateException("No Registration Details Cached"))
-  }*/
 
   def getPersonalDataDisclosureConsent()(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
     sessionCache.registrationDetails map(_.personalDataDisclosureConsent)
@@ -63,15 +60,29 @@ class UserAnswersCache @Inject() (sessionCache: SessionCache)(implicit ec: Execu
     def noneForEmptyPostcode(a: AddressViewModel) = a.copy(postcode = a.postcode.filter(_.nonEmpty))
     saveRegistrationDetails(sd => sd.copy(addressDetails = Some(noneForEmptyPostcode(address))))
   }
-
- /* def getTradeWithNI()(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
-    sessionCache.registrationDetails map {
-      case Some(value) => value.tradeWithNI
+  def getTradeWithInNI()(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
+    sessionCache.registrationDetails.map{
+      case details => details.tradeWithNI
       case _ => None
+    }.recoverWith {
+      case _ => Future.successful(None)
     }
 
   def cacheTradeWithNI(tradeWithNI: TradeWithNI)(implicit hq: HeaderCarrier): Future[Boolean] =
-    saveRegistrationDetails(sd => sd.copy(tradeWithNI = Some(TradeWithNI.toBoolean(tradeWithNI))))
-*/
+    sessionCache.saveRegistrationDetails(RegistrationDetails(tradeWithNI = Some(toBoolean(tradeWithNI))))
+
+  def cacheHaveEUEori(haveEUEori: HaveEUEori)(implicit hc: HeaderCarrier): Future[Boolean] =
+    saveRegistrationDetails(sd => sd.copy(haveEUEori = Some(HaveEUEori.toBoolean(haveEUEori))))
+
+  def getHaveEUEori()(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
+    sessionCache.registrationDetails map(_.haveEUEori)
+
+  def cacheConfirmDetails(confirmDetails: ConfirmDetails)(implicit hc: HeaderCarrier): Future[Boolean] =
+    saveRegistrationDetails(sd => sd.copy(confirmDetails = Some(ConfirmDetails.transformString(confirmDetails))))
+
+  def getConfirmDetails()(implicit hc: HeaderCarrier): Future[Option[String]] =
+    sessionCache.registrationDetails map(_.confirmDetails)
+
+
 
 }

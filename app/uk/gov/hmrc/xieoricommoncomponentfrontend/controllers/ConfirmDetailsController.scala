@@ -19,15 +19,15 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.api.{Configuration, Environment}
+import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.UserAnswersCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
-import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{
-  AuthAction,
-  AuthRedirectSupport,
-  GroupEnrolmentExtractor
-}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{AuthAction, AuthRedirectSupport, GroupEnrolmentExtractor}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.ConfirmDetailsFormProvider
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ConfirmDetails
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.SubscriptionDisplayService
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewModel
@@ -46,6 +46,7 @@ class ConfirmDetailsController @Inject() (
   mcc: MessagesControllerComponents,
   errorTemplateView: error_template,
   groupEnrolment: GroupEnrolmentExtractor,
+  userAnswersCache: UserAnswersCache,
   subscriptionDisplayService: SubscriptionDisplayService
 )(implicit val ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with AuthRedirectSupport {
@@ -57,15 +58,26 @@ class ConfirmDetailsController @Inject() (
       implicit request => loggedInUser: LoggedInUserWithEnrolments =>
         groupEnrolment.getEori(loggedInUser).flatMap {
           case Some(gbEori) =>
-            subscriptionDisplayService.getSubscriptionDisplay(gbEori).map {
+            subscriptionDisplayService.getSubscriptionDisplay(gbEori).flatMap {
               case Right(response) =>
-                Ok(confirmDetailsView(form, ConfirmDetailsViewModel(response, loggedInUser.userAffinity())))
-              case Left(_) => InternalServerError(errorTemplateView())
+                populateView(response,loggedInUser.userAffinity())
+              case Left(_) => Future.successful(InternalServerError(errorTemplateView()))
             }
           case None => Future.successful(InternalServerError(errorTemplateView()))
         }
 
     }
+
+  def populateView(subscriptionDisplayDetails: SubscriptionDisplayResponseDetail, userAffinity: AffinityGroup)(implicit
+                                                                                                               hc: HeaderCarrier,
+                                                                                                               request: Request[AnyContent]
+  ): Future[Result] = {
+    userAnswersCache.getConfirmDetails().map  {
+      case Some(confirmDetails) =>
+       Ok(confirmDetailsView(form.fill(ConfirmDetails.mapValues(confirmDetails)), ConfirmDetailsViewModel(subscriptionDisplayDetails, userAffinity)))
+      case None =>  Ok(confirmDetailsView(form, ConfirmDetailsViewModel(subscriptionDisplayDetails, userAffinity)))
+    }
+  }
 
   def submit(): Action[AnyContent] = authAction.ggAuthorisedUserWithEnrolmentsAction {
     implicit request => loggedInUser: LoggedInUserWithEnrolments =>
@@ -84,7 +96,10 @@ class ConfirmDetailsController @Inject() (
                 }
               case None => Future.successful(InternalServerError(errorTemplateView()))
             },
-          value => destinationsByAnswer(value)
+          value => {
+            userAnswersCache.cacheConfirmDetails(value)
+            destinationsByAnswer(value)
+          }
         )
   }
 

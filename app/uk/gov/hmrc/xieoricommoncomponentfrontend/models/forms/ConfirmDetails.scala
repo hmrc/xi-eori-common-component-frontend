@@ -31,6 +31,22 @@ object ConfirmDetails extends Enumerable.Implicits {
 
   val values: Seq[ConfirmDetails] = Seq(confirmedDetails, changeCredentials, changeDetails)
 
+  def mapValues(selectedValue: String): ConfirmDetails = {
+    selectedValue match {
+      case "confirmedDetails" => confirmedDetails
+      case "changeCredentials" => changeCredentials
+      case _ => changeDetails
+    }
+  }
+
+  def transformString(confirmDetails: ConfirmDetails): String ={
+    confirmDetails match {
+      case ConfirmDetails.confirmedDetails => "confirmedDetails"
+      case ConfirmDetails.changeCredentials => "changeCredentials"
+      case ConfirmDetails.changeDetails => "changeDetails"
+    }
+  }
+
   def options(form: Form[_])(implicit messages: Messages): Seq[RadioItem] = values.map {
     value =>
       RadioItem(

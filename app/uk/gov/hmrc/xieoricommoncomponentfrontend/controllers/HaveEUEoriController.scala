@@ -19,11 +19,8 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{
-  AuthAction,
-  EnrolmentExtractor,
-  GroupEnrolmentExtractor
-}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.UserAnswersCache
+import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{AuthAction, EnrolmentExtractor, GroupEnrolmentExtractor}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.HaveEUEoriFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.HaveEUEori
@@ -37,6 +34,7 @@ class HaveEUEoriController @Inject() (
   haveEUEoriView: have_eu_eori,
   formProvider: HaveEUEoriFormProvider,
   groupEnrolment: GroupEnrolmentExtractor,
+  userAnswersCache: UserAnswersCache,
   mcc: MessagesControllerComponents
 )(implicit val ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with EnrolmentExtractor {
@@ -46,7 +44,11 @@ class HaveEUEoriController @Inject() (
   def onPageLoad: Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
       implicit request => _: LoggedInUserWithEnrolments =>
-        Future.successful(Ok(haveEUEoriView(form)))
+        userAnswersCache.getHaveEUEori() map {
+          case Some(haveEUEori) =>
+            Ok(haveEUEoriView(form.fill(HaveEUEori.yesOrNo(haveEUEori))))
+          case None => Ok(haveEUEoriView(form))
+        }
     }
 
   def submit: Action[AnyContent] = authAction.ggAuthorisedUserWithEnrolmentsAction {
@@ -55,7 +57,8 @@ class HaveEUEoriController @Inject() (
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(haveEUEoriView(formWithErrors))),
-          value =>
+          value =>{
+            userAnswersCache.cacheHaveEUEori(value)
             value match {
               case HaveEUEori.Yes =>
                 Future.successful(
@@ -64,8 +67,10 @@ class HaveEUEoriController @Inject() (
                   )
                 )
               case HaveEUEori.No =>
-                groupEnrolment.getEori(loggedInUser).map(destinationsByExistingEori(_))
+                groupEnrolment.getEori(loggedInUser).map(destinationsByExistingEori)
             }
+          }
+
         )
 
   }

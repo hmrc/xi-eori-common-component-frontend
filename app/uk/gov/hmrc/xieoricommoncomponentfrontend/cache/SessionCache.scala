@@ -42,8 +42,8 @@ sealed case class CachedData(
   addressLookupResult: Option[Seq[AddressLookup]] = None
 ) {
 
-  def eori(sessionId: Id): String =
-    eori.getOrElse(throwException(eoriKey, sessionId))
+/*  def eori(sessionId: Id): String =
+    eori.getOrElse(throwException(eoriKey, sessionId))*/
 
   def subscriptionDisplayMongo(): SubscriptionDisplayResponseDetail = {
     val resp = subscriptionDisplay.getOrElse(emptySubscriptionDisplay())
@@ -58,18 +58,21 @@ sealed case class CachedData(
       resp.XIVatNo
     )
   }
-
+/*
   def getAddressLookupParams: PBEAddressLookup =
     addressLookupParams.getOrElse(emptyAddressLookupParams())
 
-  def getRegistrationDetails: RegistrationDetails =
-    registrationDetails.getOrElse(emptyRegistrationDetails())
+
 
   def getAddressLookupResult: Seq[AddressLookup] =
-    addressLookupResult.getOrElse(emptyAddressLookupResult())
+    addressLookupResult.getOrElse(None)*/
 
+  def getRegistrationDetails: RegistrationDetails =
+    registrationDetails.getOrElse(emptyRegistrationDetails())
+/*
   private def throwException(name: String, sessionId: Id) =
     throw new IllegalStateException(s"$name is not cached in data for the sessionId: ${sessionId.id}")
+*/
 
 }
 
@@ -127,48 +130,46 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
   def saveAddressLookupResult(addressLookup: Seq[AddressLookup])(implicit hc: HeaderCarrier): Future[Boolean] =
     createOrUpdate(sessionId, addressLookupResultsKey, Json.toJson(addressLookup)).map(_ => true)
 
-  private def getCached[T](sessionId: Id, t: (CachedData, Id) => T): Future[Option[T]] =
+  private def getCached[T](sessionId: Id, t: (CachedData, Id) => T): Future[T] =
     findById(sessionId.id).map {
       case Some(Cache(_, Some(data), _, _)) =>
         Json.fromJson[CachedData](data) match {
-          case d: JsSuccess[CachedData] => Some(t(d.value, sessionId))
+          case d: JsSuccess[CachedData] => t(d.value, sessionId)
           case _: JsError =>
             eccLogger.error(s"No Session data is cached for the sessionId : ${sessionId.id}")
             throw SessionTimeOutException(s"No Session data is cached for the sessionId : ${sessionId.id}")
         }
       case _ =>
         eccLogger.info(s"No match session id for signed in user with session: ${sessionId.id}")
-        None
+        throw SessionTimeOutException(s"No match session id for signed in user with session : ${sessionId.id}")
     }
 
   def eori(implicit hc: HeaderCarrier): Future[Option[String]] =
-    getCached[String](sessionId, (cachedData, id) => cachedData.eori(id))
+    getCached[Option[String]](sessionId, (cachedData, _) => cachedData.eori)
 
   def subscriptionDisplay(implicit hc: HeaderCarrier): Future[Option[SubscriptionDisplayResponseDetail]] =
-    getCached[SubscriptionDisplayResponseDetail](sessionId, (cachedData, _) => cachedData.subscriptionDisplayMongo())
+    getCached[Option[SubscriptionDisplayResponseDetail]](sessionId, (cachedData, _) => Some(cachedData.subscriptionDisplayMongo()))
 
   def addressLookupParams(implicit hc: HeaderCarrier): Future[Option[PBEAddressLookup]] =
-    getCached[PBEAddressLookup](sessionId, (cachedData, _) => cachedData.getAddressLookupParams)
+    getCached[Option[PBEAddressLookup]](sessionId, (cachedData, _) => cachedData.addressLookupParams)
 
   def addressLookupResult(implicit hc: HeaderCarrier): Future[Option[Seq[AddressLookup]]] =
-    getCached[Seq[AddressLookup]](sessionId, (cachedData, _) => cachedData.getAddressLookupResult)
+    getCached[Option[Seq[AddressLookup]]](sessionId, (cachedData, _) => cachedData.addressLookupResult)
 
   def registrationDetails(implicit hc: HeaderCarrier): Future[RegistrationDetails] = {
-   getCached[RegistrationDetails](sessionId, (cachedData, _) => cachedData.getRegistrationDetails).map{
-     details => details.getOrElse(throw new IllegalStateException("No Registration Details Cached"))
-   }
+   getCached[RegistrationDetails](sessionId, (cachedData, _) => cachedData.getRegistrationDetails)
   }
 
-  /* def getCachedRegistrationDetails(implicit hc: HeaderCarrier): Future[Option[RegistrationDetails]] =
-     getCached[RegistrationDetails](sessionId, (cachedData, _) => cachedData.getRegistrationDetails)
-
-   def registrationDetails(implicit hc: HeaderCarrier): Future[RegistrationDetails] = getCachedRegistrationDetails.map{
-     details => details.getOrElse(throw new IllegalStateException("No Registration Details Cached"))
-   }*/
+  def tradeWithNI(implicit hc: HeaderCarrier): Future[Option[Boolean]] = {
+    getCached[RegistrationDetails](sessionId, (cachedData, _) => cachedData.getRegistrationDetails)
+      .map(_.tradeWithNI)
+      .recoverWith {
+        case _ => Future.successful(None)
+       }
+  }
 
   def remove(implicit hc: HeaderCarrier): Future[Boolean] =
     removeById(sessionId.id) map (x => x.writeErrors.isEmpty && x.writeConcernError.isEmpty)
-
-}
+  }
 
 case class SessionTimeOutException(errorMessage: String) extends NoStackTrace
