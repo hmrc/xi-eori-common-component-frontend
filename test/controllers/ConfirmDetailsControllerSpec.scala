@@ -213,7 +213,7 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
     "redirect to the Disclose Personal Details Consent page when user selects Yes to confirm details" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
-
+        when(mockUserAnswersCache.cacheConfirmDetails(any())(any())).thenReturn(Future.successful(true))
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.submit().url,
@@ -254,7 +254,7 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
     "redirect to the Sign In page when user selects No and wants to use different login credentials" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
-
+        when(mockUserAnswersCache.cacheConfirmDetails(any())(any())).thenReturn(Future.successful(true))
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.submit().url,
@@ -271,7 +271,7 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
     "redirect to the HaveEUEori page when user selects No for changing the details" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
-
+        when(mockUserAnswersCache.cacheConfirmDetails(any())(any())).thenReturn(Future.successful(true))
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.submit().url,

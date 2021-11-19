@@ -25,8 +25,9 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.AddressLookupConnect
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.PBEAddressResultsFormProvider
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.{ConfirmDetails, PBEAddressLookup}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{AddressLookupFailure, AddressLookupSuccess}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewModel
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.registered_address
 
 import javax.inject.Inject

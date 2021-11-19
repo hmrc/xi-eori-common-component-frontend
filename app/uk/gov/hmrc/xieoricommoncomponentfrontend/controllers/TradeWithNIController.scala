@@ -28,7 +28,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.TradeWithNI.{No, Y
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.trade_with_ni
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class TradeWithNIController @Inject() (
   authAction: AuthAction,
@@ -51,16 +51,14 @@ class TradeWithNIController @Inject() (
         }
     }
 
-  def submit: Action[AnyContent] = Action { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => BadRequest(tradeWithNIView(formWithErrors)),
-        value => {
-          userAnswersCache.cacheTradeWithNI(value)
-          destinationsByAnswer(value)
-        }
-      )
+  def submit: Action[AnyContent] = authAction.ggAuthorisedUserWithEnrolmentsAction {
+    implicit request => _: LoggedInUserWithEnrolments =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(tradeWithNIView(formWithErrors))),
+          value => userAnswersCache.cacheTradeWithNI(value).map(_ => destinationsByAnswer(value))
+        )
   }
 
   private def destinationsByAnswer(tradeWithNI: TradeWithNI): Result = tradeWithNI match {

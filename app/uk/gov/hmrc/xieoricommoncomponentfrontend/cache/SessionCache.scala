@@ -63,22 +63,8 @@ sealed case class CachedData(
     )
   }
 
-  /*
-  def getAddressLookupParams: PBEAddressLookup =
-    addressLookupParams.getOrElse(emptyAddressLookupParams())
-
-
-
-  def getAddressLookupResult: Seq[AddressLookup] =
-    addressLookupResult.getOrElse(None)*/
-
   def getRegistrationDetails: RegistrationDetails =
     registrationDetails.getOrElse(emptyRegistrationDetails())
-
-  /*
-  private def throwException(name: String, sessionId: Id) =
-    throw new IllegalStateException(s"$name is not cached in data for the sessionId: ${sessionId.id}")
-   */
 
 }
 
@@ -128,9 +114,6 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
 
   def saveRegistrationDetails(rdh: RegistrationDetails)(implicit hc: HeaderCarrier): Future[Boolean] =
     createOrUpdate(sessionId, registrationDetailsKey, Json.toJson(rdh)) map (_ => true)
-
-  /*  def saveAddressLookupResult(addressLookup: Seq[AddressLookup])(implicit hc: HeaderCarrier): Future[Boolean] =
-    createOrUpdate(sessionId, addressLookupResultsKey, Json.toJson(addressLookup)).map(_ => true)*/
 
   private def getCached[T](sessionId: Id, t: (CachedData, Id) => T): Future[T] =
     findById(sessionId.id).map {

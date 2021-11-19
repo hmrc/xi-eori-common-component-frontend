@@ -61,19 +61,19 @@ class HaveEUEoriController @Inject() (
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(haveEUEoriView(formWithErrors))),
-          value => {
-            userAnswersCache.cacheHaveEUEori(value)
-            value match {
-              case HaveEUEori.Yes =>
-                Future.successful(
-                  Redirect(
-                    uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded()
+          value =>
+            userAnswersCache.cacheHaveEUEori(value).flatMap { _ =>
+              value match {
+                case HaveEUEori.Yes =>
+                  Future.successful(
+                    Redirect(
+                      uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded()
+                    )
                   )
-                )
-              case HaveEUEori.No =>
-                groupEnrolment.getEori(loggedInUser).map(destinationsByExistingEori)
+                case HaveEUEori.No =>
+                  groupEnrolment.getEori(loggedInUser).map(destinationsByExistingEori)
+              }
             }
-          }
         )
 
   }

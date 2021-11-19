@@ -104,28 +104,19 @@ class ConfirmDetailsController @Inject() (
                 }
               case None => Future.successful(InternalServerError(errorTemplateView()))
             },
-          value => {
-            userAnswersCache.cacheConfirmDetails(value)
-            destinationsByAnswer(value)
-          }
+          value => userAnswersCache.cacheConfirmDetails(value).map(_ => destinationsByAnswer(value))
         )
   }
 
-  private def destinationsByAnswer(confirmDetails: ConfirmDetails): Future[Result] = confirmDetails match {
+  private def destinationsByAnswer(confirmDetails: ConfirmDetails): Result = confirmDetails match {
     case ConfirmDetails.confirmedDetails =>
-      Future.successful(
-        Redirect(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.onPageLoad()
-        )
+      Redirect(
+        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.onPageLoad()
       )
     case ConfirmDetails.changeCredentials =>
-      Future.successful(toGGLogin(appConfig.loginContinueUrl).withNewSession)
+      toGGLogin(appConfig.loginContinueUrl).withNewSession
     case ConfirmDetails.changeDetails =>
-      Future.successful(
-        Redirect(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ChangeDetailsController.incorrectDetails()
-        )
-      )
+      Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ChangeDetailsController.incorrectDetails())
   }
 
 }

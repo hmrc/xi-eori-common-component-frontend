@@ -108,7 +108,21 @@ class SicCodeControllerSpec extends BaseSpec {
         page.title should startWith("What is your Standard Industrial Classification (SIC) code?")
       }
     }
+    "populate View if userAnswersCache has session data" in {
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+        when(mockUserAnswersCache.getSicCode()(any())).thenReturn(Future.successful(Some("99987")))
+        val request = SessionBuilder.buildRequestWithSessionAndPath(
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.onPageLoad().url,
+          defaultUserId
+        )
 
+        val result = route(application, request).get
+
+        val page = RegistrationPage(contentAsString(result))
+        page.getElementValue("//*[@id='sic']") shouldBe "99987"
+      }
+    }
     "redirect to the next page when Organisation group with non NI postcode data is submitted" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Organisation)
@@ -118,7 +132,7 @@ class SicCodeControllerSpec extends BaseSpec {
           .thenReturn(Future.successful(groupEnrolment))
         when(mockGroupEnrolmentExtractor.getEori(any())(any()))
           .thenReturn(Future.successful(existingEori))
-
+        when(mockUserAnswersCache.cacheSicCode(any())(any())).thenReturn(Future.successful(true))
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.submit().url,
@@ -144,7 +158,7 @@ class SicCodeControllerSpec extends BaseSpec {
           .thenReturn(Future.successful(groupEnrolment))
         when(mockGroupEnrolmentExtractor.getEori(any())(any()))
           .thenReturn(Future.successful(existingEori))
-
+        when(mockUserAnswersCache.cacheSicCode(any())(any())).thenReturn(Future.successful(true))
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.submit().url,

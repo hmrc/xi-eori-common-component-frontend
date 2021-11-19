@@ -24,6 +24,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
 import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
@@ -53,6 +54,25 @@ class PBEAddressLookupControllerSpec extends BaseSpec {
         val page = RegistrationPage(contentAsString(result))
 
         page.title should startWith("What is your permanent business establishment address?")
+      }
+    }
+
+    "populate View if userAnswersCache has session data" in {
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+        when(mockSessionCache.addressLookupParams(any())).thenReturn(
+          Future.successful(Some(PBEAddressLookup("SE211AA", Some("line1"))))
+        )
+        val request = SessionBuilder.buildRequestWithSessionAndPath(
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEAddressLookupController.onPageLoad().url,
+          defaultUserId
+        )
+
+        val result = route(application, request).get
+
+        val page = RegistrationPage(contentAsString(result))
+        page.getElementValue("//*[@id='postcode']") shouldBe "SE211AA"
+        page.getElementValue("//*[@id='line1']") shouldBe "line1"
       }
     }
 

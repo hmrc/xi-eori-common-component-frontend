@@ -23,6 +23,7 @@ import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AuthConnector
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.UserAnswersCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, KeyValue}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.HaveEUEori.{No, Yes}
@@ -76,7 +77,7 @@ class HaveEUEoriControllerSpec extends BaseSpec {
     "redirect to the XIEoriNotNeeded page when user selects Yes" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
-
+        when(mockUserAnswersCache.cacheHaveEUEori(any())(any())).thenReturn(Future.successful(true))
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.submit().url,
@@ -96,6 +97,7 @@ class HaveEUEoriControllerSpec extends BaseSpec {
     "redirect to the Confirm details page when user has GBEori and selects No" in {
       def application = new GuiceApplicationBuilder().overrides(
         inject.bind[AuthConnector].to(mockAuthConnector),
+        inject.bind[UserAnswersCache].to(mockUserAnswersCache),
         inject.bind[GroupEnrolmentExtractor].to(mockGroupEnrolmentExtractor)
       ).configure("auditing.enabled" -> "false", "metrics.jvm" -> false, "metrics.enabled" -> false).build()
 
@@ -105,6 +107,7 @@ class HaveEUEoriControllerSpec extends BaseSpec {
           .thenReturn(Future.successful(groupEnrolment))
         when(mockGroupEnrolmentExtractor.getEori(any())(any()))
           .thenReturn(Future.successful(existingEori))
+        when(mockUserAnswersCache.cacheHaveEUEori(any())(any())).thenReturn(Future.successful(true))
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.submit().url,

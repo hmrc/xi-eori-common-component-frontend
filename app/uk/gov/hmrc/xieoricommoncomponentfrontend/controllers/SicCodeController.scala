@@ -68,11 +68,12 @@ class SicCodeController @Inject() (
             case Some(AffinityGroup.Organisation) =>
               groupEnrolment.getEori(loggedInUser).flatMap {
                 case Some(gbEori) =>
-                  subscriptionDisplayService.getSubscriptionDisplay(gbEori).map {
+                  subscriptionDisplayService.getSubscriptionDisplay(gbEori).flatMap {
                     case Right(response) =>
-                      userAnswersCache.cacheSicCode(value.sic)
-                      destinationsByNIPostCode(response.CDSEstablishmentAddress.postalCode)
-                    case Left(_) => InternalServerError(errorTemplateView())
+                      userAnswersCache.cacheSicCode(value.sic).map(
+                        _ => destinationsByNIPostCode(response.CDSEstablishmentAddress.postalCode)
+                      )
+                    case Left(_) => Future.successful(InternalServerError(errorTemplateView()))
                   }
                 case None => Future.successful(InternalServerError(errorTemplateView()))
               }

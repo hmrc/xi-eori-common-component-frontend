@@ -69,7 +69,7 @@ class TradeWithNIControllerSpec extends BaseSpec {
     "redirect to HaveEuEori Page when Yes is selected" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
-
+        when(mockUserAnswersCache.cacheTradeWithNI(any())(any())).thenReturn(Future.successful(true))
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.submit().url,
@@ -89,7 +89,7 @@ class TradeWithNIControllerSpec extends BaseSpec {
     "redirect to XiEoriNotNeeded Page when No is selected" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
-
+        when(mockUserAnswersCache.cacheTradeWithNI(any())(any())).thenReturn(Future.successful(true))
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.submit().url,

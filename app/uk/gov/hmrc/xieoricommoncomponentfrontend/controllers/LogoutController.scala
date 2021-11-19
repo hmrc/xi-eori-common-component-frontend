@@ -44,10 +44,11 @@ class LogoutController @Inject() (
 
   def timeout: Action[AnyContent] = authAction.ggAuthorisedUserWithEnrolmentsAction {
     implicit request => _: LoggedInUserWithEnrolments =>
-      Future.successful(
-        Redirect(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.displayTimeOutPage
-        ).withNewSession
+      sessionCache.remove.map(
+        _ =>
+          Redirect(
+            uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.displayTimeOutPage
+          ).withNewSession
       )
   }
 

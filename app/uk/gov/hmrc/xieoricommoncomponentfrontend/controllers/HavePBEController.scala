@@ -51,16 +51,14 @@ class HavePBEController @Inject() (
         }
     }
 
-  def submit: Action[AnyContent] = Action { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => BadRequest(havePBEView(formWithErrors)),
-        value => {
-          userAnswersCache.cacheHavePBEInNI(value)
-          destinationsByAnswer(value)
-        }
-      )
+  def submit: Action[AnyContent] = authAction.ggAuthorisedUserWithEnrolmentsAction {
+    implicit request => _: LoggedInUserWithEnrolments =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(havePBEView(formWithErrors))),
+          value => userAnswersCache.cacheHavePBEInNI(value).map(_ => destinationsByAnswer(value))
+        )
 
   }
 
