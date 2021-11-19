@@ -20,8 +20,7 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{Address, AddressDetails, AddressLookup}
 
 case class AddressViewModel(street: String, city: String, postcode: Option[String], countryCode: String) {
-  val addressDetails                 = AddressDetails(street, city, postcode, countryCode)
-  def toAddressLookup: AddressLookup = AddressLookup(street, city, postcode.getOrElse(""), countryCode)
+  val addressDetails = AddressDetails(street, city, postcode, countryCode)
 }
 
 object AddressViewModel {
