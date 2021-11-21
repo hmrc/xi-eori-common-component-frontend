@@ -24,6 +24,7 @@ import uk.gov.hmrc.mongo.{MongoConnector, MongoSpecSupport}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.{CachedData, SessionCache}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.Eori
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.RegistrationDetails
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, SubscriptionDisplayResponseDetail, SubscriptionInfoVatId}
 
@@ -52,6 +53,8 @@ class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoS
     Some(LocalDate.of(1963, 4, 1)),
     Some("XIE9XSDF10BCKEYAX")
   )
+  val registrationDetails: RegistrationDetails = RegistrationDetails(Some(true),Some(true),None,None,Some("99976"),Some(true),None)
+
 
   val addressLookupParams: PBEAddressLookup = PBEAddressLookup("SE28 1AA", None)
 
@@ -172,6 +175,43 @@ class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoS
       e1.getMessage mustBe "Session id is not available"
     }
 
+    "provide default when registration details holder not in cache" in {
+      val s = setupSession
+      await(
+        sessionCache.insert(
+          Cache(Id(s.value), data = Some(toJson(CachedData(eori = Some(eori.id)))))
+        )
+      )
+
+      await(sessionCache.registrationDetails(hc)) mustBe RegistrationDetails(None)
+    }
+
+    "store, fetch and update Registration details correctly" in {
+      val sessionId: SessionId = setupSession
+
+
+
+      await(sessionCache.saveRegistrationDetails(registrationDetails)(hc))
+
+      val expectedJson                     = toJson(CachedData(registrationDetails = Some(registrationDetails)))
+      val cache                            = await(sessionCache.findById(Id(sessionId.value)))
+      val Some(Cache(_, Some(json), _, _)) = cache
+      json mustBe expectedJson
+
+      await(sessionCache.registrationDetails(hc)) mustBe registrationDetails
+
+      val updatedHolder = registrationDetails.copy(
+        confirmDetails = Some("changeDetails"),
+        personalDataDisclosureConsent = Some(true)
+      )
+
+      await(sessionCache.saveRegistrationDetails(updatedHolder)(hc))
+
+      val expectedUpdatedJson                     = toJson(CachedData(registrationDetails = Some(updatedHolder)))
+      val updatedCache                            = await(sessionCache.findById(Id(sessionId.value)))
+      val Some(Cache(_, Some(updatedJson), _, _)) = updatedCache
+      updatedJson mustBe expectedUpdatedJson
+    }
 
     }
 

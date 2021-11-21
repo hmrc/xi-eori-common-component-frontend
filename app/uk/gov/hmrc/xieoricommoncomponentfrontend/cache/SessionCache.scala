@@ -46,9 +46,6 @@ sealed case class CachedData(
   addressLookupResult: Option[Seq[AddressLookup]] = None
 ) {
 
-  /*  def eori(sessionId: Id): String =
-    eori.getOrElse(throwException(eoriKey, sessionId))*/
-
   def subscriptionDisplayMongo(): SubscriptionDisplayResponseDetail = {
     val resp = subscriptionDisplay.getOrElse(emptySubscriptionDisplay())
     SubscriptionDisplayResponseDetail(

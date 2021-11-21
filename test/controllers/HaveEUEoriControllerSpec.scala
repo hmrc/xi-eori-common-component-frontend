@@ -64,7 +64,7 @@ class HaveEUEoriControllerSpec extends BaseSpec {
     "populate View if userAnswersCache has session data" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
-        when(mockUserAnswersCache.getHaveEUEori()(any())).thenReturn(Future.successful(None))
+        when(mockUserAnswersCache.getHaveEUEori()(any())).thenReturn(Future.successful(Some(true)))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.onPageLoad().url,
           defaultUserId
