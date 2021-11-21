@@ -1,0 +1,81 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html._
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ManualPBEAddress
+
+@this(main_template: Layout,
+inputSelect : components.inputSelect,
+countryField: helpers.countryField,
+formHelper: FormWithCSRF,
+govukButton: GovukButton,
+inputText: components.inputText,
+errorSummary: components.errorSummary,
+fieldSet: components.fieldSet)
+@(manualPBEAddressForm: Form[ManualPBEAddress])(implicit messages: Messages, request: Request[_])
+@title = @{
+    messages("manual-pbe-address.page.title")
+}
+
+@displayCountryField = {
+@defining(Seq('_plainLabel -> true)) { args =>
+@countryField(manualPBEAddressForm, "country", "manual-pbe-address.country.label", args: _*)
+}
+}
+@main_template(title,form = Some(manualPBEAddressForm)) {
+
+    @formHelper(action = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.submit(), 'autoComplete -> "off") {
+
+        @errorSummary(manualPBEAddressForm.errors)
+        @fieldSet(title) {
+            @inputText(
+                form = manualPBEAddressForm,
+                id = "line1",
+                name = "line1",
+                label = "manual-pbe-address.line1.label",
+                isPageHeading = false,
+                classes = Some("govuk-!-width-one-half"),
+                labelClasses = Some("line1")
+            )
+            @inputText(
+                form = manualPBEAddressForm,
+                id = "townorcity",
+                name = "townorcity",
+                label = "manual-pbe-address.town.label",
+                isPageHeading = false,
+                classes = Some("govuk-!-width-one-half"),
+                labelClasses = Some("town")
+            )
+            @inputText(
+                form = manualPBEAddressForm,
+                id = "postcode",
+                name = "postcode",
+                label = "manual-pbe-address.postcode.label",
+                isPageHeading = false,
+                classes = Some("govuk-!-width-one-half"),
+                labelClasses = Some("postcode")
+            )
+@displayCountryField
+
+        }
+        @govukButton(Button(
+            content = Text(messages("ecc.navigation.continue"))
+        ))
+
+        @helpers.helpAndSupport()
+    }
+}

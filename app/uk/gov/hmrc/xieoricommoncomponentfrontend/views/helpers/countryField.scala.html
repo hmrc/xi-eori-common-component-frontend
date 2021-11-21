@@ -1,0 +1,72 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.helper._
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.select.SelectItem
+
+
+@this(inputSelect: components.inputSelect)
+
+
+
+@(form: Form[_], field: String, label: String, args: (Symbol, Any)*)(implicit messages: Messages)
+
+@elements = @{
+FieldElements(form(field).id, form(field), null, args.toMap, messages)
+}
+@allErrors = @{
+elements.errors ++ args.flatMap {
+case ('otherErrors, otherErrors: Seq[_]) => otherErrors.map(_.toString)
+case _ => Seq.empty[String]
+}
+}
+
+@isPlainLabel = @{
+elements.args.getOrElse('_plainLabel, false).asInstanceOf[Boolean]
+}
+
+@selectedValue = @{ form(field).value match { case Some(x) => x case None => "" case x => x }}
+
+@hintHtml = {
+<span class="govuk-visually-hidden">@Html(s". ${messages("manual-pbe-address.hint.screen-reader")}")</span>
+}
+<div class ="govuk-!-width-one-half">
+    @inputSelect(
+    form = form,
+    id = field,
+    name = field,
+    items =  Seq(SelectItem(
+    value = Some("GB"),
+    text = "United Kingdom"
+    )),
+    label = messages(label),
+    hint = Some(hintHtml),
+    classes = Some("govuk-!-width-one-half"),
+    isPageHeading = false
+    )
+</div>
+
+<script type="text/javascript">
+(function(){
+    var selectElements = document.getElementsByTagName('select');
+    var selectElement = selectElements[selectElements.length-1]
+
+    selectElement.remove(0);
+
+
+}())
+</script>
