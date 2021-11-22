@@ -44,7 +44,7 @@ elements.args.getOrElse('_plainLabel, false).asInstanceOf[Boolean]
 @hintHtml = {
 <span class="govuk-visually-hidden">@Html(s". ${messages("manual-pbe-address.hint.screen-reader")}")</span>
 }
-<div class ="govuk-!-width-one-half">
+<div>
     @inputSelect(
     form = form,
     id = field,
@@ -63,10 +63,8 @@ elements.args.getOrElse('_plainLabel, false).asInstanceOf[Boolean]
 <script type="text/javascript">
 (function(){
     var selectElements = document.getElementsByTagName('select');
-    var selectElement = selectElements[selectElements.length-1]
-
+    var selectElement = selectElements[selectElements.length-1];
     selectElement.remove(0);
-
-
+    selectElement.disabled=true;
 }())
 </script>
