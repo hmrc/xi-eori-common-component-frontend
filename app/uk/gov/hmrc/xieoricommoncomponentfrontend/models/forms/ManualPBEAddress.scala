@@ -18,7 +18,7 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms
 
 import play.api.libs.json.Json
 
-case class ManualPBEAddress(line1: String, town: String, postcode: String, country: String) {}
+case class ManualPBEAddress(line1: String, town: String, postcode: String) {}
 
 object ManualPBEAddress {
   implicit val format = Json.format[ManualPBEAddress]

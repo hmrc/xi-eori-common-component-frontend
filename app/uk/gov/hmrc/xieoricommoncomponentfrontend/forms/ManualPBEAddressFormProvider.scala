@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.xieoricommoncomponentfrontend.forms
 
+import akka.parboiled2.RuleTrace.Optional
 import play.api.data.Form
 import play.api.data.Forms.mapping
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.mappings.Mappings
@@ -41,8 +42,7 @@ class ManualPBEAddressFormProvider @Inject() extends Mappings {
               regexp(postcodeRegex, "manual-pbe-address.postcode.format.invalid"),
               btPostcode("manual-pbe-address.postcode.bt.format")
             )
-          ),
-        "country" -> text("")
+          )
       )(ManualPBEAddress.apply)(ManualPBEAddress.unapply)
     )
 
