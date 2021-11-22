@@ -20,7 +20,7 @@ import common.pages.RegistrationPage
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.test.Helpers._
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.{HavePBE, PBEAddressLookup}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.HavePBE
 import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder

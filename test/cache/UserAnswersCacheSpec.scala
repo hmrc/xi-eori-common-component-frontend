@@ -21,25 +21,16 @@ import org.mockito.Mockito._
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.test.Helpers.await
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.{SessionCache, UserAnswersCache}
-import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.Eori
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.UserAnswersCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.RegistrationDetails
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.{
-  ConfirmDetails,
-  DisclosePersonalDetails,
-  HaveEUEori,
-  HavePBE,
-  TradeWithNI
-}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.AddressViewModel
 import util.BaseSpec
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.{Duration, FiniteDuration}
+import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
-import scala.util.Random
 
 class UserAnswersCacheSpec extends BaseSpec with MockitoSugar with BeforeAndAfterEach {
 
@@ -54,11 +45,7 @@ class UserAnswersCacheSpec extends BaseSpec with MockitoSugar with BeforeAndAfte
   private val subscriptionDetailsHolderService =
     new UserAnswersCache(mockSessionCache)
 
-  private val eoriNumericLength = 15
-  private val eoriId            = "GB" + Random.nextString(eoriNumericLength)
-  private val eori              = Eori(eoriId)
-
-  protected override def beforeEach {
+  protected override def beforeEach: Unit = {
     reset(mockSessionCache, mockRegistrationDetails)
 
     when(mockSessionCache.saveRegistrationDetails(any[RegistrationDetails])(any[HeaderCarrier]))

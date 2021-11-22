@@ -18,7 +18,6 @@ package util
 
 import akka.stream.Materializer
 import akka.stream.testkit.NoMaterializer
-import common.pages.{RegistrationPage, WebPage}
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.{DefaultFileMimeTypes, FileMimeTypesConfiguration}
@@ -28,10 +27,9 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.api.{inject, Configuration, Environment}
+import play.api.{inject, Application, Configuration, Environment}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.{SessionCache, UserAnswersCache}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
 import util.builders.{AuthBuilder, SessionBuilder}
@@ -61,15 +59,15 @@ trait BaseSpec extends WordSpec with MockitoSugar with Matchers with Injector {
 
   protected val previousPageUrl = "javascript:history.back()"
 
-  val env: Environment      = Environment.simple()
-  val mockAuthConnector     = mock[AuthConnector]
-  val config: Configuration = Configuration.load(env)
+  val env: Environment                 = Environment.simple()
+  val mockAuthConnector: AuthConnector = mock[AuthConnector]
+  val config: Configuration            = Configuration.load(env)
 
   private val serviceConfig = new ServicesConfig(config)
 
   val appConfig: AppConfig = new AppConfig(config, serviceConfig)
 
-  val getRequest = FakeRequest("GET", "")
+  val getRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "")
 
   def postRequest(data: (String, String)*): FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest("POST", "").withFormUrlEncodedBody(data: _*)
@@ -113,56 +111,10 @@ trait BaseSpec extends WordSpec with MockitoSugar with Matchers with Injector {
       )
     }
 
-  // TODO This trait is used in only one controller, extract the necessary logic and use in the test, rest to remove
-  trait AbstractControllerFixture[C <: FrontendController] {
-    val mockConnector = mock[AuthConnector]
-    val userId        = defaultUserId
-
-    val controller: C
-
-    private def withAuthorisedUser[T](block: => T): T = {
-      AuthBuilder.withAuthorisedUser(userId, mockConnector)
-      block
-    }
-
-    protected def show(controller: C): Action[AnyContent]
-
-    def showForm[T](test: Future[Result] => T): T = withAuthorisedUser {
-      test(show(controller).apply(SessionBuilder.buildRequestWithSession(userId)))
-    }
-
-    protected def submit(controller: C): Action[AnyContent]
-
-    def submitForm[T](formValues: Map[String, String])(test: Future[Result] => T): T = withAuthorisedUser {
-      test(submit(controller).apply(SessionBuilder.buildRequestWithSessionAndFormValues(userId, formValues)))
-    }
-
-    def assertInvalidField(
-      formValues: Map[String, String],
-      webPage: WebPage
-    )(problemField: String, fieldLevelErrorXPath: String, errorMessage: String): Result =
-      submitForm(formValues) { result =>
-        status(result) shouldBe BAD_REQUEST
-        val page = RegistrationPage(contentAsString(result))
-        page.getElementsText(xpath = webPage.pageLevelErrorSummaryListXPath) shouldBe errorMessage
-        withClue(
-          s"Not found in the page: field level error block for '$problemField' with xpath $fieldLevelErrorXPath"
-        ) {
-          page.elementIsPresent(fieldLevelErrorXPath) shouldBe true
-        }
-        page.getElementsText(fieldLevelErrorXPath) shouldBe s"Error: $errorMessage"
-        await(result)
-      }
-
-    def assertPresentOnPage(page: RegistrationPage)(elementXpath: String): Unit =
-      withClue(s"Element xpath not present in page: $elementXpath")(page.elementIsPresent(elementXpath) shouldBe true)
-
-  }
-
   val defaultUserId: String = s"user-${UUID.randomUUID}"
 
-  val mockSessionCache     = mock[SessionCache]
-  val mockUserAnswersCache = mock[UserAnswersCache]
+  val mockSessionCache: SessionCache         = mock[SessionCache]
+  val mockUserAnswersCache: UserAnswersCache = mock[UserAnswersCache]
 
   // TODO Extract below methods to some Utils class
   def strim(s: String): String = s.stripMargin.trim.split("\n").mkString(" ")
@@ -171,7 +123,7 @@ trait BaseSpec extends WordSpec with MockitoSugar with Matchers with Injector {
 
   def undersizedString(minLength: Int): String = Random.alphanumeric.take(minLength - 1).mkString
 
-  def application = new GuiceApplicationBuilder().overrides(
+  def application: Application = new GuiceApplicationBuilder().overrides(
     inject.bind[AuthConnector].to(mockAuthConnector),
     inject.bind[SessionCache].to(mockSessionCache),
     inject.bind[UserAnswersCache].to(mockUserAnswersCache)

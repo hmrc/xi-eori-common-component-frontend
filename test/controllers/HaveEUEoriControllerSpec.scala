@@ -35,12 +35,13 @@ import scala.concurrent.Future
 
 class HaveEUEoriControllerSpec extends BaseSpec {
 
-  private def groupEnrolment() =
+  val groupEnrolment =
     List(EnrolmentResponse("HMRC-ATAR-ORG", "Activated", List(KeyValue("EORINumber", "GB123456463324"))))
 
-  val existingEori = Some("XIE9XSDF10BCKEYAX")
+  val existingEori: Option[String] = Some("XIE9XSDF10BCKEYAX")
 
-  val mockGroupEnrolmentExtractor = mock[GroupEnrolmentExtractor]
+  val mockGroupEnrolmentExtractor: GroupEnrolmentExtractor = mock[GroupEnrolmentExtractor]
+
   "HaveEUEori controller" should {
     "return OK and the correct view for a GET" in {
 

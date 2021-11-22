@@ -25,9 +25,8 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.AddressLookupConnect
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.PBEAddressResultsFormProvider
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.{ConfirmDetails, PBEAddressLookup}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{AddressLookupFailure, AddressLookupSuccess}
-import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewModel
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.registered_address
 
 import javax.inject.Inject
@@ -78,20 +77,18 @@ class RegisteredAddressController @Inject() (
   )(implicit request: Request[AnyContent], hc: HeaderCarrier): Future[Result] = {
     val addressLookupParamsWithoutLine1 = PBEAddressLookup(addressLookupParams.postcode, None)
 
-    addressLookupConnector.lookup(addressLookupParamsWithoutLine1.postcode, None).flatMap { secondResponse =>
-      secondResponse match {
-        case AddressLookupSuccess(addresses) if addresses.nonEmpty && addresses.forall(_.nonEmpty) =>
-          sessionCache.saveAddressLookupParams(addressLookupParamsWithoutLine1).map { _ =>
-            Ok(
-              registeredAddressView(
-                PBEAddressResultsFormProvider.form(addresses.map(_.dropDownView)),
-                addressLookupParams,
-                addresses
-              )
+    addressLookupConnector.lookup(addressLookupParamsWithoutLine1.postcode, None).flatMap {
+      case AddressLookupSuccess(addresses) if addresses.nonEmpty && addresses.forall(_.nonEmpty) =>
+        sessionCache.saveAddressLookupParams(addressLookupParamsWithoutLine1).map { _ =>
+          Ok(
+            registeredAddressView(
+              PBEAddressResultsFormProvider.form(addresses.map(_.dropDownView)),
+              addressLookupParams,
+              addresses
             )
-          }
-        case _ => throw AddressLookupException
-      }
+          )
+        }
+      case _ => throw AddressLookupException
     }
   }
 

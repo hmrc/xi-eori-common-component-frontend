@@ -16,15 +16,15 @@
 
 package uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels
 
-import play.api.libs.json.Json
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{Address, AddressDetails, AddressLookup}
+import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{Address, AddressDetails}
 
 case class AddressViewModel(street: String, city: String, postcode: Option[String], countryCode: String) {
-  val addressDetails = AddressDetails(street, city, postcode, countryCode)
+  val addressDetails: AddressDetails = AddressDetails(street, city, postcode, countryCode)
 }
 
 object AddressViewModel {
-  implicit val jsonFormat = Json.format[AddressViewModel]
+  implicit val jsonFormat: OFormat[AddressViewModel] = Json.format[AddressViewModel]
 
   val sixLineAddressLine1MaxLength = 35
   val sixLineAddressLine2MaxLength = 34

@@ -17,16 +17,13 @@
 package controllers
 
 import common.pages.RegistrationPage
-import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import play.api.test.Helpers._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.TradeWithNI
 import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
-import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.Mockito.{reset, verify, when}
-import play.api.data.Form
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.trade_with_ni
 
 import scala.concurrent.Future
 

@@ -23,7 +23,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.UserAnswersCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.HavePBEFormProvider
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.{DisclosePersonalDetails, HavePBE}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.HavePBE
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.HavePBE.{No, Yes}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.have_pbe
 

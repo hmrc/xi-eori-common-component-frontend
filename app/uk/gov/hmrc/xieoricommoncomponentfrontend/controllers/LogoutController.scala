@@ -25,7 +25,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolmen
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.display_sign_out
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class LogoutController @Inject() (
@@ -47,7 +47,7 @@ class LogoutController @Inject() (
       sessionCache.remove.map(
         _ =>
           Redirect(
-            uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.displayTimeOutPage
+            uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.displayTimeOutPage()
           ).withNewSession
       )
   }

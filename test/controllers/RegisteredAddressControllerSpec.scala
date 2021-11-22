@@ -20,7 +20,7 @@ import common.pages.RegistrationPage
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
-import play.api.inject
+import play.api.{inject, Application}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AuthConnector
@@ -46,7 +46,7 @@ class RegisteredAddressControllerSpec extends BaseSpec with BeforeAndAfterEach {
     super.afterEach()
   }
 
-  override def application = new GuiceApplicationBuilder().overrides(
+  override def application: Application = new GuiceApplicationBuilder().overrides(
     inject.bind[AuthConnector].to(mockAuthConnector),
     inject.bind[SessionCache].to(mockSessionCache),
     inject.bind[UserAnswersCache].to(mockUserAnswersCache),

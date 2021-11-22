@@ -28,7 +28,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{
 }
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.SicCodeFormProvider
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.{DisclosePersonalDetails, SicCode}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.SicCode
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.SubscriptionDisplayService
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{error_template, sic_code}
 

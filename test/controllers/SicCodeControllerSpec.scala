@@ -19,7 +19,7 @@ package controllers
 import common.pages.RegistrationPage
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.inject
+import play.api.{inject, Application}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector}
@@ -41,17 +41,17 @@ import scala.concurrent.Future
 
 class SicCodeControllerSpec extends BaseSpec {
 
-  val subscriptionDisplayService  = mock[SubscriptionDisplayService]
-  val mockGroupEnrolmentExtractor = mock[GroupEnrolmentExtractor]
+  val subscriptionDisplayService: SubscriptionDisplayService = mock[SubscriptionDisplayService]
+  val mockGroupEnrolmentExtractor: GroupEnrolmentExtractor   = mock[GroupEnrolmentExtractor]
 
-  val nonNIEstablishmentAddress = EstablishmentAddress(
+  val nonNIEstablishmentAddress: EstablishmentAddress = EstablishmentAddress(
     streetAndNumber = "line1",
     city = "City name",
     postalCode = Some("SE28 1AA"),
     countryCode = "GB"
   )
 
-  val nonNIsubscriptionDisplayResponse = SubscriptionDisplayResponseDetail(
+  val nonNIsubscriptionDisplayResponse: SubscriptionDisplayResponseDetail = SubscriptionDisplayResponseDetail(
     EORINo = Some("GB123456789012"),
     CDSFullName = "FirstName LastName",
     CDSEstablishmentAddress = nonNIEstablishmentAddress,
@@ -61,14 +61,14 @@ class SicCodeControllerSpec extends BaseSpec {
     XIEORINo = Some("XIE9XSDF10BCKEYAX")
   )
 
-  val niEstablishmentAddress = EstablishmentAddress(
+  val niEstablishmentAddress: EstablishmentAddress = EstablishmentAddress(
     streetAndNumber = "line1",
     city = "City name",
     postalCode = Some("BT28 1AA"),
     countryCode = "GB"
   )
 
-  val niSubscriptionDisplayResponse = SubscriptionDisplayResponseDetail(
+  val niSubscriptionDisplayResponse: SubscriptionDisplayResponseDetail = SubscriptionDisplayResponseDetail(
     EORINo = Some("GB123456789012"),
     CDSFullName = "FirstName LastName",
     CDSEstablishmentAddress = niEstablishmentAddress,
@@ -78,12 +78,12 @@ class SicCodeControllerSpec extends BaseSpec {
     XIEORINo = Some("XIE9XSDF10BCKEYAX")
   )
 
-  private def groupEnrolment() =
+  val groupEnrolment =
     List(EnrolmentResponse("HMRC-ATAR-ORG", "Activated", List(KeyValue("EORINumber", "GB123456463324"))))
 
-  val existingEori = Some("XIE9XSDF10BCKEYAX")
+  val existingEori: Option[String] = Some("XIE9XSDF10BCKEYAX")
 
-  override def application = new GuiceApplicationBuilder().overrides(
+  override def application: Application = new GuiceApplicationBuilder().overrides(
     inject.bind[AuthConnector].to(mockAuthConnector),
     inject.bind[SubscriptionDisplayService].to(subscriptionDisplayService),
     inject.bind[UserAnswersCache].to(mockUserAnswersCache),
