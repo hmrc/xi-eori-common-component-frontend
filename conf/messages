@@ -426,7 +426,7 @@ manual-pbe-address.town.required=Enter town or city
 manual-pbe-address.postcode.required=Enter postcode
 manual-pbe-address.line1.error=The first line of the address must be 70 characters or less
 manual-pbe-address.town.error=Town or city must be 35 characters or less
-manual-pbe-address.postcode.format.invalid=Enter Valid Postcode
+manual-pbe-address.postcode.format.invalid=Enter a valid postcode
 manual-pbe-address.postcode.bt.format=Postcode must start with BT
 manual-pbe-address.hint.screen-reader=The country selected is United Kingdom
 
