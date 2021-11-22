@@ -27,7 +27,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.CachedData._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.Eori
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.SubscriptionDisplayMongo
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.{ManualPBEAddress, PBEAddressLookup}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, SubscriptionDisplayResponseDetail}
 
 import javax.inject.{Inject, Singleton}
@@ -69,6 +69,7 @@ object CachedData {
   val eoriKey                              = "eori"
   val subscriptionDisplayKey               = "subscriptionDisplay"
   val addressLookupParamsKey               = "addressLookupParams"
+  val manualPBEAddressParamsKey            = "manualPBEAddressParams"
   implicit val format: OFormat[CachedData] = Json.format[CachedData]
 
   def emptySubscriptionDisplay(): SubscriptionDisplayMongo =
@@ -131,6 +132,11 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
 
   def remove(implicit hc: HeaderCarrier): Future[Boolean] =
     removeById(sessionId.id) map (x => x.writeErrors.isEmpty && x.writeConcernError.isEmpty)
+
+  def saveManualPBEAddressParams(
+    manualPBEAddressParams: ManualPBEAddress
+  )(implicit hc: HeaderCarrier): Future[Boolean] =
+    createOrUpdate(sessionId, manualPBEAddressParamsKey, Json.toJson(manualPBEAddressParams)).map(_ => true)
 
 }
 
