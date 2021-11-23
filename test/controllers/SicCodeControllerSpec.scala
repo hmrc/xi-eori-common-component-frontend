@@ -19,10 +19,11 @@ package controllers
 import common.pages.RegistrationPage
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.inject
+import play.api.{inject, Application}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.UserAnswersCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, KeyValue}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
@@ -40,17 +41,17 @@ import scala.concurrent.Future
 
 class SicCodeControllerSpec extends BaseSpec {
 
-  val subscriptionDisplayService  = mock[SubscriptionDisplayService]
-  val mockGroupEnrolmentExtractor = mock[GroupEnrolmentExtractor]
+  val subscriptionDisplayService: SubscriptionDisplayService = mock[SubscriptionDisplayService]
+  val mockGroupEnrolmentExtractor: GroupEnrolmentExtractor   = mock[GroupEnrolmentExtractor]
 
-  val nonNIEstablishmentAddress = EstablishmentAddress(
+  val nonNIEstablishmentAddress: EstablishmentAddress = EstablishmentAddress(
     streetAndNumber = "line1",
     city = "City name",
     postalCode = Some("SE28 1AA"),
     countryCode = "GB"
   )
 
-  val nonNIsubscriptionDisplayResponse = SubscriptionDisplayResponseDetail(
+  val nonNIsubscriptionDisplayResponse: SubscriptionDisplayResponseDetail = SubscriptionDisplayResponseDetail(
     EORINo = Some("GB123456789012"),
     CDSFullName = "FirstName LastName",
     CDSEstablishmentAddress = nonNIEstablishmentAddress,
@@ -60,14 +61,14 @@ class SicCodeControllerSpec extends BaseSpec {
     XIEORINo = Some("XIE9XSDF10BCKEYAX")
   )
 
-  val niEstablishmentAddress = EstablishmentAddress(
+  val niEstablishmentAddress: EstablishmentAddress = EstablishmentAddress(
     streetAndNumber = "line1",
     city = "City name",
     postalCode = Some("BT28 1AA"),
     countryCode = "GB"
   )
 
-  val niSubscriptionDisplayResponse = SubscriptionDisplayResponseDetail(
+  val niSubscriptionDisplayResponse: SubscriptionDisplayResponseDetail = SubscriptionDisplayResponseDetail(
     EORINo = Some("GB123456789012"),
     CDSFullName = "FirstName LastName",
     CDSEstablishmentAddress = niEstablishmentAddress,
@@ -77,14 +78,15 @@ class SicCodeControllerSpec extends BaseSpec {
     XIEORINo = Some("XIE9XSDF10BCKEYAX")
   )
 
-  private def groupEnrolment() =
+  val groupEnrolment =
     List(EnrolmentResponse("HMRC-ATAR-ORG", "Activated", List(KeyValue("EORINumber", "GB123456463324"))))
 
-  val existingEori = Some("XIE9XSDF10BCKEYAX")
+  val existingEori: Option[String] = Some("XIE9XSDF10BCKEYAX")
 
-  override def application = new GuiceApplicationBuilder().overrides(
+  override def application: Application = new GuiceApplicationBuilder().overrides(
     inject.bind[AuthConnector].to(mockAuthConnector),
     inject.bind[SubscriptionDisplayService].to(subscriptionDisplayService),
+    inject.bind[UserAnswersCache].to(mockUserAnswersCache),
     inject.bind[GroupEnrolmentExtractor].to(mockGroupEnrolmentExtractor)
   ).configure("auditing.enabled" -> "false", "metrics.jvm" -> false, "metrics.enabled" -> false).build()
 
@@ -93,7 +95,7 @@ class SicCodeControllerSpec extends BaseSpec {
 
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
-
+        when(mockUserAnswersCache.getSicCode()(any())).thenReturn(Future.successful(None))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.onPageLoad().url,
           defaultUserId
@@ -106,7 +108,21 @@ class SicCodeControllerSpec extends BaseSpec {
         page.title should startWith("What is your Standard Industrial Classification (SIC) code?")
       }
     }
+    "populate View if userAnswersCache has session data" in {
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+        when(mockUserAnswersCache.getSicCode()(any())).thenReturn(Future.successful(Some("99987")))
+        val request = SessionBuilder.buildRequestWithSessionAndPath(
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.onPageLoad().url,
+          defaultUserId
+        )
 
+        val result = route(application, request).get
+
+        val page = RegistrationPage(contentAsString(result))
+        page.getElementValue("//*[@id='sic']") shouldBe "99987"
+      }
+    }
     "redirect to the next page when Organisation group with non NI postcode data is submitted" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Organisation)
@@ -116,7 +132,7 @@ class SicCodeControllerSpec extends BaseSpec {
           .thenReturn(Future.successful(groupEnrolment))
         when(mockGroupEnrolmentExtractor.getEori(any())(any()))
           .thenReturn(Future.successful(existingEori))
-
+        when(mockUserAnswersCache.cacheSicCode(any())(any())).thenReturn(Future.successful(true))
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.submit().url,
@@ -142,7 +158,7 @@ class SicCodeControllerSpec extends BaseSpec {
           .thenReturn(Future.successful(groupEnrolment))
         when(mockGroupEnrolmentExtractor.getEori(any())(any()))
           .thenReturn(Future.successful(existingEori))
-
+        when(mockUserAnswersCache.cacheSicCode(any())(any())).thenReturn(Future.successful(true))
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.submit().url,

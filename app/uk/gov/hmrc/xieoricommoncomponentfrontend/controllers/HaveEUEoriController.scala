@@ -19,6 +19,7 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.UserAnswersCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{
   AuthAction,
   EnrolmentExtractor,
@@ -37,6 +38,7 @@ class HaveEUEoriController @Inject() (
   haveEUEoriView: have_eu_eori,
   formProvider: HaveEUEoriFormProvider,
   groupEnrolment: GroupEnrolmentExtractor,
+  userAnswersCache: UserAnswersCache,
   mcc: MessagesControllerComponents
 )(implicit val ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with EnrolmentExtractor {
@@ -46,7 +48,11 @@ class HaveEUEoriController @Inject() (
   def onPageLoad: Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
       implicit request => _: LoggedInUserWithEnrolments =>
-        Future.successful(Ok(haveEUEoriView(form)))
+        userAnswersCache.getHaveEUEori() map {
+          case Some(haveEUEori) =>
+            Ok(haveEUEoriView(form.fill(HaveEUEori.yesOrNo(haveEUEori))))
+          case None => Ok(haveEUEoriView(form))
+        }
     }
 
   def submit: Action[AnyContent] = authAction.ggAuthorisedUserWithEnrolmentsAction {
@@ -56,15 +62,17 @@ class HaveEUEoriController @Inject() (
         .fold(
           formWithErrors => Future.successful(BadRequest(haveEUEoriView(formWithErrors))),
           value =>
-            value match {
-              case HaveEUEori.Yes =>
-                Future.successful(
-                  Redirect(
-                    uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded()
+            userAnswersCache.cacheHaveEUEori(value).flatMap { _ =>
+              value match {
+                case HaveEUEori.Yes =>
+                  Future.successful(
+                    Redirect(
+                      uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded()
+                    )
                   )
-                )
-              case HaveEUEori.No =>
-                groupEnrolment.getEori(loggedInUser).map(destinationsByExistingEori(_))
+                case HaveEUEori.No =>
+                  groupEnrolment.getEori(loggedInUser).map(destinationsByExistingEori)
+              }
             }
         )
 

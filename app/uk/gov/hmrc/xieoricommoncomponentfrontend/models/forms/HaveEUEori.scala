@@ -30,7 +30,9 @@ object HaveEUEori extends Enumerable.Implicits {
 
   val values: Seq[HaveEUEori] = Seq(Yes, No)
 
-  def fromBoolean(viewHaveEuEori: Boolean): HaveEUEori =
+  def toBoolean(haveEUEori: HaveEUEori): Boolean = if (haveEUEori.equals(Yes)) true else false
+
+  def yesOrNo(viewHaveEuEori: Boolean): HaveEUEori =
     if (viewHaveEuEori)
       Yes
     else

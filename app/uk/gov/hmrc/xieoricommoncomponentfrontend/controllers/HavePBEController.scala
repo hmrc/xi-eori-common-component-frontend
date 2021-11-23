@@ -19,6 +19,7 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.UserAnswersCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.HavePBEFormProvider
@@ -27,27 +28,38 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.HavePBE.{No, Yes}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.have_pbe
 
 import javax.inject.Inject
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class HavePBEController @Inject() (
   authAction: AuthAction,
   havePBEView: have_pbe,
   formProvider: HavePBEFormProvider,
+  userAnswersCache: UserAnswersCache,
   mcc: MessagesControllerComponents
-) extends FrontendController(mcc) with I18nSupport {
+)(implicit val ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport {
 
   private val form = formProvider()
 
   def onPageLoad: Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
       implicit request => _: LoggedInUserWithEnrolments =>
-        Future.successful(Ok(havePBEView(form)))
+        userAnswersCache.getHavePBEInNI() map {
+          case Some(havePBE) =>
+            Ok(havePBEView(form.fill(HavePBE.yesOrNo(havePBE))))
+          case None => Ok(havePBEView(form))
+        }
     }
 
-  def submit: Action[AnyContent] = Action { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(formWithErrors => BadRequest(havePBEView(formWithErrors)), value => destinationsByAnswer(value))
+  def submit: Action[AnyContent] = authAction.ggAuthorisedUserWithEnrolmentsAction {
+    implicit request => _: LoggedInUserWithEnrolments =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(havePBEView(formWithErrors))),
+          value => userAnswersCache.cacheHavePBEInNI(value).map(_ => destinationsByAnswer(value))
+        )
+
   }
 
   private def destinationsByAnswer(havePBE: HavePBE): Result = havePBE match {

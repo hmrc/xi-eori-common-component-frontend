@@ -30,7 +30,9 @@ object TradeWithNI extends Enumerable.Implicits {
 
   val values: Seq[TradeWithNI] = Seq(Yes, No)
 
-  def fromBoolean(viewBalance: Boolean): TradeWithNI =
+  def toBoolean(tradeWithNI: TradeWithNI): Boolean = if (tradeWithNI.equals(Yes)) true else false
+
+  def yesOrNo(viewBalance: Boolean): TradeWithNI =
     if (viewBalance)
       Yes
     else

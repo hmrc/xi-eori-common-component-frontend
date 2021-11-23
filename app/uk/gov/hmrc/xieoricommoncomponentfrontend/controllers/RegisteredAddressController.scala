@@ -20,7 +20,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.{SessionCache, UserAnswersCache}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.AddressLookupConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
@@ -37,6 +37,7 @@ class RegisteredAddressController @Inject() (
   mcc: MessagesControllerComponents,
   addressLookupConnector: AddressLookupConnector,
   sessionCache: SessionCache,
+  userAnswersCache: UserAnswersCache,
   registeredAddressView: registered_address
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
@@ -76,20 +77,18 @@ class RegisteredAddressController @Inject() (
   )(implicit request: Request[AnyContent], hc: HeaderCarrier): Future[Result] = {
     val addressLookupParamsWithoutLine1 = PBEAddressLookup(addressLookupParams.postcode, None)
 
-    addressLookupConnector.lookup(addressLookupParamsWithoutLine1.postcode, None).flatMap { secondResponse =>
-      secondResponse match {
-        case AddressLookupSuccess(addresses) if addresses.nonEmpty && addresses.forall(_.nonEmpty) =>
-          sessionCache.saveAddressLookupParams(addressLookupParamsWithoutLine1).map { _ =>
-            Ok(
-              registeredAddressView(
-                PBEAddressResultsFormProvider.form(addresses.map(_.dropDownView)),
-                addressLookupParams,
-                addresses
-              )
+    addressLookupConnector.lookup(addressLookupParamsWithoutLine1.postcode, None).flatMap {
+      case AddressLookupSuccess(addresses) if addresses.nonEmpty && addresses.forall(_.nonEmpty) =>
+        sessionCache.saveAddressLookupParams(addressLookupParamsWithoutLine1).map { _ =>
+          Ok(
+            registeredAddressView(
+              PBEAddressResultsFormProvider.form(addresses.map(_.dropDownView)),
+              addressLookupParams,
+              addresses
             )
-          }
-        case _ => throw AddressLookupException
-      }
+          )
+        }
+      case _ => throw AddressLookupException
     }
   }
 
@@ -105,12 +104,14 @@ class RegisteredAddressController @Inject() (
               PBEAddressResultsFormProvider.form(addressesView).bindFromRequest.fold(
                 formWithErrors =>
                   Future.successful(BadRequest(registeredAddressView(formWithErrors, addressLookupParams, addresses))),
-                validAnswer =>
-                  Future.successful(
+                validAnswer => {
+                  val address = addressesMap(validAnswer.address).toAddressViewModel
+                  userAnswersCache.cacheAddressDetails(address).map { _ =>
                     Redirect(
                       uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad()
                     )
-                  )
+                  }
+                }
               )
             case AddressLookupFailure => throw AddressLookupException
           }
