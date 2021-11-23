@@ -20,11 +20,11 @@ import common.pages.RegistrationPage
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
-import play.api.inject
+import play.api.{inject, Application}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.{SessionCache, UserAnswersCache}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.AddressLookupConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{AddressLookup, AddressLookupSuccess}
@@ -35,7 +35,6 @@ import util.builders.SessionBuilder
 import scala.concurrent.Future
 
 class RegisteredAddressControllerSpec extends BaseSpec with BeforeAndAfterEach {
-  private val mockSessionCache           = mock[SessionCache]
   private val addressLookupParams        = PBEAddressLookup("postcode", None)
   private val addressLookup              = AddressLookup("line1", "city", "postcode", "GB")
   private val mockAddressLookupConnector = mock[AddressLookupConnector]
@@ -43,12 +42,14 @@ class RegisteredAddressControllerSpec extends BaseSpec with BeforeAndAfterEach {
   override protected def afterEach(): Unit = {
     reset(mockAddressLookupConnector)
     reset(mockSessionCache)
+    reset(mockUserAnswersCache)
     super.afterEach()
   }
 
-  override def application = new GuiceApplicationBuilder().overrides(
+  override def application: Application = new GuiceApplicationBuilder().overrides(
     inject.bind[AuthConnector].to(mockAuthConnector),
     inject.bind[SessionCache].to(mockSessionCache),
+    inject.bind[UserAnswersCache].to(mockUserAnswersCache),
     inject.bind[AddressLookupConnector].to(mockAddressLookupConnector)
   ).configure("auditing.enabled" -> "false", "metrics.jvm" -> false, "metrics.enabled" -> false).build()
 
@@ -100,7 +101,7 @@ class RegisteredAddressControllerSpec extends BaseSpec with BeforeAndAfterEach {
         when(mockSessionCache.addressLookupParams(any())).thenReturn(Future.successful(Some(addressLookupParams)))
         when(mockAddressLookupConnector.lookup(any(), any())(any()))
           .thenReturn(Future.successful(AddressLookupSuccess(Seq(AddressLookup("line1", "city", "postcode", "GB")))))
-
+        when(mockUserAnswersCache.cacheAddressDetails(any())(any())).thenReturn(Future.successful(true))
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
@@ -126,7 +127,7 @@ class RegisteredAddressControllerSpec extends BaseSpec with BeforeAndAfterEach {
         when(mockAddressLookupConnector.lookup(meq("postcode"), meq(None))(any()))
           .thenReturn(Future.successful(AddressLookupSuccess(Seq(AddressLookup("lin1", "city", "postcode", "GB")))))
         when(mockSessionCache.saveAddressLookupParams(any())(any())).thenReturn(Future.successful(true))
-
+        when(mockUserAnswersCache.cacheAddressDetails(any())(any())).thenReturn(Future.successful(true))
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.RegisteredAddressController.onPageLoad().url,

@@ -20,6 +20,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.UserAnswersCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{
   AuthAction,
   EnrolmentExtractor,
@@ -27,6 +28,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{
 }
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.SicCodeFormProvider
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.SicCode
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.SubscriptionDisplayService
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{error_template, sic_code}
 
@@ -40,6 +42,7 @@ class SicCodeController @Inject() (
   mcc: MessagesControllerComponents,
   errorTemplateView: error_template,
   subscriptionDisplayService: SubscriptionDisplayService,
+  userAnswersCache: UserAnswersCache,
   groupEnrolment: GroupEnrolmentExtractor
 )(implicit val ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with EnrolmentExtractor {
@@ -49,7 +52,11 @@ class SicCodeController @Inject() (
   def onPageLoad: Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
       implicit request => _: LoggedInUserWithEnrolments =>
-        Future.successful(Ok(sicCodeView(form)))
+        userAnswersCache.getSicCode map {
+          case Some(code) =>
+            Ok(sicCodeView(form.fill(SicCode(code))))
+          case None => Ok(sicCodeView(form))
+        }
     }
 
   def submit: Action[AnyContent] =
@@ -61,10 +68,12 @@ class SicCodeController @Inject() (
             case Some(AffinityGroup.Organisation) =>
               groupEnrolment.getEori(loggedInUser).flatMap {
                 case Some(gbEori) =>
-                  subscriptionDisplayService.getSubscriptionDisplay(gbEori).map {
+                  subscriptionDisplayService.getSubscriptionDisplay(gbEori).flatMap {
                     case Right(response) =>
-                      destinationsByNIPostCode(response.CDSEstablishmentAddress.postalCode)
-                    case Left(_) => InternalServerError(errorTemplateView())
+                      userAnswersCache.cacheSicCode(value.sic).map(
+                        _ => destinationsByNIPostCode(response.CDSEstablishmentAddress.postalCode)
+                      )
+                    case Left(_) => Future.successful(InternalServerError(errorTemplateView()))
                   }
                 case None => Future.successful(InternalServerError(errorTemplateView()))
               }

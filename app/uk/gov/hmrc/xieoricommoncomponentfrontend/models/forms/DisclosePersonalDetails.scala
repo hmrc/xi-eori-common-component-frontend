@@ -30,7 +30,10 @@ object DisclosePersonalDetails extends Enumerable.Implicits {
 
   val values: Seq[DisclosePersonalDetails] = Seq(Yes, No)
 
-  def fromBoolean(viewDisclosePersonalDetails: Boolean): DisclosePersonalDetails =
+  def toBoolean(viewDisclosePersonalDetails: DisclosePersonalDetails): Boolean =
+    if (viewDisclosePersonalDetails.equals(Yes)) true else false
+
+  def yesOrNo(viewDisclosePersonalDetails: Boolean): DisclosePersonalDetails =
     if (viewDisclosePersonalDetails)
       Yes
     else

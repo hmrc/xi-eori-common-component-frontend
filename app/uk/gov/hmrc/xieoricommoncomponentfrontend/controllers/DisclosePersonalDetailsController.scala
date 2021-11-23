@@ -19,7 +19,9 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.UserAnswersCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.DisclosePersonalDetailsFormProvider
@@ -28,22 +30,27 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.DisclosePersonalDe
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.disclose_personal_details
 
 import javax.inject.Inject
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class DisclosePersonalDetailsController @Inject() (
   authAction: AuthAction,
   disclosePersonalDetailsView: disclose_personal_details,
   formProvider: DisclosePersonalDetailsFormProvider,
+  userAnswersCache: UserAnswersCache,
   mcc: MessagesControllerComponents
-) extends FrontendController(mcc) with I18nSupport {
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport {
 
   private val form = formProvider()
 
-  // Note: permitted for user with service enrolment
   def onPageLoad: Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
       implicit request => _: LoggedInUserWithEnrolments =>
-        Future.successful(Ok(disclosePersonalDetailsView(form)))
+        userAnswersCache.getPersonalDataDisclosureConsent map {
+          case Some(personalDetails) =>
+            Ok(disclosePersonalDetailsView(form.fill(DisclosePersonalDetails.yesOrNo(personalDetails))))
+          case None => Ok(disclosePersonalDetailsView(form))
+        }
     }
 
   def submit: Action[AnyContent] =
@@ -53,7 +60,7 @@ class DisclosePersonalDetailsController @Inject() (
         value =>
           loggedInUser.affinityGroup match {
             case Some(AffinityGroup.Organisation) =>
-              Future.successful(destinationsByAnswer(value))
+              userAnswersCache.cacheConsentToDisclosePersonalDetails(value).map(_ => destinationsByAnswer(value))
             case _ =>
               Future.successful(
                 Redirect(
@@ -64,7 +71,9 @@ class DisclosePersonalDetailsController @Inject() (
       )
     }
 
-  private def destinationsByAnswer(disclosePersonalDetails: DisclosePersonalDetails): Result =
+  private def destinationsByAnswer(
+    disclosePersonalDetails: DisclosePersonalDetails
+  )(implicit hc: HeaderCarrier): Result =
     disclosePersonalDetails match {
       case Yes =>
         Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.onPageLoad())

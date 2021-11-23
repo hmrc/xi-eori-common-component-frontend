@@ -17,11 +17,15 @@
 package controllers
 
 import common.pages.RegistrationPage
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import play.api.test.Helpers._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.HavePBE
 import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
+
+import scala.concurrent.Future
 
 class HavePBEControllerSpec extends BaseSpec {
 
@@ -30,7 +34,7 @@ class HavePBEControllerSpec extends BaseSpec {
 
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
-
+        when(mockUserAnswersCache.getHavePBEInNI()(any())).thenReturn(Future.successful(None))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HavePBEController.onPageLoad().url,
           defaultUserId
@@ -43,10 +47,27 @@ class HavePBEControllerSpec extends BaseSpec {
         page.title should startWith("Do you have a permanent business establishment in Northern Ireland?")
       }
     }
+
+    "populate View if userAnswersCache has session data" in {
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+        when(mockUserAnswersCache.getHavePBEInNI()(any())).thenReturn(Future.successful(Some(true)))
+        val request = SessionBuilder.buildRequestWithSessionAndPath(
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HavePBEController.onPageLoad().url,
+          defaultUserId
+        )
+
+        val result = route(application, request).get
+
+        val page = RegistrationPage(contentAsString(result))
+        page.getElementValue("//*[@id='value']") shouldBe "yes"
+      }
+    }
+
     "redirect to PBE Address Lookup Page when Yes is selected" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
-
+        when(mockUserAnswersCache.cacheHavePBEInNI(any())(any())).thenReturn(Future.successful(true))
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HavePBEController.submit().url,

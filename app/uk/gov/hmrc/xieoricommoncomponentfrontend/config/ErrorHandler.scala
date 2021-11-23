@@ -66,7 +66,7 @@ class ErrorHandler @Inject() (
         logger.info("Session time out: " + sessionTimeOut.errorMessage, exception)
         Future.successful(
           Redirect(
-            uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.timeout()
+            uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.displayTimeOutPage()
           ).withNewSession
         )
       case _ =>
