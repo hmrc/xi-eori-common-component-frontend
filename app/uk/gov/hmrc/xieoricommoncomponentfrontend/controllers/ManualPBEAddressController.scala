@@ -53,11 +53,11 @@ class ManualPBEAddressController @Inject() (
         validManualPBEAddressParams =>
           loggedInUser.affinityGroup match {
             case Some(AffinityGroup.Organisation) =>
-              sessionCache.saveManualPBEAddressParams(validManualPBEAddressParams).map { _ =>
+              Future.successful(
                 Redirect(
                   uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded()
                 )
-              }
+              )
             case _ =>
               Future.successful(
                 Redirect(

@@ -40,9 +40,6 @@ elements.args.getOrElse('_plainLabel, false).asInstanceOf[Boolean]
 
 @selectedValue = @{ form(field).value match { case Some(x) => x case None => "" case x => x }}
 
-@hintHtml = {
-<span class="govuk-visually-hidden">@Html(s". ${messages("manual-pbe-address.hint.screen-reader")}")</span>
-}
 
 <div>
     @inputSelect(
@@ -55,7 +52,6 @@ elements.args.getOrElse('_plainLabel, false).asInstanceOf[Boolean]
     selected = Some(messages("ecc.GB.CountryCode"))
     )),
     label = messages(label),
-    hint = Some(hintHtml),
     classes = Some("govuk-!-width-one-half"),
     isPageHeading = false
     )
