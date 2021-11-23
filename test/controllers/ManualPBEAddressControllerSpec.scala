@@ -19,7 +19,7 @@ package controllers
 import common.pages.RegistrationPage
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.inject
+import play.api.{inject, Application}
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
@@ -28,31 +28,36 @@ import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
 import play.api.inject.guice.GuiceApplicationBuilder
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.UserAnswersCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.SubscriptionDisplayService
+import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.AddressViewModel
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 class ManualPBEAddressControllerSpec extends BaseSpec {
 
-  val mockGroupEnrolmentExtractor = mock[GroupEnrolmentExtractor]
-  val subscriptionDisplayService  = mock[SubscriptionDisplayService]
+  val mockGroupEnrolmentExtractor: GroupEnrolmentExtractor   = mock[GroupEnrolmentExtractor]
+  val subscriptionDisplayService: SubscriptionDisplayService = mock[SubscriptionDisplayService]
 
   private def groupEnrolment() =
     List(EnrolmentResponse("HMRC-ATAR-ORG", "Activated", List(KeyValue("EORINumber", "GB123456463324"))))
 
-  override def application = new GuiceApplicationBuilder().overrides(
+  override def application: Application = new GuiceApplicationBuilder().overrides(
     inject.bind[AuthConnector].to(mockAuthConnector),
+    inject.bind[UserAnswersCache].to(mockUserAnswersCache),
     inject.bind[GroupEnrolmentExtractor].to(mockGroupEnrolmentExtractor)
   ).configure("auditing.enabled" -> "false", "metrics.jvm" -> false, "metrics.enabled" -> false).build()
 
-  val existingEori = Some("XIE9XSDF10BCKEYAX")
+  val existingEori: Some[String] = Some("XIE9XSDF10BCKEYAX")
 
   "ManualPBEAddress controller" should {
     "return OK and the correct view for a GET" in {
 
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
+        when(mockUserAnswersCache.getAdddressDetails()(any())).thenReturn(Future.successful(None))
+        when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
+          .thenReturn(Future.successful(groupEnrolment))
 
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.onPageLoad().url,
@@ -64,6 +69,24 @@ class ManualPBEAddressControllerSpec extends BaseSpec {
         val page = RegistrationPage(contentAsString(result))
 
         page.title should startWith("What is your permanent business establishment address?")
+      }
+    }
+
+    "populate View if userAnswersCache has session data" in {
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+        when(mockUserAnswersCache.getAdddressDetails()(any())).thenReturn(
+          Future.successful(Some(AddressViewModel("line1", "town", Some("BT11AA"), "GB")))
+        )
+        val request = SessionBuilder.buildRequestWithSessionAndPath(
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.onPageLoad().url,
+          defaultUserId
+        )
+
+        val result = route(application, request).get
+
+        val page = RegistrationPage(contentAsString(result))
+        page.getElementValue("//*[@id='line1']") shouldBe "line1"
       }
     }
 
@@ -191,9 +214,9 @@ class ManualPBEAddressControllerSpec extends BaseSpec {
     "redirect to the next page when Affinity group is Organisation" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Organisation)
-
         when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
           .thenReturn(Future.successful(groupEnrolment))
+        when(mockUserAnswersCache.cacheAddressDetails(any())(any())).thenReturn(Future.successful(true))
 
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
@@ -214,7 +237,7 @@ class ManualPBEAddressControllerSpec extends BaseSpec {
     "redirect to the next page when Affinity group is Individual" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Individual)
-
+        when(mockUserAnswersCache.getAdddressDetails()(any())).thenReturn(Future.successful(None))
         when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
           .thenReturn(Future.successful(groupEnrolment))
 
