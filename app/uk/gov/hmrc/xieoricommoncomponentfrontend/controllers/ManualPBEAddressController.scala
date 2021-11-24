@@ -25,7 +25,6 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{AuthAction, E
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.ManualPBEAddressFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ManualPBEAddress
-import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.AddressViewModel
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.manual_pbe_address
 
 import javax.inject.Inject
