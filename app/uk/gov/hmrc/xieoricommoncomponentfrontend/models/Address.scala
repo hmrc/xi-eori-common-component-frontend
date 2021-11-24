@@ -19,14 +19,7 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.models
 import play.api.libs.json.Json
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.AddressViewModel
 
-case class Address(
-  addressLine1: String,
-  addressLine2: Option[String],
-  addressLine3: Option[String],
-  addressLine4: Option[String],
-  postalCode: Option[String],
-  countryCode: String
-)
+case class Address(addressLine1: String, addressLine2: Option[String], postalCode: Option[String], countryCode: String)
 
 object Address {
   implicit val jsonFormat = Json.format[Address]
@@ -34,21 +27,12 @@ object Address {
   def apply(
     addressLine1: String,
     addressLine2: Option[String],
-    addressLine3: Option[String],
-    addressLine4: Option[String],
     postalCode: Option[String],
     countryCode: String
   ): Address =
-    new Address(
-      addressLine1,
-      addressLine2,
-      addressLine3,
-      addressLine4,
-      postalCode.filter(_.nonEmpty),
-      countryCode.toUpperCase()
-    ) {}
+    new Address(addressLine1, addressLine2, postalCode.filter(_.nonEmpty), countryCode.toUpperCase()) {}
 
   def apply(address: AddressViewModel): Address =
-    new Address(address.street, None, Some(address.city), None, address.postcode, address.countryCode) {}
+    new Address(address.street, Some(address.city), address.postcode, address.countryCode) {}
 
 }

@@ -38,7 +38,7 @@ h1: components.h1)
     messages("pbe-confirm-address.page.title")
 }
 @addressHtml = {
-    <div id="address" class="govuk-body govuk-!-margin-top-5 govuk-!-padding-bottom-5">
+    <div id="address" class="govuk-body">
         @p(Html(address.street),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0")
         @p(Html(address.city),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0")
         @address.postcode.map( postalCode => p(Html(postalCode),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0"))
