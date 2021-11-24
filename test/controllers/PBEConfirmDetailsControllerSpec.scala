@@ -20,7 +20,11 @@ import common.pages.RegistrationPage
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.test.Helpers._
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEConfirmAddress.{changeAddress, confirmedAddress, enterManually}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEConfirmAddress.{
+  changeAddress,
+  confirmedAddress,
+  enterManually
+}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.AddressViewModel
 import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
