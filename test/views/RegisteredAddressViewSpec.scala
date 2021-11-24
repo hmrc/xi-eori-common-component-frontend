@@ -99,7 +99,7 @@ class RegisteredAddressViewSpec extends ViewSpec {
       val manualAddressLink = doc.body().getElementById("cannot-find-address")
 
       manualAddressLink.text() mustBe "I can't find my address in the list"
-      manualAddressLink.attr("href") mustBe "#"
+      manualAddressLink.attr("href") mustBe "/xi-customs-registration-services/pbe-company-address"
     }
 
     "display Continue button" in {

@@ -43,6 +43,10 @@ h1: components.h1)
       }
     }
 
+@manualAddressLink = @{
+uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.onPageLoad()
+}
+
 @main_template(title,form = Some(pbeAddressResultsForm)) {
 
     @formHelper(action = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.RegisteredAddressController.submit(), 'autoComplete -> "off") {
@@ -91,7 +95,7 @@ h1: components.h1)
         </div>
 
         <p class="govuk-body">
-            <a href="#" id="cannot-find-address" class="govuk-link">@messages("registered-address.page.cannot-find-address")</a>
+            <a href="@manualAddressLink" id="cannot-find-address" class="govuk-link">@messages("registered-address.page.cannot-find-address")</a>
         </p>
 
         @govukButton(Button(
