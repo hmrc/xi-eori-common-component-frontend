@@ -17,7 +17,7 @@
 package uk.gov.hmrc.xieoricommoncomponentfrontend.forms
 
 import play.api.data.Form
-import play.api.data.Forms.{ignored, mapping, optional}
+import play.api.data.Forms.{mapping, optional}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.mappings.Mappings
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.{ManualPBEAddress, StopOnFirstFail}
 

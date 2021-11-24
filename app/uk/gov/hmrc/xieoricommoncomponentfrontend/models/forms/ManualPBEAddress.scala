@@ -17,9 +17,30 @@
 package uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms
 
 import play.api.libs.json.Json
+import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.AddressViewModel
 
 case class ManualPBEAddress(line1: String, townorcity: String, postcode: String, country: Option[String]) {}
 
 object ManualPBEAddress {
   implicit val format = Json.format[ManualPBEAddress]
+
+  def fetchAddressDetail(addressViewModel: AddressViewModel): ManualPBEAddress = {
+    val line1    = addressViewModel.street
+    val townCity = addressViewModel.city
+    val postCode: String = addressViewModel.postcode match {
+      case None            => ""
+      case Some(p: String) => p
+    }
+    val country = "GB"
+    ManualPBEAddress.apply(line1, townCity, postCode, Option(country))
+  }
+
+  def toAddressModel(validPBEAddressParams: ManualPBEAddress): AddressViewModel = {
+    val line1       = validPBEAddressParams.line1
+    val townCity    = validPBEAddressParams.townorcity
+    val postCode    = Some(validPBEAddressParams.postcode)
+    val countryCode = "GB"
+    AddressViewModel(line1, townCity, postCode, countryCode)
+  }
+
 }

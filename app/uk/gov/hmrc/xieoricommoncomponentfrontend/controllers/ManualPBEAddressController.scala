@@ -47,7 +47,7 @@ class ManualPBEAddressController @Inject() (
       implicit request => _: LoggedInUserWithEnrolments =>
         userAnswersCache.getAdddressDetails() map {
           case Some(pbeAddressDetails) =>
-            Ok(manualPBEAddressView(form.fill(fetchAddressDetail(pbeAddressDetails))))
+            Ok(manualPBEAddressView(form.fill(ManualPBEAddress.fetchAddressDetail(pbeAddressDetails))))
           case None => Ok(manualPBEAddressView(form))
         }
     }
@@ -59,7 +59,7 @@ class ManualPBEAddressController @Inject() (
         validAddressParams =>
           loggedInUser.affinityGroup match {
             case Some(AffinityGroup.Organisation) =>
-              userAnswersCache.cacheAddressDetails(toAddressModel(validAddressParams)).map { _ =>
+              userAnswersCache.cacheAddressDetails(ManualPBEAddress.toAddressModel(validAddressParams)).map { _ =>
                 Redirect(
                   uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded()
                 )
@@ -74,24 +74,5 @@ class ManualPBEAddressController @Inject() (
           }
       )
     }
-
-  private def toAddressModel(validPBEAddressParams: ManualPBEAddress): AddressViewModel = {
-    val line1       = validPBEAddressParams.line1
-    val townCity    = validPBEAddressParams.townorcity
-    val postCode    = Some(validPBEAddressParams.postcode)
-    val countryCode = "GB"
-    AddressViewModel(line1, townCity, postCode, countryCode)
-  }
-
-  private def fetchAddressDetail(addressViewModel: AddressViewModel): ManualPBEAddress = {
-    val line1    = addressViewModel.street
-    val townCity = addressViewModel.city
-    val postCode: String = addressViewModel.postcode match {
-      case None            => ""
-      case Some(p: String) => p
-    }
-    val country = "GB"
-    ManualPBEAddress.apply(line1, townCity, postCode, Option(country))
-  }
 
 }

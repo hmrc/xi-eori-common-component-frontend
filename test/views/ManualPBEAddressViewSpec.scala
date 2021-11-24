@@ -26,8 +26,6 @@ import util.ViewSpec
 
 class ManualPBEAddressViewSpec extends ViewSpec {
 
-  private val view = instanceOf[manual_pbe_address]
-
   implicit val request: Request[Any]  = withFakeCSRF(fakeRegisterRequest)
   private val formProvider            = new ManualPBEAddressFormProvider()
   private def form                    = formProvider.apply()
