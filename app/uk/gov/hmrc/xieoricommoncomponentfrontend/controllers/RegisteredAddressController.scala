@@ -108,7 +108,7 @@ class RegisteredAddressController @Inject() (
                   val address = addressesMap(validAnswer.address).toAddressViewModel
                   userAnswersCache.cacheAddressDetails(address).map { _ =>
                     Redirect(
-                      uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad()
+                      uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEConfirmAddressController.onPageLoad()
                     )
                   }
                 }

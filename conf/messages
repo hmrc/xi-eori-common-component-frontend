@@ -139,6 +139,14 @@ registered-address.page.property-name.label= Property name or number
 registered-address.page.address.required= Select your address from the list
 registered-address.page.property-name.not-known= Not known
 
+#pbe-confirm-address
+pbe-confirm-address.page.title=Review and confirm your address
+pbe-confirm-address.page.address.title=Is this address correct?
+pbe-confirm-address.error.required=Confirm your address details
+pbe-confirm-address.confirmedAddress=Yes, this address is correct
+pbe-confirm-address.changeAddress=No, I want to change the address
+pbe-confirm-address.enterManually=I want to enter the address manually
+
 #======================================
 # Countries
 #======================================

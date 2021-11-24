@@ -24,6 +24,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.{
   DisclosePersonalDetails,
   HaveEUEori,
   HavePBE,
+  PBEConfirmAddress,
   TradeWithNI
 }
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.AddressViewModel
@@ -67,6 +68,9 @@ class UserAnswersCache @Inject() (sessionCache: SessionCache)(implicit ec: Execu
     saveRegistrationDetails(sd => sd.copy(addressDetails = Some(noneForEmptyPostcode(address))))
   }
 
+  def getAddressDetails()(implicit hc: HeaderCarrier): Future[Option[AddressViewModel]] =
+    sessionCache.registrationDetails map (_.addressDetails)
+
   def getTradeWithInNI()(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
     sessionCache.registrationDetails.map {
       case details => details.tradeWithNI
@@ -92,5 +96,11 @@ class UserAnswersCache @Inject() (sessionCache: SessionCache)(implicit ec: Execu
 
   def getConfirmDetails()(implicit hc: HeaderCarrier): Future[Option[String]] =
     sessionCache.registrationDetails map (_.confirmDetails)
+
+  def cacheConfirmAddress(pbeConfirmAddress: PBEConfirmAddress)(implicit hc: HeaderCarrier): Future[Boolean] =
+    saveRegistrationDetails(sd => sd.copy(confirmAddress = Some(PBEConfirmAddress.transformString(pbeConfirmAddress))))
+
+  def getConfirmAddress()(implicit hc: HeaderCarrier): Future[Option[String]] =
+    sessionCache.registrationDetails map (_.confirmAddress)
 
 }
