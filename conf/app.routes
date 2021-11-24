@@ -56,3 +56,7 @@ POST       /pbe-postcode                      @uk.gov.hmrc.xieoricommoncomponent
 #registered-address
 GET        /pbe-company-address-match                             @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.RegisteredAddressController.onPageLoad
 POST        /pbe-company-address-match                             @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.RegisteredAddressController.submit
+
+#pbe-address-lookup
+GET        /pbe-company-address                             @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ManualPBEAddressController.onPageLoad
+POST       /pbe-company-address                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ManualPBEAddressController.submit

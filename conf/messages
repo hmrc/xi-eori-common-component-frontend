@@ -414,3 +414,20 @@ havePBE.error.required=Select your public business establishment preference
 havePBE.yes=Yes
 havePBE.no=No
 havePBE.hint=This is an address where you carry out customs activities related to moving goods between Northern Ireland and England, Scotland, Wales, the Isle of Man or the Channel Islands.
+
+#manual-pbe-address
+manual-pbe-address.page.title=What is your permanent business establishment address?
+manual-pbe-address.line1.label=Address line 1
+manual-pbe-address.town.label=Town or city
+manual-pbe-address.postcode.label=Postcode
+manual-pbe-address.country.label=Country
+manual-pbe-address.line1.required=Enter Address line 1
+manual-pbe-address.town.required=Enter town or city
+manual-pbe-address.postcode.required=Enter postcode
+manual-pbe-address.line1.error=The first line of the address must be 70 characters or less
+manual-pbe-address.town.error=Town or city must be 35 characters or less
+manual-pbe-address.postcode.format.invalid=Enter a valid postcode
+manual-pbe-address.postcode.bt.format=Postcode must start with BT
+
+ecc.GB.CountryCode=GB
+ecc.GB.CountryName=United Kingdom
