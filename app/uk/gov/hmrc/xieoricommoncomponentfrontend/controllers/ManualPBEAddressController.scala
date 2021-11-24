@@ -44,7 +44,7 @@ class ManualPBEAddressController @Inject() (
   def onPageLoad: Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
       implicit request => _: LoggedInUserWithEnrolments =>
-        userAnswersCache.getAdddressDetails() map {
+        userAnswersCache.getAddressDetails() map {
           case Some(pbeAddressDetails) =>
             Ok(manualPBEAddressView(form.fill(ManualPBEAddress.fetchAddressDetail(pbeAddressDetails))))
           case None => Ok(manualPBEAddressView(form))
@@ -60,7 +60,7 @@ class ManualPBEAddressController @Inject() (
             case Some(AffinityGroup.Organisation) =>
               userAnswersCache.cacheAddressDetails(ManualPBEAddress.toAddressModel(validAddressParams)).map { _ =>
                 Redirect(
-                  uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded()
+                  uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEConfirmAddressController.onPageLoad()
                 )
               }
             case _ =>

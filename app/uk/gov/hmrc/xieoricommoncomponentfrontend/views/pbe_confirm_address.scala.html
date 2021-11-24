@@ -49,15 +49,15 @@ h1: components.h1)
 
 @main_template(title) {
 
-
-    @h1(messages("pbe-confirm-address.page.title"))
-
-    @govukInsetText(InsetText(
-        content = HtmlContent(addressHtml)
-    ))
     @formHelper(action = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEConfirmAddressController.submit(), 'autoComplete -> "off") {
 
         @errorSummary(confirmAddressForm.errors)
+        @h1(messages("pbe-confirm-address.page.title"))
+
+        @govukInsetText(InsetText(
+            content = HtmlContent(addressHtml)
+        ))
+
         @inputRadioGroup(
             confirmAddressForm("value"),
             legend = messages("pbe-confirm-address.page.address.title"),

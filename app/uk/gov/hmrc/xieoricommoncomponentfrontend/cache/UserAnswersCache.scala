@@ -68,7 +68,7 @@ class UserAnswersCache @Inject() (sessionCache: SessionCache)(implicit ec: Execu
     saveRegistrationDetails(sd => sd.copy(addressDetails = Some(noneForEmptyPostcode(address))))
   }
 
-  def getAdddressDetails()(implicit hc: HeaderCarrier): Future[Option[AddressViewModel]] =
+  def getAddressDetails()(implicit hc: HeaderCarrier): Future[Option[AddressViewModel]] =
     sessionCache.registrationDetails map (_.addressDetails)
 
   def getTradeWithInNI()(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
