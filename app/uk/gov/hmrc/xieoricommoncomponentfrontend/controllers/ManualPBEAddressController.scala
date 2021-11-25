@@ -52,6 +52,13 @@ class ManualPBEAddressController @Inject() (
         }
     }
 
+  def reviewPageLoad(): Action[AnyContent] =
+    authAction.ggAuthorisedUserWithEnrolmentsAction {
+      implicit request => _: LoggedInUserWithEnrolments =>
+        Future.successful(Ok(manualPBEAddressView(form)))
+
+    }
+
   def submit: Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => loggedInUser: LoggedInUserWithEnrolments =>
       form.bindFromRequest.fold(

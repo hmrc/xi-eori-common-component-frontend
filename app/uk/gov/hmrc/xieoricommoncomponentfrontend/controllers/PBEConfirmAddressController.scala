@@ -76,7 +76,7 @@ class PBEConfirmAddressController @Inject() (
     case PBEConfirmAddress.changeAddress =>
       Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEAddressLookupController.onPageLoad())
     case PBEConfirmAddress.enterManually =>
-      Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.onPageLoad())
+      Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.reviewPageLoad())
   }
 
 }

@@ -256,5 +256,23 @@ class ManualPBEAddressControllerSpec extends BaseSpec {
 
       }
     }
+
+    "return OK and the correct view for review" in {
+
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+
+        val request = SessionBuilder.buildRequestWithSessionAndPath(
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.reviewPageLoad().url,
+          defaultUserId
+        )
+
+        val result = route(application, request).get
+
+        val page = RegistrationPage(contentAsString(result))
+
+        page.title should startWith("What is your permanent business establishment address?")
+      }
+    }
   }
 }
