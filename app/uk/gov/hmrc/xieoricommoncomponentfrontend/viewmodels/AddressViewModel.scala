@@ -17,7 +17,7 @@
 package uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels
 
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{Address, AddressDetails}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.AddressDetails
 
 case class AddressViewModel(street: String, city: String, postcode: Option[String], countryCode: String) {
   val addressDetails: AddressDetails = AddressDetails(street, city, postcode, countryCode)

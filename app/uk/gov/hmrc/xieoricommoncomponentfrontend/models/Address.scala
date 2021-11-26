@@ -16,13 +16,13 @@
 
 package uk.gov.hmrc.xieoricommoncomponentfrontend.models
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.AddressViewModel
 
 case class Address(addressLine1: String, addressLine2: Option[String], postalCode: Option[String], countryCode: String)
 
 object Address {
-  implicit val jsonFormat = Json.format[Address]
+  implicit val jsonFormat: OFormat[Address] = Json.format[Address]
 
   def apply(
     addressLine1: String,
