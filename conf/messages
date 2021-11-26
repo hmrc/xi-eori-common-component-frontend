@@ -132,7 +132,7 @@ pbe-address-lookup.postcode.format.invalid= Enter a valid postcode
 
 #registered-address
 registered-address.postcode.address.label= Select your address
-registered-address.page.title=What is your registered company address?
+registered-address.page.title=What is your permanent business establishment address?
 registered-address.page.cannot-find-address= I can''t find my address in the list
 registered-address.page.postcode.label=Postcode
 registered-address.page.property-name.label= Property name or number
@@ -140,7 +140,7 @@ registered-address.page.address.required= Select your address from the list
 registered-address.page.property-name.not-known= Not known
 
 #pbe-confirm-address
-pbe-confirm-address.page.title=Review and confirm your address
+pbe-confirm-address.page.title=Review and confirm your permanent business establishment address
 pbe-confirm-address.page.address.title=Is this address correct?
 pbe-confirm-address.error.required=Confirm your address details
 pbe-confirm-address.confirmedAddress=Yes, this address is correct

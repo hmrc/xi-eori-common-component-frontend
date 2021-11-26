@@ -51,7 +51,7 @@ class PBEConfirmDetailsControllerSpec extends BaseSpec {
 
         val page = RegistrationPage(contentAsString(result))
 
-        page.title should startWith("Review and confirm your address")
+        page.title should startWith("Review and confirm your permanent business establishment address")
       }
     }
 

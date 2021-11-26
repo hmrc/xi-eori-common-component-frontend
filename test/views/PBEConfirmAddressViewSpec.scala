@@ -44,12 +44,12 @@ class PBEConfirmAddressViewSpec extends ViewSpec {
 
     "display required title information" in {
 
-      doc.title() must startWith("Review and confirm your address")
+      doc.title() must startWith("Review and confirm your permanent business establishment address")
     }
 
     "display correct header" in {
 
-      doc.body().getElementsByTag("h1").text() mustBe "Review and confirm your address"
+      doc.body().getElementsByTag("h1").text() mustBe "Review and confirm your permanent business establishment address"
     }
 
     "display errors while empty form is submitted" in {
