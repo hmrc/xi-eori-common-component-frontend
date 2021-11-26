@@ -74,7 +74,7 @@ class YouCannotUseServiceViewSpec extends ViewSpec {
     "display para-2" in {
       agentDoc.body
         .getElementById("para-2")
-        .text mustBe "You need to sign in with the Government Gateway for the organisation or individual that is applying for access."
+        .text mustBe "You need to sign in with the Government Gateway for the organisation or individual that is applying for an XI EORI."
     }
 
     "have a Sign out button with the correct href" in {
