@@ -36,7 +36,7 @@ ecc.enrolment.already.exists.for-group.para1=Your organisation is already subscr
 
 
 ecc.you-cant-use-service-agent.para1=You signed in to Government Gateway with an agent services account.
-ecc.you-cant-use-service-agent.para2=You need to sign in with the Government Gateway for the organisation or individual that is applying for access.
+ecc.you-cant-use-service-agent.para2=You need to sign in with the Government Gateway for the organisation or individual that is applying for an XI EORI.
 ecc.you-cant-use-service-standard-organisation.para1=You signed in to Government Gateway as a standard user. To apply for access you must be an administrator user.
 ecc.you-cant-use-service-standard-organisation.para2=Please log in as an administrator or contact the person who set up your Government Gateway.
 
