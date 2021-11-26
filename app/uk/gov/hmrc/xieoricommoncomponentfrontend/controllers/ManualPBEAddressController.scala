@@ -66,13 +66,12 @@ class ManualPBEAddressController @Inject() (
         validAddressParams =>
           loggedInUser.affinityGroup match {
             case Some(AffinityGroup.Organisation) =>
-              userAnswersCache.cacheAddressDetails(ManualPBEAddress.toAddressModel(validAddressParams)).flatMap { _ =>
-                sessionCache.clearAddressLookupParams.map { _ =>
-                  Redirect(
-                    uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEConfirmAddressController.onPageLoad()
-                  )
-                }
-              }
+              for {
+                _ <- userAnswersCache.cacheAddressDetails(ManualPBEAddress.toAddressModel(validAddressParams))
+                _ <- sessionCache.clearAddressLookupParams
+              } yield Redirect(
+                uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEConfirmAddressController.onPageLoad()
+              )
             case _ =>
               Future.successful(
                 Redirect(
