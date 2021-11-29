@@ -22,12 +22,12 @@
 @this(main_template: Layout, appConfig: AppConfig,govukButton: GovukButton)
 @()(implicit messages: Messages, request: Request[_])
 
-@main_template(messages("ecc.already.have.xieori.title")) {
+@main_template(messages("ecc.already.have.xieori.title"), displayBackLink = false) {
     <div>
 
         <h1 id="page-heading" class="govuk-heading-l">@messages("ecc.already.have.xieori.heading")</h1>
 
-        <p class="govuk-body" id="para1">@messages("ecc.already.have.xieori.para1", "XIE9XSDF10BCKEYAX")</p>
+        <p class="govuk-body" id="para1">@messages("ecc.already.have.xieori.para1", "XI1234567890")</p>
 
         @govukButton(Button(
         content = Text(messages("ecc.sign.out")),
