@@ -55,7 +55,7 @@ class ManualPBEAddressControllerSpec extends BaseSpec {
 
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
-        when(mockUserAnswersCache.getAdddressDetails()(any())).thenReturn(Future.successful(None))
+        when(mockUserAnswersCache.getAddressDetails()(any())).thenReturn(Future.successful(None))
         when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
           .thenReturn(Future.successful(groupEnrolment))
 
@@ -75,7 +75,7 @@ class ManualPBEAddressControllerSpec extends BaseSpec {
     "populate View if userAnswersCache has session data" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
-        when(mockUserAnswersCache.getAdddressDetails()(any())).thenReturn(
+        when(mockUserAnswersCache.getAddressDetails()(any())).thenReturn(
           Future.successful(Some(AddressViewModel("line1", "town", Some("BT11AA"), "GB")))
         )
         val request = SessionBuilder.buildRequestWithSessionAndPath(
@@ -229,7 +229,7 @@ class ManualPBEAddressControllerSpec extends BaseSpec {
         status(result) shouldBe SEE_OTHER
         redirectLocation(
           result
-        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded().url
+        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEConfirmAddressController.onPageLoad().url
 
       }
     }
@@ -237,7 +237,7 @@ class ManualPBEAddressControllerSpec extends BaseSpec {
     "redirect to the next page when Affinity group is Individual" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Individual)
-        when(mockUserAnswersCache.getAdddressDetails()(any())).thenReturn(Future.successful(None))
+        when(mockUserAnswersCache.getAddressDetails()(any())).thenReturn(Future.successful(None))
         when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
           .thenReturn(Future.successful(groupEnrolment))
 
@@ -254,6 +254,24 @@ class ManualPBEAddressControllerSpec extends BaseSpec {
           result
         ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded().url
 
+      }
+    }
+
+    "return OK and the correct view for review" in {
+
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+
+        val request = SessionBuilder.buildRequestWithSessionAndPath(
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.reviewPageLoad().url,
+          defaultUserId
+        )
+
+        val result = route(application, request).get
+
+        val page = RegistrationPage(contentAsString(result))
+
+        page.title should startWith("What is your permanent business establishment address?")
       }
     }
   }

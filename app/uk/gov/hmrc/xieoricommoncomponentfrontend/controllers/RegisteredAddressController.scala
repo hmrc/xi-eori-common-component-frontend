@@ -50,7 +50,7 @@ class RegisteredAddressController @Inject() (
 
   private def displayPage()(implicit request: Request[AnyContent]): Future[Result] =
     sessionCache.addressLookupParams.flatMap {
-      case Some(addressLookupParams) =>
+      case Some(addressLookupParams) if !addressLookupParams.isEmpty() =>
         addressLookupConnector.lookup(addressLookupParams.postcode, addressLookupParams.line1).flatMap {
           case AddressLookupSuccess(addresses) if addresses.nonEmpty && addresses.forall(_.nonEmpty) =>
             Future.successful(
@@ -108,7 +108,7 @@ class RegisteredAddressController @Inject() (
                   val address = addressesMap(validAnswer.address).toAddressViewModel
                   userAnswersCache.cacheAddressDetails(address).map { _ =>
                     Redirect(
-                      uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad()
+                      uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEConfirmAddressController.onPageLoad()
                     )
                   }
                 }
