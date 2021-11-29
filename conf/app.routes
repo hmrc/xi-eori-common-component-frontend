@@ -65,3 +65,6 @@ POST       /pbe-company-address                      @uk.gov.hmrc.xieoricommonco
 #pbe-confirm-address
 GET        /pbe-confirm-address                             @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.PBEConfirmAddressController.onPageLoad
 POST        /pbe-confirm-address                             @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.PBEConfirmAddressController.submit
+
+# already-have-xi-eori
+GET        /already-have-xi-eori                 @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.AlreadyHaveXIEoriController.xiEoriAlreadyExists
