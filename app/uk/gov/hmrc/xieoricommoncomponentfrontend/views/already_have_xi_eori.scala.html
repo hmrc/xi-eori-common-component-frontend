@@ -1,0 +1,40 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.button.Button
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
+
+@this(main_template: Layout, appConfig: AppConfig,govukButton: GovukButton)
+@()(implicit messages: Messages, request: Request[_])
+
+@main_template(messages("ecc.already.have.xieori.title")) {
+    <div>
+
+        <h1 id="page-heading" class="govuk-heading-l">@messages("ecc.already.have.xieori.heading")</h1>
+
+        <p class="govuk-body" id="para1">@messages("ecc.already.have.xieori.para1")</p>
+
+        @govukButton(Button(
+        content = Text(messages("ecc.sign.out")),
+        href = Some(appConfig.signOutUrl),
+        attributes = Map("id" -> "sign-out")
+        ))
+
+        @helpers.helpAndSupport()
+    </div>
+}

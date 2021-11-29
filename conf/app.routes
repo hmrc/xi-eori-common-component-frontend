@@ -60,3 +60,6 @@ POST        /pbe-company-address-match                             @uk.gov.hmrc.
 #pbe-address-lookup
 GET        /pbe-company-address                             @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ManualPBEAddressController.onPageLoad
 POST       /pbe-company-address                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ManualPBEAddressController.submit
+
+# already-have-xi-eori
+GET        /already-have-xi-eori                 @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.AlreadyHaveXIEoriController.xiEoriAlreadyExists
