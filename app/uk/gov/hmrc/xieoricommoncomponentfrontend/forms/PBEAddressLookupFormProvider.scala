@@ -39,7 +39,7 @@ class PBEAddressLookupFormProvider @Inject() extends Mappings {
             )
           ),
         "line1" -> optional(text("").verifying(maxLength(35, "pbe-address-lookup.postcode.line1.error")))
-      )(PBEAddressLookup.apply)(PBEAddressLookup.unapply)
+      )((postcode, line1) => PBEAddressLookup(postcode.toUpperCase, line1))(PBEAddressLookup.unapply)
     )
 
 }

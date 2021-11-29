@@ -23,6 +23,7 @@ case class RegistrationDetails(
   tradeWithNI: Option[Boolean] = None,
   haveEUEori: Option[Boolean] = None,
   confirmDetails: Option[String] = None,
+  confirmAddress: Option[String] = None,
   personalDataDisclosureConsent: Option[Boolean] = None,
   sicCode: Option[String] = None,
   havePBEInNI: Option[Boolean] = None,

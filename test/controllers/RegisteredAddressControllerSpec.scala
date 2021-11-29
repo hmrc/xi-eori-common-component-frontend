@@ -70,7 +70,7 @@ class RegisteredAddressControllerSpec extends BaseSpec with BeforeAndAfterEach {
 
         val page = RegistrationPage(contentAsString(result))
 
-        page.title should startWith("What is your registered company address?")
+        page.title should startWith("What is your permanent business establishment address?")
       }
     }
 

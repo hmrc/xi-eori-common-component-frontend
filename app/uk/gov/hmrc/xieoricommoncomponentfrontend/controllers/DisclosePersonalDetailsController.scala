@@ -58,15 +58,17 @@ class DisclosePersonalDetailsController @Inject() (
       form.bindFromRequest.fold(
         invalidForm => Future.successful(BadRequest(disclosePersonalDetailsView(invalidForm))),
         value =>
-          loggedInUser.affinityGroup match {
-            case Some(AffinityGroup.Organisation) =>
-              userAnswersCache.cacheConsentToDisclosePersonalDetails(value).map(_ => destinationsByAnswer(value))
-            case _ =>
-              Future.successful(
-                Redirect(
-                  uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded()
+          userAnswersCache.cacheConsentToDisclosePersonalDetails(value).flatMap { _ =>
+            loggedInUser.affinityGroup match {
+              case Some(AffinityGroup.Organisation) =>
+                Future.successful(destinationsByAnswer(value))
+              case _ =>
+                Future.successful(
+                  Redirect(
+                    uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded()
+                  )
                 )
-              )
+            }
           }
       )
     }

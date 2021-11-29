@@ -18,6 +18,7 @@ package views
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.Helpers.contentAsString
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.PBEAddressResultsFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.AddressLookup
@@ -29,7 +30,7 @@ class RegisteredAddressViewSpec extends ViewSpec {
 
   private val view = instanceOf[registered_address]
 
-  private implicit val request = withFakeCSRF(fakeRegisterRequest)
+  private implicit val request: Request[AnyContentAsEmpty.type] = withFakeCSRF(fakeRegisterRequest)
 
   private val params         = PBEAddressLookup("AA11 1AA", Some("Flat 1"))
   private val allowedAddress = Seq(AddressLookup("Line 1", "City", "BB11 1BB", "GB"))
@@ -52,7 +53,7 @@ class RegisteredAddressViewSpec extends ViewSpec {
 
     "display title for company" in {
 
-      doc.title() must startWith("What is your registered company address?")
+      doc.title() must startWith("What is your permanent business establishment address?")
     }
 
     "display summary of params" in {

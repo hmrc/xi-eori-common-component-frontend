@@ -20,7 +20,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.UserAnswersCache
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.{SessionCache, UserAnswersCache}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{AuthAction, EnrolmentExtractor}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.ManualPBEAddressFormProvider
@@ -35,7 +35,8 @@ class ManualPBEAddressController @Inject() (
   manualPBEAddressView: manual_pbe_address,
   formProvider: ManualPBEAddressFormProvider,
   mcc: MessagesControllerComponents,
-  userAnswersCache: UserAnswersCache
+  userAnswersCache: UserAnswersCache,
+  sessionCache: SessionCache
 )(implicit val ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with EnrolmentExtractor {
 
@@ -44,11 +45,18 @@ class ManualPBEAddressController @Inject() (
   def onPageLoad: Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
       implicit request => _: LoggedInUserWithEnrolments =>
-        userAnswersCache.getAdddressDetails() map {
+        userAnswersCache.getAddressDetails() map {
           case Some(pbeAddressDetails) =>
             Ok(manualPBEAddressView(form.fill(ManualPBEAddress.fetchAddressDetail(pbeAddressDetails))))
           case None => Ok(manualPBEAddressView(form))
         }
+    }
+
+  def reviewPageLoad(): Action[AnyContent] =
+    authAction.ggAuthorisedUserWithEnrolmentsAction {
+      implicit request => _: LoggedInUserWithEnrolments =>
+        Future.successful(Ok(manualPBEAddressView(form)))
+
     }
 
   def submit: Action[AnyContent] =
@@ -58,11 +66,12 @@ class ManualPBEAddressController @Inject() (
         validAddressParams =>
           loggedInUser.affinityGroup match {
             case Some(AffinityGroup.Organisation) =>
-              userAnswersCache.cacheAddressDetails(ManualPBEAddress.toAddressModel(validAddressParams)).map { _ =>
-                Redirect(
-                  uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded()
-                )
-              }
+              for {
+                _ <- userAnswersCache.cacheAddressDetails(ManualPBEAddress.toAddressModel(validAddressParams))
+                _ <- sessionCache.clearAddressLookupParams
+              } yield Redirect(
+                uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEConfirmAddressController.onPageLoad()
+              )
             case _ =>
               Future.successful(
                 Redirect(

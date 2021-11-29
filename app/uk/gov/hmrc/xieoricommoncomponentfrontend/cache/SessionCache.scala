@@ -147,6 +147,9 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
   def remove(implicit hc: HeaderCarrier): Future[Boolean] =
     removeById(sessionId.id) map (x => x.writeErrors.isEmpty && x.writeConcernError.isEmpty)
 
+  def clearAddressLookupParams(implicit hc: HeaderCarrier): Future[Unit] =
+    createOrUpdate(sessionId, addressLookupParamsKey, Json.toJson(PBEAddressLookup("", None))).map(_ => ())
+
 }
 
 case class SessionTimeOutException(errorMessage: String) extends NoStackTrace

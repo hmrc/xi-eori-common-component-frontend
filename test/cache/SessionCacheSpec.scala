@@ -30,7 +30,7 @@ class SessionCacheSpec extends BaseSpec with MockitoSugar {
 
   "CachedData" should {
 
-    "throw IllegalStateException" when {
+    "return None" when {
 
       "eori missing " in {
         CachedData().eori shouldBe None

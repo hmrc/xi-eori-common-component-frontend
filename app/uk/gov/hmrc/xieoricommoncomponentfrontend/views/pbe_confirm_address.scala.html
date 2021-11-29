@@ -1,0 +1,74 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.PBEAddressResultsFormProvider
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.models.AddressLookup
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html._
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
+@import play.api.data.Form
+@import play.api.i18n.Messages
+@import play.api.mvc.Request
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.AddressViewModel
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEConfirmAddress
+
+@this(main_template: Layout,
+formHelper: FormWithCSRF,
+govukButton: GovukButton,
+p: components.p,
+errorSummary: components.errorSummary,
+govukInsetText : GovukInsetText,
+inputRadioGroup: components.inputRadioGroup,
+h1: components.h1)
+@(address: AddressViewModel,confirmAddressForm: Form[PBEConfirmAddress])(implicit messages: Messages, request: Request[_])
+@title = @{
+    messages("pbe-confirm-address.page.title")
+}
+@addressHtml = {
+    <div id="address" class="govuk-body">
+        @p(Html(address.street),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0")
+        @p(Html(address.city),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0")
+        @address.postcode.map( postalCode => p(Html(postalCode),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0"))
+        @p(Html(Some(messages("ecc.country.GB"))))
+    </div>
+}
+
+
+@main_template(title) {
+
+    @formHelper(action = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEConfirmAddressController.submit(), 'autoComplete -> "off") {
+
+        @errorSummary(confirmAddressForm.errors)
+        @h1(messages("pbe-confirm-address.page.title"))
+
+        @govukInsetText(InsetText(
+            content = HtmlContent(addressHtml)
+        ))
+
+        @inputRadioGroup(
+            confirmAddressForm("value"),
+            legend = messages("pbe-confirm-address.page.address.title"),
+            items = PBEConfirmAddress.options(confirmAddressForm),
+            classes = "govuk-fieldset__legend--m",
+            legendAsHeading = false
+        )
+        @govukButton(Button(
+            content = Text(messages("ecc.navigation.continue"))
+        ))
+
+        @helpers.helpAndSupport()
+    }
+}
