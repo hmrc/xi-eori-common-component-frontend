@@ -439,3 +439,7 @@ manual-pbe-address.postcode.bt.format=Postcode must start with BT
 
 ecc.GB.CountryCode=GB
 ecc.GB.CountryName=United Kingdom
+
+ecc.already.have.xieori.title=You already have an XI EORI connected to this Government Gateway
+ecc.already.have.xieori.heading=You already have an XI EORI connected to this Government Gateway
+ecc.already.have.xieori.para1=Your XI EORI number is: {0}
