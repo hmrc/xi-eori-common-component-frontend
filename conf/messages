@@ -443,3 +443,14 @@ ecc.GB.CountryName=United Kingdom
 ecc.already.have.xieori.title=You already have an XI EORI connected to this Government Gateway
 ecc.already.have.xieori.heading=You already have an XI EORI connected to this Government Gateway
 ecc.already.have.xieori.para1=Your XI EORI number is: {0}
+
+ecc.address-lookup.postcode.error=We have a problem
+ecc.address-lookup.postcode.error.hint=We are unable to view the list of matching addresses at this time. Try again in a few minutes or enter your address manually.
+ecc.address-lookup.postcode.error.re-enter=Re-enter postcode
+ecc.address-lookup.postcode.error.manual=I want to enter my address manually.
+
+ecc.address-lookup.postcode.no-results=No address found
+ecc.address-lookup.postcode.no-results.hint=We are unable to find an address associated with this postcode. Review the postcode below or enter your address manually.
+ecc.address-lookup.postcode.no-results.manual=I want to enter my address manually.
+
+ecc.address-change.link=Change

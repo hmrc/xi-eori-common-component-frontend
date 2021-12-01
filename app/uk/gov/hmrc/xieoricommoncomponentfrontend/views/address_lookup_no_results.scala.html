@@ -1,0 +1,51 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEAddressLookupController
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html._
+
+@this(main_template: Layout)
+
+@(postcode: String)(implicit messages: Messages, request: Request[_])
+
+@changeLink = {
+        <a href="@PBEAddressLookupController.onPageLoad()" class="govuk-link" id="reenter-postcode-button">@messages("ecc.address-change.link")</a>
+}
+
+@enterManuallyAddressLink = {
+        <a href="@ManualPBEAddressController.onPageLoad()" class="govuk-link" id="enter-manually-button">@messages("ecc.address-lookup.postcode.no-results.manual")</a>
+}
+
+@main_template(messages("ecc.address-lookup.postcode.no-results")) {
+    <div>
+        <legend>
+            <h1 class="govuk-heading-l">@messages("ecc.address-lookup.postcode.no-results")</h1>
+        </legend>
+
+        <p id="hint" class="govuk-body">@messages("ecc.address-lookup.postcode.no-results.hint")</p>
+
+        <div class="govuk-!-margin-top-2 govuk-!-margin-bottom-2">
+            <p class="govuk-!-display-inline govuk-!-font-weight-bold govuk-body">@postcode</p> <p class="govuk-!-display-inline govuk-!-margin-left-2 govuk-!-font-weight-bold govuk-body">@changeLink</p>
+        </div>
+
+        <div class="govuk-!-margin-bottom-4 govuk-!-margin-top-4">
+            @enterManuallyAddressLink
+        </div>
+
+        @helpers.helpAndSupport()
+    </div>
+}

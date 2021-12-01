@@ -68,3 +68,9 @@ POST        /pbe-confirm-address                             @uk.gov.hmrc.xieori
 
 # already-have-xi-eori
 GET        /already-have-xi-eori                 @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.AlreadyHaveXIEoriController.xiEoriAlreadyExists
+
+# address-lookup-error-page
+GET         /address-unavailable                @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.AddressLookupErrorController.displayErrorPage
+
+# address-lookup-error-no-results
+GET         /address-no-results                 @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.AddressLookupErrorController.displayNoResultsPage
