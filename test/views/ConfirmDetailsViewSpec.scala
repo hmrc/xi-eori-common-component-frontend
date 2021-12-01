@@ -22,11 +22,7 @@ import play.api.test.Helpers.contentAsString
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.ConfirmDetailsFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ConfirmDetails.confirmedDetails
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
-  EstablishmentAddress,
-  SubscriptionDisplayResponseDetail,
-  SubscriptionInfoVatId
-}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, SubscriptionDisplayResponseDetail, SubscriptionInfoVatId, XiSubscription}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewModel
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.confirm_details
 import util.ViewSpec
@@ -39,7 +35,7 @@ class ConfirmDetailsViewSpec extends ViewSpec {
   private val formProvider     = new ConfirmDetailsFormProvider().apply()
   private def form             = formProvider.bind(Map("value" -> confirmedDetails.toString))
   private def formWithError    = form.bind(Map("value" -> ""))
-
+  val xiSubscription: XiSubscription = XiSubscription("XI8989989797",None,Some("7978"),None,Some("S"),Some("7600"))
   private val response = SubscriptionDisplayResponseDetail(
     Some("EN123456789012345"),
     "John Doe",
@@ -47,7 +43,7 @@ class ConfirmDetailsViewSpec extends ViewSpec {
     Some(List(SubscriptionInfoVatId(Some("GB"), Some("999999")), SubscriptionInfoVatId(Some("ES"), Some("888888")))),
     Some("Doe"),
     Some(LocalDate.of(1963, 4, 1)),
-    Some("XIE9XSDF10BCKEYAX")
+    Some(xiSubscription)
   )
 
   private val viewModelOrganisation                     = ConfirmDetailsViewModel(response, AffinityGroup.Organisation)

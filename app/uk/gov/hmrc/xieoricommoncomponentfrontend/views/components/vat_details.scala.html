@@ -44,9 +44,28 @@ appConfig: AppConfig
 @displayGBVatNumber(vatIDs: Option[List[SubscriptionInfoVatId]]) = {
     @vatIDs.map(vatList => vatList.filter(_.countryCode == Some("GB")).map(vat => vatID(vat.VATID)) )
 }
+@getXiVatNumber = @{
+    for{
+        xiSubscription <- model.subscriptionDisplay.XI_Subscription
+                xiVatNumber <- xiSubscription.XI_VATNumber
+    } yield xiVatNumber
 
-@xiVatNumber(xiVatNumber:Option[String],message: String) = @{
-    if(xiVatNumber.isDefined) Html(xiVatNumber.get)
+}
+
+@*xiVatRow = @{
+    if(xiVatNumber.isDefined)
+        SummaryListRow(
+            key = Key(content = Text(messages("confirmDetails.xi-vat-number.label")),classes = "govuk-!-width-one-half"),
+            value = Value(content = HtmlContent(link(messages("confirmDetails.do-you-need-xi-vat-number.label"),uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiVatRegisterController.onPageLoad().url))),
+            classes = "xi-vat-number")
+    else
+        SummaryListRow(
+            key = Key(content = Text(messages("confirmDetails.xi-vat-number.label")),classes = "govuk-!-width-one-half"),
+            value = Value(content = HtmlContent(link(messages("confirmDetails.do-you-need-xi-vat-number.label"),uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiVatRegisterController.onPageLoad().url))),
+            classes = "xi-vat-number")
+}*@
+@xiVatNumber(message: String) = @{
+    if(getXiVatNumber.isDefined) Html(getXiVatNumber.get)
     else link(message,uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiVatRegisterController.onPageLoad().url)
 }
 
@@ -74,7 +93,7 @@ appConfig: AppConfig
             ),
             SummaryListRow(
                 key = Key(content = Text(messages("confirmDetails.xi-vat-number.label")),classes = "govuk-!-width-one-half"),
-                value = Value(content = HtmlContent(xiVatNumber(model.subscriptionDisplay.XIVatNo,messages("confirmDetails.do-you-need-xi-vat-number.label")))),
+                value = Value(content = HtmlContent(xiVatNumber(messages("confirmDetails.do-you-need-xi-vat-number.label")))),
                 classes = "xi-vat-number")
         ), "govuk-!-margin-bottom-9 govuk-summary-list--wide",attributes = Map("id"->"vat-details")))
 </div>

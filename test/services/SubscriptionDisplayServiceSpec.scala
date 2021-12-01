@@ -22,16 +22,12 @@ import org.scalatest.{BeforeAndAfter, Matchers, WordSpec}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.{await, defaultAwaitTimeout, running}
-import play.api.{inject, Application}
+import play.api.{Application, inject}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.SubscriptionDisplayConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain._
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
-  EstablishmentAddress,
-  SubscriptionDisplayResponseDetail,
-  SubscriptionInfoVatId
-}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, SubscriptionDisplayResponseDetail, SubscriptionInfoVatId, XiSubscription}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.SubscriptionDisplayService
 
 import java.time.LocalDate
@@ -57,7 +53,7 @@ class SubscriptionDisplayServiceSpec extends WordSpec with BeforeAndAfter with M
   before {
     reset(mockSubscriptionDisplayConnector)
   }
-
+  val xiSubscription: XiSubscription = XiSubscription("XI8989989797",None,Some("7978"),None,Some("S"),Some("7600"))
   val subscriptionResponse = SubscriptionDisplayResponseDetail(
     Some("EN123456789012345"),
     "John Doe",
@@ -65,7 +61,7 @@ class SubscriptionDisplayServiceSpec extends WordSpec with BeforeAndAfter with M
     Some(List(SubscriptionInfoVatId(Some("GB"), Some("999999")), SubscriptionInfoVatId(Some("ES"), Some("888888")))),
     Some("Doe"),
     Some(LocalDate.of(1963, 4, 1)),
-    Some("XIE9XSDF10BCKEYAX")
+    Some(xiSubscription)
   )
 
   private val eori = Eori("GB123456789012")

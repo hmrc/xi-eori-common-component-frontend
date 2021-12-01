@@ -46,18 +46,20 @@ sealed case class CachedData(
   addressLookupResult: Option[Seq[AddressLookup]] = None
 ) {
 
-  def subscriptionDisplayMongo(): SubscriptionDisplayResponseDetail = {
-    val resp = subscriptionDisplay.getOrElse(emptySubscriptionDisplay())
-    SubscriptionDisplayResponseDetail(
-      resp.EORINo,
-      resp.CDSFullName,
-      resp.CDSEstablishmentAddress,
-      resp.VATIDs,
-      resp.shortName,
-      resp.dateOfEstablishment,
-      resp.XIEORINo,
-      resp.XIVatNo
-    )
+  def subscriptionDisplayMongo(): Option[SubscriptionDisplayResponseDetail] = {
+
+    subscriptionDisplay match {
+      case Some(resp) => Some(SubscriptionDisplayResponseDetail(
+        resp.EORINo,
+        resp.CDSFullName,
+        resp.CDSEstablishmentAddress,
+        resp.VATIDs,
+        resp.shortName,
+        resp.dateOfEstablishment,
+        resp.xiSubscription
+      ))
+      case _ => None
+    }
   }
 
   def getRegistrationDetails: RegistrationDetails =
@@ -72,9 +74,6 @@ object CachedData {
   val registrationDetailsKey               = "registrationDetails"
   val addressLookupResultsKey              = "addressLookupResult"
   implicit val format: OFormat[CachedData] = Json.format[CachedData]
-
-  def emptySubscriptionDisplay(): SubscriptionDisplayMongo =
-    SubscriptionDisplayMongo(None, "", EstablishmentAddress("", "", None, ""), None, None, None, None, None)
 
   def emptyRegistrationDetails(): RegistrationDetails =
     RegistrationDetails(None)
@@ -103,7 +102,7 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
     createOrUpdate(
       sessionId,
       subscriptionDisplayKey,
-      Json.toJson(subscriptionDisplay.toSubscriptionDisplayMongo())
+      Json.toJson(subscriptionDisplay.toSubscriptionDisplayMongo)
     ) map (_ => true)
 
   def saveAddressLookupParams(addressLookupParams: PBEAddressLookup)(implicit hc: HeaderCarrier): Future[Boolean] =
@@ -128,11 +127,14 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
 
   def eori(implicit hc: HeaderCarrier): Future[Option[String]] =
     getCached[Option[String]](sessionId, (cachedData, _) => cachedData.eori)
+    .recoverWith {
+      case _ => Future.successful(None)
+    }
 
   def subscriptionDisplay(implicit hc: HeaderCarrier): Future[Option[SubscriptionDisplayResponseDetail]] =
     getCached[Option[SubscriptionDisplayResponseDetail]](
       sessionId,
-      (cachedData, _) => Some(cachedData.subscriptionDisplayMongo())
+      (cachedData, _) => cachedData.subscriptionDisplayMongo()
     )
 
   def addressLookupParams(implicit hc: HeaderCarrier): Future[Option[PBEAddressLookup]] =
@@ -149,6 +151,15 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
 
   def clearAddressLookupParams(implicit hc: HeaderCarrier): Future[Unit] =
     createOrUpdate(sessionId, addressLookupParamsKey, Json.toJson(PBEAddressLookup("", None))).map(_ => ())
+
+  def fetchXiEori()(implicit hc: HeaderCarrier): Future[Option[String]] = subscriptionDisplay map {
+    mayBeSubscriptionDisplayResponse => {
+      for{
+        subscriptionResponse <- mayBeSubscriptionDisplayResponse
+        xiSubscription <- subscriptionResponse.XI_Subscription
+      }yield xiSubscription.XI_EORINo
+    }
+  }
 
 }
 

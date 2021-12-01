@@ -17,27 +17,14 @@
 package uk.gov.hmrc.xieoricommoncomponentfrontend.models
 
 import play.api.libs.functional.syntax._
-import play.api.libs.json.{JsPath, Json, Reads}
+import play.api.libs.json.{JsPath, Json, OFormat, OWrites, Reads}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.SubscriptionDisplayMongo
 
 import java.time.{Clock, LocalDate, LocalDateTime, ZoneId}
 
 case class SubscriptionInfoVatId(countryCode: Option[String], VATID: Option[String])
 
-case class ContactInformation(
-  personOfContact: Option[String] = None,
-  sepCorrAddrIndicator: Option[Boolean] = None,
-  streetAndNumber: Option[String] = None,
-  city: Option[String] = None,
-  postalCode: Option[String] = None,
-  countryCode: Option[String] = None,
-  telephoneNumber: Option[String] = None,
-  faxNumber: Option[String] = None,
-  emailAddress: Option[String] = None,
-  emailVerificationTimestamp: Option[LocalDateTime] = Some(
-    LocalDateTime.ofInstant(Clock.systemUTC().instant, ZoneId.of("Europe/London"))
-  )
-)
+
 
 case class EstablishmentAddress(
   streetAndNumber: String,
@@ -46,6 +33,14 @@ case class EstablishmentAddress(
   countryCode: String
 )
 
+
+case class XiSubscription(
+                           XI_EORINo: String,
+
+                           XI_VATNumber: Option[String]
+
+                         )
+
 case class SubscriptionDisplayResponseDetail(
   EORINo: Option[String],
   CDSFullName: String,
@@ -53,27 +48,25 @@ case class SubscriptionDisplayResponseDetail(
   VATIDs: Option[List[SubscriptionInfoVatId]],
   shortName: Option[String],
   dateOfEstablishment: Option[LocalDate] = None,
-  XIEORINo: Option[String],
-  XIVatNo: Option[String] = None
+  XI_Subscription: Option[XiSubscription]
 ) {
 
-  def toSubscriptionDisplayMongo() = SubscriptionDisplayMongo(
+  def toSubscriptionDisplayMongo: SubscriptionDisplayMongo = SubscriptionDisplayMongo(
     EORINo,
     CDSFullName,
     CDSEstablishmentAddress,
     VATIDs,
     shortName,
     dateOfEstablishment,
-    XIEORINo,
-    XIVatNo
+    XI_Subscription
   )
 
 }
 
 object SubscriptionDisplayResponseDetail {
-  implicit val addressFormat            = Json.format[EstablishmentAddress]
-  implicit val contactInformationFormat = Json.format[ContactInformation]
-  implicit val vatFormat                = Json.format[SubscriptionInfoVatId]
+  implicit val addressFormat: OFormat[EstablishmentAddress] = Json.format[EstablishmentAddress]
+  implicit val vatFormat: OFormat[SubscriptionInfoVatId] = Json.format[SubscriptionInfoVatId]
+  implicit val xiSubscriptionFormat: OFormat[XiSubscription] = Json.format[XiSubscription]
 
   implicit val subscriptionDisplayReads: Reads[SubscriptionDisplayResponseDetail] = (
     (JsPath \ "subscriptionDisplayResponse" \ "responseDetail" \ "EORINo").readNullable[String] and
@@ -86,9 +79,8 @@ object SubscriptionDisplayResponseDetail {
       ] and
       (JsPath \ "subscriptionDisplayResponse" \ "responseDetail" \ "shortName").readNullable[String] and
       (JsPath \ "subscriptionDisplayResponse" \ "responseDetail" \ "dateOfEstablishment").readNullable[LocalDate] and
-      (JsPath \ "subscriptionDisplayResponse" \ "responseDetail" \ "XI_EORI").readNullable[String] and
-      (JsPath \ "subscriptionDisplayResponse" \ "responseDetail" \ "XI EORI" \ "XI_VAT_Number").readNullable[String]
+      (JsPath \ "subscriptionDisplayResponse" \ "responseDetail" \ "XI_Subscription").readNullable[XiSubscription]
   )(SubscriptionDisplayResponseDetail.apply _)
 
-  implicit val subscriptionDisplayWrites = Json.writes[SubscriptionDisplayResponseDetail]
+  implicit val subscriptionDisplayWrites: OWrites[SubscriptionDisplayResponseDetail] = Json.writes[SubscriptionDisplayResponseDetail]
 }

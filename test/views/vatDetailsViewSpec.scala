@@ -20,11 +20,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.contentAsString
 import uk.gov.hmrc.auth.core.AffinityGroup
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
-  EstablishmentAddress,
-  SubscriptionDisplayResponseDetail,
-  SubscriptionInfoVatId
-}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, SubscriptionDisplayResponseDetail, SubscriptionInfoVatId, XiSubscription}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewModel
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.components.vat_details
 import util.ViewSpec
@@ -34,7 +30,8 @@ import java.time.LocalDate
 class vatDetailsViewSpec extends ViewSpec {
 
   private implicit val request = withFakeCSRF(fakeRegisterRequest)
-
+  val xiSubscriptionWithoutXIVat: XiSubscription = XiSubscription("XI8989989797",None,Some("7978"),None,Some("S"),Some("7600"))
+  val xiSubscriptionWithVat: XiSubscription = XiSubscription("XI8989989797",None,Some("7978"),None,Some("S"),Some("7600"))
   private val response = SubscriptionDisplayResponseDetail(
     Some("EN123456789012345"),
     "John Doe",
@@ -42,13 +39,13 @@ class vatDetailsViewSpec extends ViewSpec {
     Some(List(SubscriptionInfoVatId(Some("GB"), Some("999999")), SubscriptionInfoVatId(Some("ES"), Some("888888")))),
     Some("Doe"),
     Some(LocalDate.of(1963, 4, 1)),
-    Some("XIE9XSDF10BCKEYAX")
+    Some(xiSubscriptionWithoutXIVat)
   )
 
   private val viewWithoutXIVATModel = ConfirmDetailsViewModel(response, AffinityGroup.Organisation)
 
   private val viewWithXIVATModel =
-    ConfirmDetailsViewModel(response.copy(XIVatNo = Some("XIVATNumber")), AffinityGroup.Organisation)
+    ConfirmDetailsViewModel(response.copy(XI_Subscription = Some(xiSubscriptionWithVat)), AffinityGroup.Organisation)
 
   private val vatDetailsWithXIVATView             = instanceOf[vat_details].apply(viewWithXIVATModel)
   private val vatDetailsWithoutXIVATView          = instanceOf[vat_details].apply(viewWithoutXIVATModel)

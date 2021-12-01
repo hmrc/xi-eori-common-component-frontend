@@ -19,18 +19,14 @@ package controllers
 import common.pages.RegistrationPage
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.{inject, Application}
+import play.api.{Application, inject}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.UserAnswersCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, KeyValue}
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
-  EstablishmentAddress,
-  ServiceUnavailableResponse,
-  SubscriptionDisplayResponseDetail
-}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, ServiceUnavailableResponse, SubscriptionDisplayResponseDetail, XiSubscription}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.SubscriptionDisplayService
 import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
@@ -50,7 +46,7 @@ class SicCodeControllerSpec extends BaseSpec {
     postalCode = Some("SE28 1AA"),
     countryCode = "GB"
   )
-
+  val xiSubscription: XiSubscription = XiSubscription("XI8989989797",None,Some("7978"),None,Some("S"),Some("7600"))
   val nonNIsubscriptionDisplayResponse: SubscriptionDisplayResponseDetail = SubscriptionDisplayResponseDetail(
     EORINo = Some("GB123456789012"),
     CDSFullName = "FirstName LastName",
@@ -58,7 +54,7 @@ class SicCodeControllerSpec extends BaseSpec {
     VATIDs = None,
     shortName = Some("Short Name"),
     dateOfEstablishment = Some(LocalDate.now()),
-    XIEORINo = Some("XIE9XSDF10BCKEYAX")
+    XI_Subscription = Some(xiSubscription)
   )
 
   val niEstablishmentAddress: EstablishmentAddress = EstablishmentAddress(
@@ -75,7 +71,7 @@ class SicCodeControllerSpec extends BaseSpec {
     VATIDs = None,
     shortName = Some("Short Name"),
     dateOfEstablishment = Some(LocalDate.now()),
-    XIEORINo = Some("XIE9XSDF10BCKEYAX")
+    XI_Subscription = Some(xiSubscription)
   )
 
   val groupEnrolment =

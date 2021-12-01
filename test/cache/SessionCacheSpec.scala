@@ -47,7 +47,6 @@ class SessionCacheSpec extends BaseSpec with MockitoSugar {
           None,
           None,
           None,
-          None,
           None
         )
 

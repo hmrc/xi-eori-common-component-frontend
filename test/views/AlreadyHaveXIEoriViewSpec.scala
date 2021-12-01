@@ -27,7 +27,7 @@ class AlreadyHaveXIEoriViewSpec extends ViewSpec {
   private implicit val request = withFakeCSRF(fakeRegisterRequest)
 
   private val alreadyhaveXIEoriView               = instanceOf[already_have_xi_eori]
-  private lazy val alreadyhaveXIEoriDoc: Document = Jsoup.parse(contentAsString(alreadyhaveXIEoriView()))
+  private lazy val alreadyhaveXIEoriDoc: Document = Jsoup.parse(contentAsString(alreadyhaveXIEoriView("XI8989989797")))
 
   "Already Have XI Eori page " should {
 

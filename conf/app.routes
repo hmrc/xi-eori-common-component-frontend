@@ -68,3 +68,6 @@ POST        /pbe-confirm-address                             @uk.gov.hmrc.xieori
 
 # already-have-xi-eori
 GET        /already-have-xi-eori                 @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.AlreadyHaveXIEoriController.xiEoriAlreadyExists
+
+#register
+GET        /register                 @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ApplicationController.onPageLoad

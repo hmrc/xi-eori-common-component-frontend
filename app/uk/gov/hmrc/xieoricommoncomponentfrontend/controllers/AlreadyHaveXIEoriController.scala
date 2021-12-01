@@ -18,25 +18,32 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-
-import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.already_have_xi_eori
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
+import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
+import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{already_have_xi_eori, error_template}
 
 import javax.inject.Inject
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class AlreadyHaveXIEoriController @Inject() (
   authAction: AuthAction,
+  sessionCache: SessionCache,
   xiEoriExistsView: already_have_xi_eori,
+  errorTemplateView: error_template,
   mcc: MessagesControllerComponents
-) extends FrontendController(mcc) with I18nSupport {
+)(implicit val ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   def xiEoriAlreadyExists: Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
-      implicit request => _: LoggedInUserWithEnrolments =>
-        Future.successful(Ok(xiEoriExistsView()))
-    }
+      implicit request =>
+        _: LoggedInUserWithEnrolments =>
+          sessionCache.fetchXiEori.flatMap {
+              case Some(resp) => Future.successful(Ok(xiEoriExistsView(resp)))
+              case None => Future.successful(InternalServerError(errorTemplateView()))
+            }
+          }
 
 }
