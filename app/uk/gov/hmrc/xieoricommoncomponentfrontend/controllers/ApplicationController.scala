@@ -18,9 +18,7 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{AuthAction, GroupEnrolmentExtractor}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.XiSubscription
@@ -30,16 +28,14 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.error_template
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ApplicationController @Inject()(
+class ApplicationController @Inject() (
   authAction: AuthAction,
   groupEnrolment: GroupEnrolmentExtractor,
-  sessionCache: SessionCache,
   subscriptionDisplayService: SubscriptionDisplayService,
   errorTemplateView: error_template,
   mcc: MessagesControllerComponents
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
-
 
   def onPageLoad: Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
@@ -51,7 +47,10 @@ class ApplicationController @Inject()(
                 Future.successful(destinationsByAnswer(response.XI_Subscription))
               case Left(_) => Future.successful(InternalServerError(errorTemplateView()))
             }
-          case None => Future.successful(Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad()))
+          case None =>
+            Future.successful(
+              Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad())
+            )
         }
     }
 

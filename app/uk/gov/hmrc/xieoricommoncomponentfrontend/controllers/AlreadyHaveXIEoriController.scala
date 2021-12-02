@@ -18,11 +18,15 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ConfirmDetails
+import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewModel
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{already_have_xi_eori, error_template}
 
 import javax.inject.Inject
@@ -34,16 +38,25 @@ class AlreadyHaveXIEoriController @Inject() (
   xiEoriExistsView: already_have_xi_eori,
   errorTemplateView: error_template,
   mcc: MessagesControllerComponents
-)(implicit val ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+)(implicit val ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport {
 
   def xiEoriAlreadyExists: Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
-      implicit request =>
-        _: LoggedInUserWithEnrolments =>
-          sessionCache.fetchXiEori.flatMap {
-              case Some(resp) => Future.successful(Ok(xiEoriExistsView(resp)))
-              case None => Future.successful(InternalServerError(errorTemplateView()))
-            }
-          }
+      implicit request => _: LoggedInUserWithEnrolments =>
+        sessionCache.subscriptionDisplay map {
+          case Some(response) =>
+            populateView(response)
+          case None => InternalServerError(errorTemplateView())
+        }
+    }
+
+  def populateView(
+    subscriptionDisplayDetails: SubscriptionDisplayResponseDetail
+  )(implicit hc: HeaderCarrier, request: Request[AnyContent]): Result =
+    subscriptionDisplayDetails.XI_Subscription match {
+      case Some(resp) => Ok(xiEoriExistsView(resp.XI_EORINo))
+      case None       => InternalServerError(errorTemplateView())
+    }
 
 }

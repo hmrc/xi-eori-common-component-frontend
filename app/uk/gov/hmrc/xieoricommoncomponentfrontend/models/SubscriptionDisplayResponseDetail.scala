@@ -24,8 +24,6 @@ import java.time.{Clock, LocalDate, LocalDateTime, ZoneId}
 
 case class SubscriptionInfoVatId(countryCode: Option[String], VATID: Option[String])
 
-
-
 case class EstablishmentAddress(
   streetAndNumber: String,
   city: String,
@@ -33,13 +31,7 @@ case class EstablishmentAddress(
   countryCode: String
 )
 
-
-case class XiSubscription(
-                           XI_EORINo: String,
-
-                           XI_VATNumber: Option[String]
-
-                         )
+case class XiSubscription(XI_EORINo: String, XI_VATNumber: Option[String])
 
 case class SubscriptionDisplayResponseDetail(
   EORINo: Option[String],
@@ -64,8 +56,8 @@ case class SubscriptionDisplayResponseDetail(
 }
 
 object SubscriptionDisplayResponseDetail {
-  implicit val addressFormat: OFormat[EstablishmentAddress] = Json.format[EstablishmentAddress]
-  implicit val vatFormat: OFormat[SubscriptionInfoVatId] = Json.format[SubscriptionInfoVatId]
+  implicit val addressFormat: OFormat[EstablishmentAddress]  = Json.format[EstablishmentAddress]
+  implicit val vatFormat: OFormat[SubscriptionInfoVatId]     = Json.format[SubscriptionInfoVatId]
   implicit val xiSubscriptionFormat: OFormat[XiSubscription] = Json.format[XiSubscription]
 
   implicit val subscriptionDisplayReads: Reads[SubscriptionDisplayResponseDetail] = (
@@ -82,5 +74,7 @@ object SubscriptionDisplayResponseDetail {
       (JsPath \ "subscriptionDisplayResponse" \ "responseDetail" \ "XI_Subscription").readNullable[XiSubscription]
   )(SubscriptionDisplayResponseDetail.apply _)
 
-  implicit val subscriptionDisplayWrites: OWrites[SubscriptionDisplayResponseDetail] = Json.writes[SubscriptionDisplayResponseDetail]
+  implicit val subscriptionDisplayWrites: OWrites[SubscriptionDisplayResponseDetail] =
+    Json.writes[SubscriptionDisplayResponseDetail]
+
 }

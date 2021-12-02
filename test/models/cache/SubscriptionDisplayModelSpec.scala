@@ -50,10 +50,13 @@ class SubscriptionDisplayModelSpec extends WordSpec with MustMatchers {
                                                               |      ],
                                                               |      "shortName": "Doe",
                                                               |      "dateOfEstablishment": "1963-04-01",
-                                                              |      "XIEORINo" : "XIE9XSDF10BCKEYAX"
+                                                              |      "XI_Subscription": {
+                                                              |         "XI_EORINo":"XI8989989797",
+                                                              |         "XI_VATNumber":"7978"
+                                                              |      }
                                                               |}
                                                               | """.stripMargin)
-      val xiSubscription: XiSubscription = XiSubscription("XI8989989797",None,Some("7978"),None,Some("S"),Some("7600"))
+      val xiSubscription: XiSubscription  = XiSubscription("XI8989989797", Some("7978"))
       val expectedModel = SubscriptionDisplayMongo(
         Some("EN123456789012345"),
         "John Doe",

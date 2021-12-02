@@ -22,7 +22,12 @@ import play.api.test.Helpers.contentAsString
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.ConfirmDetailsFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ConfirmDetails.confirmedDetails
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, SubscriptionDisplayResponseDetail, SubscriptionInfoVatId, XiSubscription}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
+  EstablishmentAddress,
+  SubscriptionDisplayResponseDetail,
+  SubscriptionInfoVatId,
+  XiSubscription
+}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewModel
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.confirm_details
 import util.ViewSpec
@@ -31,11 +36,12 @@ import java.time.LocalDate
 
 class ConfirmDetailsViewSpec extends ViewSpec {
 
-  private implicit val request = withFakeCSRF(fakeRegisterRequest)
-  private val formProvider     = new ConfirmDetailsFormProvider().apply()
-  private def form             = formProvider.bind(Map("value" -> confirmedDetails.toString))
-  private def formWithError    = form.bind(Map("value" -> ""))
-  val xiSubscription: XiSubscription = XiSubscription("XI8989989797",None,Some("7978"),None,Some("S"),Some("7600"))
+  private implicit val request       = withFakeCSRF(fakeRegisterRequest)
+  private val formProvider           = new ConfirmDetailsFormProvider().apply()
+  private def form                   = formProvider.bind(Map("value" -> confirmedDetails.toString))
+  private def formWithError          = form.bind(Map("value" -> ""))
+  val xiSubscription: XiSubscription = XiSubscription("XI8989989797", Some("7978"))
+
   private val response = SubscriptionDisplayResponseDetail(
     Some("EN123456789012345"),
     "John Doe",

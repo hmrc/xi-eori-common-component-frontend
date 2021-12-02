@@ -20,7 +20,12 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.contentAsString
 import uk.gov.hmrc.auth.core.AffinityGroup
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, SubscriptionDisplayResponseDetail, SubscriptionInfoVatId, XiSubscription}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
+  EstablishmentAddress,
+  SubscriptionDisplayResponseDetail,
+  SubscriptionInfoVatId,
+  XiSubscription
+}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewModel
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.components.company_details
 import util.ViewSpec
@@ -29,8 +34,9 @@ import java.time.LocalDate
 
 class CompanyDetailsViewSpec extends ViewSpec {
 
-  private implicit val request = withFakeCSRF(fakeRegisterRequest)
-  val xiSubscription: XiSubscription = XiSubscription("XI8989989797",None,Some("7978"),None,Some("S"),Some("7600"))
+  private implicit val request       = withFakeCSRF(fakeRegisterRequest)
+  val xiSubscription: XiSubscription = XiSubscription("XI8989989797", Some("7978"))
+
   private val response = SubscriptionDisplayResponseDetail(
     Some("EN123456789012345"),
     "John Doe",

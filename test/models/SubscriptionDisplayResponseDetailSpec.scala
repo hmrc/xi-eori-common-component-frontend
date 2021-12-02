@@ -18,7 +18,12 @@ package models
 
 import org.scalatest.{MustMatchers, WordSpec}
 import play.api.libs.json.Json
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, SubscriptionDisplayResponseDetail, SubscriptionInfoVatId, XiSubscription}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
+  EstablishmentAddress,
+  SubscriptionDisplayResponseDetail,
+  SubscriptionInfoVatId,
+  XiSubscription
+}
 
 import java.time.LocalDate
 
@@ -86,14 +91,17 @@ class SubscriptionDisplayResponseDetailSpec extends WordSpec with MustMatchers {
                                                               |      "dateOfEstablishment": "1963-04-01",
                                                               |      "typeOfPerson": "1",
                                                               |      "principalEconomicActivity": "2000",
-                                                              |      "XI_EORI" : "XIE9XSDF10BCKEYAX"
+                                                              |      "XI_Subscription": {
+                                                              |         "XI_EORINo":"XI8989989797",
+                                                              |         "XI_VATNumber":"7978"
+                                                              |      }
                                                               |    }
                                                               |  }
                                                               |}
                                                               | """.stripMargin)
 
-      val result = SubscriptionDisplayResponseDetail.subscriptionDisplayReads.reads(subscriptionDisplayJsonResponse)
-      val xiSubscription: XiSubscription = XiSubscription("XI8989989797",None,Some("7978"),None,Some("S"),Some("7600"))
+      val result                         = SubscriptionDisplayResponseDetail.subscriptionDisplayReads.reads(subscriptionDisplayJsonResponse)
+      val xiSubscription: XiSubscription = XiSubscription("XI8989989797", Some("7978"))
       val expectedModel = SubscriptionDisplayResponseDetail(
         Some("EN123456789012345"),
         "John Doe",

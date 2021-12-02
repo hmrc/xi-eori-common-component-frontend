@@ -20,7 +20,12 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.contentAsString
 import uk.gov.hmrc.auth.core.AffinityGroup
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, SubscriptionDisplayResponseDetail, SubscriptionInfoVatId, XiSubscription}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
+  EstablishmentAddress,
+  SubscriptionDisplayResponseDetail,
+  SubscriptionInfoVatId,
+  XiSubscription
+}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewModel
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.components.vat_details
 import util.ViewSpec
@@ -30,8 +35,12 @@ import java.time.LocalDate
 class vatDetailsViewSpec extends ViewSpec {
 
   private implicit val request = withFakeCSRF(fakeRegisterRequest)
-  val xiSubscriptionWithoutXIVat: XiSubscription = XiSubscription("XI8989989797",None,Some("7978"),None,Some("S"),Some("7600"))
-  val xiSubscriptionWithVat: XiSubscription = XiSubscription("XI8989989797",None,Some("7978"),None,Some("S"),Some("7600"))
+
+  val xiSubscriptionWithoutXIVat: XiSubscription =
+    XiSubscription("XI8989989797", None)
+
+  val xiSubscriptionWithVat: XiSubscription = XiSubscription("XI8989989797", Some("123"))
+
   private val response = SubscriptionDisplayResponseDetail(
     Some("EN123456789012345"),
     "John Doe",
@@ -76,7 +85,7 @@ class vatDetailsViewSpec extends ViewSpec {
       "display XI VAT number if XI VAT number is present" in {
         val vatNumber = vatDetailsDoc.body.getElementsByClass("xi-vat-number").get(0)
         vatNumber.getElementsByClass("govuk-summary-list__key").text mustBe "XI VAT number"
-        vatNumber.getElementsByClass("govuk-summary-list__value").text mustBe "XIVATNumber"
+        vatNumber.getElementsByClass("govuk-summary-list__value").text mustBe "123"
       }
 
       "display XI VAT register link if XI Vat number is not present" in {

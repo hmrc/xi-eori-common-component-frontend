@@ -17,45 +17,83 @@
 package controllers
 
 import common.pages.RegistrationPage
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import play.api.test.Helpers._
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
+  EstablishmentAddress,
+  SubscriptionDisplayResponseDetail,
+  XiSubscription
+}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.TradeWithNI
 import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
 
+import java.time.LocalDate
+import scala.concurrent.Future
+
 class AlreadyHaveXIEoriControllerSpec extends BaseSpec {
-  val signOutXpath = "//*[@id='sign-out']"
+
+  val establishmentAddress: EstablishmentAddress = EstablishmentAddress(
+    streetAndNumber = "line1",
+    city = "City name",
+    postalCode = Some("SE28 1AA"),
+    countryCode = "GB"
+  )
+
+  val xiSubscription: XiSubscription = XiSubscription("XI8989989797", None)
+
+  val subscriptionDisplayResponse: SubscriptionDisplayResponseDetail = SubscriptionDisplayResponseDetail(
+    EORINo = Some("GB123456789012"),
+    CDSFullName = "FirstName LastName",
+    CDSEstablishmentAddress = establishmentAddress,
+    VATIDs = None,
+    shortName = Some("Short Name"),
+    dateOfEstablishment = Some(LocalDate.now()),
+    XI_Subscription = Some(xiSubscription)
+  )
+
   "AlreadyHaveXIEori controller" should {
-    "display Already have an XI Eori page" in {
+    "return OK and the correct view for a GET" in {
+
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
-
+        when(mockSessionCache.subscriptionDisplay(any())).thenReturn(
+          Future.successful(Some(subscriptionDisplayResponse))
+        )
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AlreadyHaveXIEoriController.xiEoriAlreadyExists().url,
           defaultUserId
         )
+
         val result = route(application, request).get
-        status(result) shouldBe OK
 
         val page = RegistrationPage(contentAsString(result))
 
         page.title should startWith("You already have an XI EORI connected to this Government Gateway")
-
       }
-
     }
 
-    "redirect to Sign out page when user clicks Sign Out" in {
+    "redirect to sign out page when the user clicks Signout button" in {
+      val signOutXpath = "//*[@id='sign-out']"
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+        when(mockSessionCache.subscriptionDisplay(any())).thenReturn(
+          Future.successful(Some(subscriptionDisplayResponse))
+        )
+        val request = SessionBuilder.buildRequestWithSessionAndPath(
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AlreadyHaveXIEoriController.xiEoriAlreadyExists().url,
+          defaultUserId
+        )
 
-      withAuthorisedUser(defaultUserId, mockAuthConnector)
-      val request = SessionBuilder.buildRequestWithSessionAndPath(
-        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded().url,
-        defaultUserId
-      )
-      val result = route(application, request).get
+        val result = route(application, request).get
 
-      val page = RegistrationPage(contentAsString(result))
-      page.getElementsHref(signOutXpath) shouldBe "http://localhost:9553/bas-gateway/sign-out-without-state"
+        val page = RegistrationPage(contentAsString(result))
 
+        page.getElementsHref(signOutXpath) shouldBe "http://localhost:9553/bas-gateway/sign-out-without-state"
+      }
     }
 
   }

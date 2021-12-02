@@ -28,12 +28,12 @@ case class SubscriptionDisplayMongo(
   VATIDs: Option[List[SubscriptionInfoVatId]],
   shortName: Option[String],
   dateOfEstablishment: Option[LocalDate] = None,
-  xiSubscription: Option[XiSubscription]
+  XI_Subscription: Option[XiSubscription]
 )
 
 object SubscriptionDisplayMongo {
-  implicit val addressFormat: OFormat[EstablishmentAddress] = Json.format[EstablishmentAddress]
-  implicit val vatFormat: OFormat[SubscriptionInfoVatId] = Json.format[SubscriptionInfoVatId]
-  implicit val xiSubscriptionFormat: OFormat[XiSubscription] = Json.format[XiSubscription]
+  implicit val addressFormat: OFormat[EstablishmentAddress]                      = Json.format[EstablishmentAddress]
+  implicit val vatFormat: OFormat[SubscriptionInfoVatId]                         = Json.format[SubscriptionInfoVatId]
+  implicit val xiSubscriptionFormat: OFormat[XiSubscription]                     = Json.format[XiSubscription]
   implicit val subscriptionDisplayMongoFormat: OFormat[SubscriptionDisplayMongo] = Json.format[SubscriptionDisplayMongo]
 }

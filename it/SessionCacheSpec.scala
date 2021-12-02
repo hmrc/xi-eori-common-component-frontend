@@ -42,7 +42,7 @@ class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoS
   val sessionCache = new SessionCache(appConfig, reactiveMongoComponent)
 
   val hc: HeaderCarrier = mock[HeaderCarrier]
-  val xiSubscription: XiSubscription = XiSubscription("XI8989989797",None,Some("7978"),None,Some("S"),Some("7600"))
+  val xiSubscription: XiSubscription = XiSubscription("XI8989989797", Some("7978"))
   val subscriptionDisplay: SubscriptionDisplayResponseDetail = SubscriptionDisplayResponseDetail(
     Some("EN123456789012345"),
     "John Doe",
@@ -156,7 +156,7 @@ class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoS
       await(sessionCache.eori(hc)) mustBe None
     }
 
-    "provide default when subscription display details holder not in cache" in {
+    "return None when subscription display details holder not in cache" in {
       val s = setupSession
       await(
         sessionCache.insert(
@@ -164,7 +164,7 @@ class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoS
         )
       )
 
-      await(sessionCache.subscriptionDisplay(hc)) mustBe Some(SubscriptionDisplayResponseDetail(None,"",EstablishmentAddress("", "", None, ""),None,None,None,None))
+      await(sessionCache.subscriptionDisplay(hc)) mustBe None
     }
 
     "throw IllegalStateException when session id is not retrieved from hc" in {

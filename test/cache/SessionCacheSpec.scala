@@ -39,19 +39,9 @@ class SessionCacheSpec extends BaseSpec with MockitoSugar {
     }
 
     "return default" when {
-      val emptySubscriptionDisplay =
-        SubscriptionDisplayResponseDetail(
-          None,
-          "",
-          EstablishmentAddress("", "", None, ""),
-          None,
-          None,
-          None,
-          None
-        )
 
       "subscriptionDisplay missing " in {
-        CachedData().subscriptionDisplayMongo() shouldBe emptySubscriptionDisplay
+        CachedData().subscriptionDisplayMongo() shouldBe None
       }
 
       "addressLookupParams missing " in {
