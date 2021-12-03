@@ -23,7 +23,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.UserAnswersCache
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.RegistrationDetails
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.UserAnswers
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.AddressViewModel
 import util.BaseSpec
@@ -36,7 +36,7 @@ class UserAnswersCacheSpec extends BaseSpec with MockitoSugar with BeforeAndAfte
 
   implicit val hc: HeaderCarrier = mock[HeaderCarrier]
 
-  private val mockRegistrationDetails           = mock[RegistrationDetails]
+  private val mockUserAnswers                   = mock[UserAnswers]
   private val mockpersonalDataDisclosureConsent = mock[Option[Boolean]]
 
   private val addressDetails =
@@ -46,18 +46,18 @@ class UserAnswersCacheSpec extends BaseSpec with MockitoSugar with BeforeAndAfte
     new UserAnswersCache(mockSessionCache)
 
   protected override def beforeEach: Unit = {
-    reset(mockSessionCache, mockRegistrationDetails)
+    reset(mockSessionCache, mockUserAnswers)
 
-    when(mockSessionCache.saveRegistrationDetails(any[RegistrationDetails])(any[HeaderCarrier]))
+    when(mockSessionCache.saveUserAnswers(any[UserAnswers])(any[HeaderCarrier]))
       .thenReturn(Future.successful(true))
 
     when(mockSessionCache.eori(any[HeaderCarrier]))
       .thenReturn(Future.successful(Some("GB122")))
 
-    val existingHolder = RegistrationDetails(None, None, None, None, None, None, None)
+    val existingHolder = UserAnswers(None, None, None, None, None, None, None)
 
-    when(mockSessionCache.registrationDetails(any[HeaderCarrier])).thenReturn(Future.successful(existingHolder))
-    when(mockRegistrationDetails.personalDataDisclosureConsent).thenReturn(mockpersonalDataDisclosureConsent)
+    when(mockSessionCache.userAnswers(any[HeaderCarrier])).thenReturn(Future.successful(existingHolder))
+    when(mockUserAnswers.personalDataDisclosureConsent).thenReturn(mockpersonalDataDisclosureConsent)
 
   }
 
@@ -65,10 +65,10 @@ class UserAnswersCacheSpec extends BaseSpec with MockitoSugar with BeforeAndAfte
     "save Address Details in frontend cache" in {
 
       Await.result(subscriptionDetailsHolderService.cacheAddressDetails(addressDetails), Duration.Inf)
-      val requestCaptor = ArgumentCaptor.forClass(classOf[RegistrationDetails])
+      val requestCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
 
-      verify(mockSessionCache).saveRegistrationDetails(requestCaptor.capture())(ArgumentMatchers.eq(hc))
-      val holder: RegistrationDetails = requestCaptor.getValue
+      verify(mockSessionCache).saveUserAnswers(requestCaptor.capture())(ArgumentMatchers.eq(hc))
+      val holder: UserAnswers = requestCaptor.getValue
       holder.addressDetails shouldBe Some(addressDetails)
 
     }
@@ -79,10 +79,10 @@ class UserAnswersCacheSpec extends BaseSpec with MockitoSugar with BeforeAndAfte
         subscriptionDetailsHolderService.cacheAddressDetails(addressDetails.copy(postcode = Some(""))),
         Duration.Inf
       )
-      val requestCaptor = ArgumentCaptor.forClass(classOf[RegistrationDetails])
+      val requestCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
 
-      verify(mockSessionCache).saveRegistrationDetails(requestCaptor.capture())(ArgumentMatchers.eq(hc))
-      val holder: RegistrationDetails = requestCaptor.getValue
+      verify(mockSessionCache).saveUserAnswers(requestCaptor.capture())(ArgumentMatchers.eq(hc))
+      val holder: UserAnswers = requestCaptor.getValue
       holder.addressDetails shouldBe Some(addressDetails.copy(postcode = None))
     }
   }
@@ -94,10 +94,10 @@ class UserAnswersCacheSpec extends BaseSpec with MockitoSugar with BeforeAndAfte
         subscriptionDetailsHolderService.cacheConsentToDisclosePersonalDetails(DisclosePersonalDetails.Yes),
         Duration.Inf
       )
-      val requestCaptor = ArgumentCaptor.forClass(classOf[RegistrationDetails])
+      val requestCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
 
-      verify(mockSessionCache).saveRegistrationDetails(requestCaptor.capture())(ArgumentMatchers.eq(hc))
-      val holder: RegistrationDetails = requestCaptor.getValue
+      verify(mockSessionCache).saveUserAnswers(requestCaptor.capture())(ArgumentMatchers.eq(hc))
+      val holder: UserAnswers = requestCaptor.getValue
       holder.personalDataDisclosureConsent shouldBe Some(true)
     }
   }
@@ -105,10 +105,10 @@ class UserAnswersCacheSpec extends BaseSpec with MockitoSugar with BeforeAndAfte
     "save TradeWithNI in frontend cache" in {
 
       Await.result(subscriptionDetailsHolderService.cacheTradeWithNI(TradeWithNI.Yes), Duration.Inf)
-      val requestCaptor = ArgumentCaptor.forClass(classOf[RegistrationDetails])
+      val requestCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
 
-      verify(mockSessionCache).saveRegistrationDetails(requestCaptor.capture())(ArgumentMatchers.eq(hc))
-      val holder: RegistrationDetails = requestCaptor.getValue
+      verify(mockSessionCache).saveUserAnswers(requestCaptor.capture())(ArgumentMatchers.eq(hc))
+      val holder: UserAnswers = requestCaptor.getValue
       holder.tradeWithNI shouldBe Some(true)
     }
   }
@@ -116,10 +116,10 @@ class UserAnswersCacheSpec extends BaseSpec with MockitoSugar with BeforeAndAfte
     "save HaveEUEori in frontend cache" in {
 
       Await.result(subscriptionDetailsHolderService.cacheHaveEUEori(HaveEUEori.Yes), Duration.Inf)
-      val requestCaptor = ArgumentCaptor.forClass(classOf[RegistrationDetails])
+      val requestCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
 
-      verify(mockSessionCache).saveRegistrationDetails(requestCaptor.capture())(ArgumentMatchers.eq(hc))
-      val holder: RegistrationDetails = requestCaptor.getValue
+      verify(mockSessionCache).saveUserAnswers(requestCaptor.capture())(ArgumentMatchers.eq(hc))
+      val holder: UserAnswers = requestCaptor.getValue
       holder.haveEUEori shouldBe Some(true)
     }
   }
@@ -127,10 +127,10 @@ class UserAnswersCacheSpec extends BaseSpec with MockitoSugar with BeforeAndAfte
     "save HavePBEInNI in frontend cache" in {
 
       Await.result(subscriptionDetailsHolderService.cacheHavePBEInNI(HavePBE.Yes), Duration.Inf)
-      val requestCaptor = ArgumentCaptor.forClass(classOf[RegistrationDetails])
+      val requestCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
 
-      verify(mockSessionCache).saveRegistrationDetails(requestCaptor.capture())(ArgumentMatchers.eq(hc))
-      val holder: RegistrationDetails = requestCaptor.getValue
+      verify(mockSessionCache).saveUserAnswers(requestCaptor.capture())(ArgumentMatchers.eq(hc))
+      val holder: UserAnswers = requestCaptor.getValue
       holder.havePBEInNI shouldBe Some(true)
     }
   }
@@ -138,10 +138,10 @@ class UserAnswersCacheSpec extends BaseSpec with MockitoSugar with BeforeAndAfte
     "save ConfirmDetails in frontend cache" in {
 
       Await.result(subscriptionDetailsHolderService.cacheConfirmDetails(ConfirmDetails.changeDetails), Duration.Inf)
-      val requestCaptor = ArgumentCaptor.forClass(classOf[RegistrationDetails])
+      val requestCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
 
-      verify(mockSessionCache).saveRegistrationDetails(requestCaptor.capture())(ArgumentMatchers.eq(hc))
-      val holder: RegistrationDetails = requestCaptor.getValue
+      verify(mockSessionCache).saveUserAnswers(requestCaptor.capture())(ArgumentMatchers.eq(hc))
+      val holder: UserAnswers = requestCaptor.getValue
       holder.confirmDetails shouldBe Some("changeDetails")
     }
   }
@@ -149,10 +149,10 @@ class UserAnswersCacheSpec extends BaseSpec with MockitoSugar with BeforeAndAfte
     "save SicCode in frontend cache" in {
 
       Await.result(subscriptionDetailsHolderService.cacheSicCode("99978"), Duration.Inf)
-      val requestCaptor = ArgumentCaptor.forClass(classOf[RegistrationDetails])
+      val requestCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
 
-      verify(mockSessionCache).saveRegistrationDetails(requestCaptor.capture())(ArgumentMatchers.eq(hc))
-      val holder: RegistrationDetails = requestCaptor.getValue
+      verify(mockSessionCache).saveUserAnswers(requestCaptor.capture())(ArgumentMatchers.eq(hc))
+      val holder: UserAnswers = requestCaptor.getValue
       holder.sicCode shouldBe Some("99978")
 
     }
@@ -162,10 +162,10 @@ class UserAnswersCacheSpec extends BaseSpec with MockitoSugar with BeforeAndAfte
     "save ConfirmAddress in frontend cache" in {
 
       Await.result(subscriptionDetailsHolderService.cacheConfirmAddress(PBEConfirmAddress.changeAddress), Duration.Inf)
-      val requestCaptor = ArgumentCaptor.forClass(classOf[RegistrationDetails])
+      val requestCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
 
-      verify(mockSessionCache).saveRegistrationDetails(requestCaptor.capture())(ArgumentMatchers.eq(hc))
-      val holder: RegistrationDetails = requestCaptor.getValue
+      verify(mockSessionCache).saveUserAnswers(requestCaptor.capture())(ArgumentMatchers.eq(hc))
+      val holder: UserAnswers = requestCaptor.getValue
       holder.confirmAddress shouldBe Some("changeAddress")
     }
   }

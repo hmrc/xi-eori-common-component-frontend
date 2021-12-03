@@ -19,7 +19,7 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.AddressViewModel
 
-case class RegistrationDetails(
+case class UserAnswers(
   tradeWithNI: Option[Boolean] = None,
   haveEUEori: Option[Boolean] = None,
   confirmDetails: Option[String] = None,
@@ -30,6 +30,6 @@ case class RegistrationDetails(
   addressDetails: Option[AddressViewModel] = None
 )
 
-object RegistrationDetails {
-  implicit val format: Format[RegistrationDetails] = Json.format[RegistrationDetails]
+object UserAnswers {
+  implicit val format: Format[UserAnswers] = Json.format[UserAnswers]
 }

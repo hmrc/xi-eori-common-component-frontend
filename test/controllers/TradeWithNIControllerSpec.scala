@@ -36,7 +36,7 @@ class TradeWithNIControllerSpec extends BaseSpec {
     Json.parse("""
                  |{
                  |  "data": {
-                 |    "registrationDetails": {
+                 |    "userAnswers": {
                  |
                  |    }
                  |  }

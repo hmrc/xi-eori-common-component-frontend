@@ -27,7 +27,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.CachedData._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.Eori
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.{RegistrationDetails, SubscriptionDisplayMongo}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.{SubscriptionDisplayMongo, UserAnswers}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
 
 import javax.inject.{Inject, Singleton}
@@ -38,7 +38,7 @@ sealed case class CachedData(
   eori: Option[String] = None,
   subscriptionDisplay: Option[SubscriptionDisplayMongo] = None,
   addressLookupParams: Option[PBEAddressLookup] = None,
-  registrationDetails: Option[RegistrationDetails] = None
+  userAnswers: Option[UserAnswers] = None
 ) {
 
   def subscriptionDisplayMongo(): Option[SubscriptionDisplayResponseDetail] =
@@ -58,8 +58,8 @@ sealed case class CachedData(
       case _ => None
     }
 
-  def getRegistrationDetails: RegistrationDetails =
-    registrationDetails.getOrElse(emptyRegistrationDetails())
+  def getUserAnswers: UserAnswers =
+    userAnswers.getOrElse(emptyUserAnswers())
 
 }
 
@@ -67,12 +67,12 @@ object CachedData {
   val eoriKey                              = "eori"
   val subscriptionDisplayKey               = "subscriptionDisplay"
   val addressLookupParamsKey               = "addressLookupParams"
-  val registrationDetailsKey               = "registrationDetails"
+  val userAnswersKey                       = "userAnswers"
   val addressLookupResultsKey              = "addressLookupResult"
   implicit val format: OFormat[CachedData] = Json.format[CachedData]
 
-  def emptyRegistrationDetails(): RegistrationDetails =
-    RegistrationDetails(None)
+  def emptyUserAnswers(): UserAnswers =
+    UserAnswers(None)
 
 }
 
@@ -102,8 +102,8 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
   def saveAddressLookupParams(addressLookupParams: PBEAddressLookup)(implicit hc: HeaderCarrier): Future[Boolean] =
     createOrUpdate(sessionId, addressLookupParamsKey, Json.toJson(addressLookupParams)).map(_ => true)
 
-  def saveRegistrationDetails(rdh: RegistrationDetails)(implicit hc: HeaderCarrier): Future[Boolean] =
-    createOrUpdate(sessionId, registrationDetailsKey, Json.toJson(rdh)) map (_ => true)
+  def saveUserAnswers(rdh: UserAnswers)(implicit hc: HeaderCarrier): Future[Boolean] =
+    createOrUpdate(sessionId, userAnswersKey, Json.toJson(rdh)) map (_ => true)
 
   private def getCached[T](sessionId: Id, t: (CachedData, Id) => T): Future[T] =
     findById(sessionId.id).map {
@@ -134,8 +134,8 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
   def addressLookupParams(implicit hc: HeaderCarrier): Future[Option[PBEAddressLookup]] =
     getCached[Option[PBEAddressLookup]](sessionId, (cachedData, _) => cachedData.addressLookupParams)
 
-  def registrationDetails(implicit hc: HeaderCarrier): Future[RegistrationDetails] =
-    getCached[RegistrationDetails](sessionId, (cachedData, _) => cachedData.getRegistrationDetails)
+  def userAnswers(implicit hc: HeaderCarrier): Future[UserAnswers] =
+    getCached[UserAnswers](sessionId, (cachedData, _) => cachedData.getUserAnswers)
 
   def remove(implicit hc: HeaderCarrier): Future[Boolean] =
     removeById(sessionId.id) map (x => x.writeErrors.isEmpty && x.writeConcernError.isEmpty)

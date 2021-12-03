@@ -22,7 +22,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import play.api.{inject, Application}
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.UserAnswersCache
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.{SessionCache, UserAnswersCache}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, KeyValue}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
@@ -72,6 +72,7 @@ class ApplicationControllerSpec extends BaseSpec {
     inject.bind[AuthConnector].to(mockAuthConnector),
     inject.bind[SubscriptionDisplayService].to(subscriptionDisplayService),
     inject.bind[UserAnswersCache].to(mockUserAnswersCache),
+    inject.bind[SessionCache].to(mockSessionCache),
     inject.bind[GroupEnrolmentExtractor].to(mockGroupEnrolmentExtractor)
   ).configure("auditing.enabled" -> "false", "metrics.jvm" -> false, "metrics.enabled" -> false).build()
 
@@ -80,6 +81,8 @@ class ApplicationControllerSpec extends BaseSpec {
 
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
+        when(mockSessionCache.saveUserAnswers(any())(any()))
+          .thenReturn(Future.successful(true))
         when(mockGroupEnrolmentExtractor.getEori(any())(any()))
           .thenReturn(Future.successful(None))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
@@ -128,6 +131,8 @@ class ApplicationControllerSpec extends BaseSpec {
           .thenReturn(Future.successful(Right(subscriptionDisplayResponse.copy(XI_Subscription = None))))
         when(mockGroupEnrolmentExtractor.getEori(any())(any()))
           .thenReturn(Future.successful(existingEori))
+        when(mockSessionCache.saveUserAnswers(any())(any()))
+          .thenReturn(Future.successful(true))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ApplicationController.onPageLoad().url,
           defaultUserId

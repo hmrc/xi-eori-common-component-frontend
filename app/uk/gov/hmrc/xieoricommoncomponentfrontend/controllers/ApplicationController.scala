@@ -24,7 +24,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{AuthAction, GroupEnrolmentExtractor}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.XiSubscription
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.RegistrationDetails
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.UserAnswers
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.SubscriptionDisplayService
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.error_template
 
@@ -52,7 +52,7 @@ class ApplicationController @Inject() (
               case Left(_) => Future.successful(InternalServerError(errorTemplateView()))
             }
           case None =>
-            sessionCache.saveRegistrationDetails(RegistrationDetails()).map(
+            sessionCache.saveUserAnswers(UserAnswers()).map(
               _ =>
                 Redirect(
                   uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad()
@@ -65,7 +65,7 @@ class ApplicationController @Inject() (
   private def destinationsByAnswer(xiSubscription: Option[XiSubscription])(implicit hc: HeaderCarrier): Future[Result] =
     xiSubscription match {
       case Some(_) =>
-        sessionCache.saveRegistrationDetails(RegistrationDetails()).map(
+        sessionCache.saveUserAnswers(UserAnswers()).map(
           _ =>
             Redirect(
               uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AlreadyHaveXIEoriController.xiEoriAlreadyExists()
