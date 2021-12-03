@@ -19,22 +19,39 @@ package controllers
 import common.pages.RegistrationPage
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import play.api.libs.json.Json
 import play.api.test.Helpers._
+import reactivemongo.api.ReadPreference
+import uk.gov.hmrc.cache.model.{Cache, Id}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.TradeWithNI
 import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class TradeWithNIControllerSpec extends BaseSpec {
 
+  val json =
+    Json.parse("""
+                 |{
+                 |  "data": {
+                 |    "registrationDetails": {
+                 |
+                 |    }
+                 |  }
+                 |}""".stripMargin)
+
+  val data = Cache(mock[Id], Some(json))
   "TradeWithNI controller" should {
     "return OK and the correct view" in {
 
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
-        when(mockSessionCache.eori(any())).thenReturn(Future.successful(Some("GB123456463324")))
+
+        when(mockSessionCache.findById(any(), any[ReadPreference])(any[ExecutionContext])).thenReturn(
+          Future.successful(Some(data))
+        )
         when(mockUserAnswersCache.getTradeWithInNI()(any())).thenReturn(Future.successful(None))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad().url,
@@ -53,7 +70,9 @@ class TradeWithNIControllerSpec extends BaseSpec {
 
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
-        when(mockSessionCache.eori(any())).thenReturn(Future.successful(None))
+        when(mockSessionCache.findById(any(), any[ReadPreference])(any[ExecutionContext])).thenReturn(
+          Future.successful(Some(data))
+        )
         when(mockUserAnswersCache.getTradeWithInNI()(any())).thenReturn(Future.successful(None))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad().url,
@@ -86,7 +105,9 @@ class TradeWithNIControllerSpec extends BaseSpec {
     "redirect to HaveEuEori Page when Yes is selected" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
-        when(mockSessionCache.eori(any())).thenReturn(Future.successful(Some("GB123456463324")))
+        when(mockSessionCache.findById(any(), any[ReadPreference])(any[ExecutionContext])).thenReturn(
+          Future.successful(Some(data))
+        )
         when(mockUserAnswersCache.cacheTradeWithNI(any())(any())).thenReturn(Future.successful(true))
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",

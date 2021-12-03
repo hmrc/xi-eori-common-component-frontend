@@ -82,7 +82,7 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
 
   private val eccLogger: Logger = Logger(this.getClass)
 
-  private def sessionId(implicit hc: HeaderCarrier): Id =
+  def sessionId(implicit hc: HeaderCarrier): Id =
     hc.sessionId match {
       case None =>
         throw new IllegalStateException("Session id is not available")

@@ -17,6 +17,7 @@
 package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 
 import play.api.i18n.I18nSupport
+import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.{SessionCache, UserAnswersCache}
@@ -45,15 +46,19 @@ class TradeWithNIController @Inject() (
   def onPageLoad: Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
       implicit request => _: LoggedInUserWithEnrolments =>
-        sessionCache.eori flatMap {
+        sessionCache.findById(sessionCache.sessionId) flatMap {
           case Some(_) =>
             userAnswersCache.getTradeWithInNI() map {
               case Some(tradeWithNI) =>
                 Ok(tradeWithNIView(form.fill(TradeWithNI.yesOrNo(tradeWithNI))))
               case None => Ok(tradeWithNIView(form))
             }
-
-          case None => Future.successful(Ok(tradeWithNIView(form)))
+          case None =>
+            Future.successful(
+              Redirect(
+                uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.displayTimeOutPage()
+              ).withNewSession
+            )
         }
 
     }

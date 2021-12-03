@@ -18,10 +18,13 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{AuthAction, GroupEnrolmentExtractor}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.XiSubscription
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.RegistrationDetails
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.SubscriptionDisplayService
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.error_template
 
@@ -33,6 +36,7 @@ class ApplicationController @Inject() (
   groupEnrolment: GroupEnrolmentExtractor,
   subscriptionDisplayService: SubscriptionDisplayService,
   errorTemplateView: error_template,
+  sessionCache: SessionCache,
   mcc: MessagesControllerComponents
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
@@ -42,25 +46,36 @@ class ApplicationController @Inject() (
       implicit request => loggedInUser: LoggedInUserWithEnrolments =>
         groupEnrolment.getEori(loggedInUser).flatMap {
           case Some(gbEori) =>
-            subscriptionDisplayService.getSubscriptionDisplay(gbEori).map {
+            subscriptionDisplayService.getSubscriptionDisplay(gbEori).flatMap {
               case Right(response) =>
                 destinationsByAnswer(response.XI_Subscription)
-              case Left(_) => InternalServerError(errorTemplateView())
+              case Left(_) => Future.successful(InternalServerError(errorTemplateView()))
             }
           case None =>
-            Future.successful(
-              Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad())
+            sessionCache.saveRegistrationDetails(RegistrationDetails()).map(
+              _ =>
+                Redirect(
+                  uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad()
+                )
             )
         }
+
     }
 
-  private def destinationsByAnswer(xiSubscription: Option[XiSubscription]): Result = xiSubscription match {
-    case Some(_) =>
-      Redirect(
-        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AlreadyHaveXIEoriController.xiEoriAlreadyExists()
-      )
-    case None =>
-      Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad())
-  }
+  private def destinationsByAnswer(xiSubscription: Option[XiSubscription])(implicit hc: HeaderCarrier): Future[Result] =
+    xiSubscription match {
+      case Some(_) =>
+        sessionCache.saveRegistrationDetails(RegistrationDetails()).map(
+          _ =>
+            Redirect(
+              uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AlreadyHaveXIEoriController.xiEoriAlreadyExists()
+            )
+        )
+
+      case None =>
+        Future.successful(
+          Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad())
+        )
+    }
 
 }
