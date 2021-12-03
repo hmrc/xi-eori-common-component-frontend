@@ -68,3 +68,7 @@ POST        /pbe-confirm-address                             @uk.gov.hmrc.xieori
 
 # already-have-xi-eori
 GET        /already-have-xi-eori                 @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.AlreadyHaveXIEoriController.xiEoriAlreadyExists
+
+#pbe-address-lookup
+GET        /contact-postcode                             @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ContactAddressLookupController.onPageLoad
+POST       /contact-postcode                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ContactAddressLookupController.submit
