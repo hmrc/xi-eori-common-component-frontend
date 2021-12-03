@@ -44,7 +44,10 @@ class AlreadyHaveXIEoriController @Inject() (
         sessionCache.subscriptionDisplay map {
           case Some(response) =>
             populateView(response)
-          case None => InternalServerError(errorTemplateView())
+          case None =>
+            Redirect(
+              uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.displayTimeOutPage()
+            ).withNewSession
         }
     }
 

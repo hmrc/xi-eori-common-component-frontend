@@ -211,7 +211,7 @@ class SicCodeControllerSpec extends BaseSpec {
       }
     }
 
-    "redirect to Error Page if session cache doesn't have subscriptoin display response" in {
+    "redirect to signout page if session cache doesn't have subscription display response" in {
 
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Organisation)
@@ -226,7 +226,11 @@ class SicCodeControllerSpec extends BaseSpec {
 
         val result = route(application, request).get
 
-        status(result) shouldBe INTERNAL_SERVER_ERROR
+        status(result) shouldBe SEE_OTHER
+
+        redirectLocation(
+          result
+        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.displayTimeOutPage().url
       }
     }
 

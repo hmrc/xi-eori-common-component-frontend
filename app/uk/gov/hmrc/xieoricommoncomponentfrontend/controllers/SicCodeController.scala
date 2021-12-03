@@ -65,7 +65,12 @@ class SicCodeController @Inject() (
                   userAnswersCache.cacheSicCode(value.sic).map(
                     _ => destinationsByNIPostCode(response.CDSEstablishmentAddress.postalCode)
                   )
-                case None => Future.successful(InternalServerError(errorTemplateView()))
+                case None =>
+                  Future.successful(
+                    Redirect(
+                      uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.displayTimeOutPage()
+                    ).withNewSession
+                  )
               }
             case _ =>
               Future.successful(

@@ -50,7 +50,12 @@ class PBEConfirmAddressController @Inject() (
                 Ok(pbeConfirmAddressView(address, form.fill(PBEConfirmAddress.mapValues(confirmAddress))))
               case None => Ok(pbeConfirmAddressView(address, form))
             }
-          case None => Future.successful(InternalServerError(errorTemplateView()))
+          case None =>
+            Future.successful(
+              Redirect(
+                uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.displayTimeOutPage()
+              ).withNewSession
+            )
         }
     }
 
@@ -63,7 +68,12 @@ class PBEConfirmAddressController @Inject() (
               formWithErrors => Future.successful(BadRequest(pbeConfirmAddressView(address, formWithErrors))),
               value => userAnswersCache.cacheConfirmAddress(value).map(_ => destinationsByAnswer(value))
             )
-        case None => Future.successful(InternalServerError(errorTemplateView()))
+        case None =>
+          Future.successful(
+            Redirect(
+              uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.displayTimeOutPage()
+            ).withNewSession
+          )
       }
 
   }

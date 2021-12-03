@@ -114,7 +114,7 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
       }
     }
 
-    "redirect InternalServerError when session cache doesn't hold subscription display details" in {
+    "redirect signout page when session cache doesn't hold subscription display details" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockSessionCache.subscriptionDisplay(any())).thenReturn(Future.successful(None))
@@ -124,11 +124,15 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
         )
 
         val result = route(application, request).get
-        status(result) shouldBe INTERNAL_SERVER_ERROR
+        status(result) shouldBe SEE_OTHER
+
+        redirectLocation(
+          result
+        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.displayTimeOutPage().url
       }
     }
 
-    "redirect InternalServerError when session cache doesn't hold subscription display details during submit" in {
+    "redirect sign out page when session cache doesn't hold subscription display details during submit" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockSessionCache.subscriptionDisplay(any())).thenReturn(Future.successful(None))
@@ -140,7 +144,11 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
         )
 
         val result = route(application, request).get
-        status(result) shouldBe INTERNAL_SERVER_ERROR
+        status(result) shouldBe SEE_OTHER
+
+        redirectLocation(
+          result
+        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.displayTimeOutPage().url
       }
     }
     "return a Bad Request and errors when invalid data is submitted" in {

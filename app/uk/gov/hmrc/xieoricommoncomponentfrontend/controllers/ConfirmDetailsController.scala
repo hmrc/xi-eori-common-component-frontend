@@ -57,7 +57,12 @@ class ConfirmDetailsController @Inject() (
         sessionCache.subscriptionDisplay.flatMap {
           case Some(response) =>
             populateView(response, loggedInUser.userAffinity())
-          case None => Future.successful(InternalServerError(errorTemplateView()))
+          case None =>
+            Future.successful(
+              Redirect(
+                uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.displayTimeOutPage()
+              ).withNewSession
+            )
         }
 
     }
@@ -88,7 +93,10 @@ class ConfirmDetailsController @Inject() (
                 BadRequest(
                   confirmDetailsView(formWithErrors, ConfirmDetailsViewModel(response, loggedInUser.userAffinity()))
                 )
-              case None => InternalServerError(errorTemplateView())
+              case None =>
+                Redirect(
+                  uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.displayTimeOutPage()
+                ).withNewSession
             },
           value => userAnswersCache.cacheConfirmDetails(value).map(_ => destinationsByAnswer(value))
         )
