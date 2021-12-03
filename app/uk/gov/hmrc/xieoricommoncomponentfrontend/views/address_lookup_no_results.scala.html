@@ -23,7 +23,7 @@
 @(postcode: String)(implicit messages: Messages, request: Request[_])
 
 @changeLink = {
-        <a href="@PBEAddressLookupController.onPageLoad()" class="govuk-link" id="reenter-postcode-button">@messages("ecc.address-change.link")</a>
+        <a href="@PBEAddressLookupController.onPageLoad()" class="govuk-link" id="reenter-postcode-button">@messages("ecc.form.change")</a>
 }
 
 @enterManuallyAddressLink = {
