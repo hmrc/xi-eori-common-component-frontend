@@ -51,6 +51,9 @@ class UserAnswersCacheSpec extends BaseSpec with MockitoSugar with BeforeAndAfte
     when(mockSessionCache.saveRegistrationDetails(any[RegistrationDetails])(any[HeaderCarrier]))
       .thenReturn(Future.successful(true))
 
+    when(mockSessionCache.eori(any[HeaderCarrier]))
+      .thenReturn(Future.successful(Some("GB122")))
+
     val existingHolder = RegistrationDetails(None, None, None, None, None, None, None)
 
     when(mockSessionCache.registrationDetails(any[HeaderCarrier])).thenReturn(Future.successful(existingHolder))

@@ -114,10 +114,42 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
       }
     }
 
+    "redirect InternalServerError when session cache doesn't hold subscription display details" in {
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+        when(mockSessionCache.subscriptionDisplay(any())).thenReturn(Future.successful(None))
+        val request = SessionBuilder.buildRequestWithSessionAndPath(
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad().url,
+          defaultUserId
+        )
+
+        val result = route(application, request).get
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+    }
+
+    "redirect InternalServerError when session cache doesn't hold subscription display details during submit" in {
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+        when(mockSessionCache.subscriptionDisplay(any())).thenReturn(Future.successful(None))
+        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
+          "POST",
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.submit().url,
+          defaultUserId,
+          Map("value" -> "")
+        )
+
+        val result = route(application, request).get
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+    }
     "return a Bad Request and errors when invalid data is submitted" in {
 
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
+        when(mockSessionCache.subscriptionDisplay(any())).thenReturn(
+          Future.successful(Some(subscriptionDisplayResponse))
+        )
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.submit().url,

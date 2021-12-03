@@ -30,10 +30,30 @@ import scala.concurrent.Future
 class TradeWithNIControllerSpec extends BaseSpec {
 
   "TradeWithNI controller" should {
-    "return OK and the correct view for a GET" in {
+    "return OK and the correct view" in {
 
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
+        when(mockSessionCache.eori(any())).thenReturn(Future.successful(Some("GB123456463324")))
+        when(mockUserAnswersCache.getTradeWithInNI()(any())).thenReturn(Future.successful(None))
+        val request = SessionBuilder.buildRequestWithSessionAndPath(
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad().url,
+          defaultUserId
+        )
+
+        val result = route(application, request).get
+
+        val page = RegistrationPage(contentAsString(result))
+
+        page.title should startWith("Do you move goods in or out of Northern Ireland")
+      }
+    }
+
+    "display page if GB Eori is not linked for the logged user" in {
+
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+        when(mockSessionCache.eori(any())).thenReturn(Future.successful(None))
         when(mockUserAnswersCache.getTradeWithInNI()(any())).thenReturn(Future.successful(None))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad().url,
@@ -66,6 +86,7 @@ class TradeWithNIControllerSpec extends BaseSpec {
     "redirect to HaveEuEori Page when Yes is selected" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
+        when(mockSessionCache.eori(any())).thenReturn(Future.successful(Some("GB123456463324")))
         when(mockUserAnswersCache.cacheTradeWithNI(any())(any())).thenReturn(Future.successful(true))
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",

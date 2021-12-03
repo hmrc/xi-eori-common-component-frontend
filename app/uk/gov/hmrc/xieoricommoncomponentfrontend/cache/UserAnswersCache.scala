@@ -75,14 +75,12 @@ class UserAnswersCache @Inject() (sessionCache: SessionCache)(implicit ec: Execu
     sessionCache.registrationDetails.map {
       case details => details.tradeWithNI
       case _       => None
-    }.recoverWith {
-      case _ => Future.successful(None)
     }
 
   def cacheTradeWithNI(tradeWithNI: TradeWithNI)(implicit hq: HeaderCarrier): Future[Boolean] =
-    getTradeWithInNI.flatMap {
+    sessionCache.eori.flatMap {
       case Some(_) => saveRegistrationDetails(sd => sd.copy(tradeWithNI = Some(toBoolean(tradeWithNI))))
-      case None    => sessionCache.saveRegistrationDetails(RegistrationDetails(tradeWithNI = Some(toBoolean(tradeWithNI))))
+      case _       => sessionCache.saveRegistrationDetails(RegistrationDetails(tradeWithNI = Some(toBoolean(tradeWithNI))))
     }
 
   def cacheHaveEUEori(haveEUEori: HaveEUEori)(implicit hc: HeaderCarrier): Future[Boolean] =

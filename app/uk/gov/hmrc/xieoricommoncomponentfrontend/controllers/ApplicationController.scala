@@ -42,10 +42,10 @@ class ApplicationController @Inject() (
       implicit request => loggedInUser: LoggedInUserWithEnrolments =>
         groupEnrolment.getEori(loggedInUser).flatMap {
           case Some(gbEori) =>
-            subscriptionDisplayService.getSubscriptionDisplay(gbEori).flatMap {
+            subscriptionDisplayService.getSubscriptionDisplay(gbEori).map {
               case Right(response) =>
-                Future.successful(destinationsByAnswer(response.XI_Subscription))
-              case Left(_) => Future.successful(InternalServerError(errorTemplateView()))
+                destinationsByAnswer(response.XI_Subscription)
+              case Left(_) => InternalServerError(errorTemplateView())
             }
           case None =>
             Future.successful(
