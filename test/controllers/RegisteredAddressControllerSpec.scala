@@ -187,5 +187,51 @@ class RegisteredAddressControllerSpec extends BaseSpec with BeforeAndAfterEach {
       }
     }
 
+    "display no address page if the Address lookup doesn't return any results" in {
+      running(application) {
+        when(mockSessionCache.addressLookupParams(any()))
+          .thenReturn(Future.successful(Some(PBEAddressLookup("BT281AF", None))))
+        when(mockAddressLookupConnector.lookup(meq("BT281AF"), meq(None))(any()))
+          .thenReturn(Future.successful(AddressLookupSuccess(Seq.empty)))
+        when(mockSessionCache.saveAddressLookupParams(any())(any())).thenReturn(Future.successful(true))
+        when(mockUserAnswersCache.cacheAddressDetails(any())(any())).thenReturn(Future.successful(true))
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+        val request = SessionBuilder.buildRequestWithSessionAndPath(
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.RegisteredAddressController.onPageLoad().url,
+          defaultUserId
+        )
+        val result = route(application, request).get
+        status(result) shouldBe SEE_OTHER
+
+        redirectLocation(
+          result
+        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AddressLookupErrorController.displayNoResultsPage().url
+
+      }
+    }
+
+    "display error page if the Address lookup is unavailable" in {
+      running(application) {
+        when(mockSessionCache.addressLookupParams(any()))
+          .thenReturn(Future.successful(Some(PBEAddressLookup("BT281FF", Some("500")))))
+        when(mockAddressLookupConnector.lookup(meq("BT281FF"), meq(Some("500")))(any()))
+          .thenReturn(Future.successful(AddressLookupSuccess(Seq.empty)))
+        when(mockSessionCache.saveAddressLookupParams(any())(any())).thenReturn(Future.successful(true))
+        when(mockUserAnswersCache.cacheAddressDetails(any())(any())).thenReturn(Future.successful(true))
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+        val request = SessionBuilder.buildRequestWithSessionAndPath(
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.RegisteredAddressController.onPageLoad().url,
+          defaultUserId
+        )
+        val result = route(application, request).get
+        status(result) shouldBe SEE_OTHER
+
+        redirectLocation(
+          result
+        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AddressLookupErrorController.displayErrorPage().url
+
+      }
+    }
+
   }
 }

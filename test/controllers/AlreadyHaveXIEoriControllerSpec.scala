@@ -48,7 +48,7 @@ class AlreadyHaveXIEoriControllerSpec extends BaseSpec {
 
       withAuthorisedUser(defaultUserId, mockAuthConnector)
       val request = SessionBuilder.buildRequestWithSessionAndPath(
-        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded().url,
+        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AlreadyHaveXIEoriController.xiEoriAlreadyExists().url,
         defaultUserId
       )
       val result = route(application, request).get
