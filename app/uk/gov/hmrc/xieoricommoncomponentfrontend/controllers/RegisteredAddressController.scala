@@ -64,7 +64,10 @@ class RegisteredAddressController @Inject() (
             )
           case AddressLookupSuccess(_) if addressLookupParams.line1.exists(_.nonEmpty) =>
             fetchAddressWithoutLine1(addressLookupParams)
-          case _ => throw AddressLookupException
+          case AddressLookupSuccess(_) => Future.successful(displayNoResultsPage())
+          case AddressLookupFailure    => throw AddressLookupException
+        }.recoverWith {
+          case _ => Future.successful(displayErrorPage())
         }
       case _ =>
         Future.successful(
@@ -88,7 +91,8 @@ class RegisteredAddressController @Inject() (
             )
           )
         }
-      case _ => throw AddressLookupException
+      case AddressLookupSuccess(_) => Future.successful(displayNoResultsPage())
+      case AddressLookupFailure    => throw AddressLookupException
     }
   }
 
@@ -113,7 +117,10 @@ class RegisteredAddressController @Inject() (
                   }
                 }
               )
-            case AddressLookupFailure => throw AddressLookupException
+            case AddressLookupSuccess(_) => Future.successful(displayNoResultsPage())
+            case AddressLookupFailure    => throw AddressLookupException
+          }.recoverWith {
+            case _ => Future.successful(displayErrorPage())
           }
         case _ =>
           Future.successful(
@@ -123,6 +130,16 @@ class RegisteredAddressController @Inject() (
           )
       }
     }
+
+  def displayErrorPage(): Result =
+    Redirect(
+      uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AddressLookupErrorController.displayErrorPage()
+    )
+
+  def displayNoResultsPage(): Result =
+    Redirect(
+      uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AddressLookupErrorController.displayNoResultsPage()
+    )
 
 }
 
