@@ -33,8 +33,6 @@ class AddressLookupNoResultsViewSpec extends ViewSpec {
 
   private val doc: Document = Jsoup.parse(contentAsString(view(postcode)))
 
-  private val reviewDoc: Document = Jsoup.parse(contentAsString(view(postcode)))
-
   "Address lookup error page" should {
 
     "display title" in {

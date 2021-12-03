@@ -31,8 +31,6 @@ class AddressLookupErrorViewSpec extends ViewSpec {
 
   private val doc: Document = Jsoup.parse(contentAsString(view()))
 
-  private val reviewDoc: Document = Jsoup.parse(contentAsString(view()))
-
   "Address lookup error page" should {
 
     "display title" in {
