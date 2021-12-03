@@ -19,7 +19,7 @@ package controllers
 import common.pages.RegistrationPage
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers._
 import reactivemongo.api.ReadPreference
 import uk.gov.hmrc.cache.model.{Cache, Id}
@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class TradeWithNIControllerSpec extends BaseSpec {
 
-  val json =
+  val json: JsValue =
     Json.parse("""
                  |{
                  |  "data": {
@@ -42,7 +42,7 @@ class TradeWithNIControllerSpec extends BaseSpec {
                  |  }
                  |}""".stripMargin)
 
-  val data = Cache(mock[Id], Some(json))
+  val data: Cache = Cache(mock[Id], Some(json))
   "TradeWithNI controller" should {
     "return OK and the correct view" in {
 
