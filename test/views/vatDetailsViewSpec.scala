@@ -18,6 +18,7 @@ package views
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.Helpers.contentAsString
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
@@ -34,7 +35,7 @@ import java.time.LocalDate
 
 class vatDetailsViewSpec extends ViewSpec {
 
-  private implicit val request = withFakeCSRF(fakeRegisterRequest)
+  private implicit val request: Request[AnyContentAsEmpty.type] = withFakeCSRF(fakeRegisterRequest)
 
   val xiSubscriptionWithoutXIVat: XiSubscription =
     XiSubscription("XI8989989797", None)

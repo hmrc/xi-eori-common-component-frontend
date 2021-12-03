@@ -20,13 +20,11 @@ import common.pages.RegistrationPage
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
   EstablishmentAddress,
   SubscriptionDisplayResponseDetail,
   XiSubscription
 }
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.TradeWithNI
 import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder

@@ -18,6 +18,7 @@ package views
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.Helpers.contentAsString
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.ConfirmDetailsFormProvider
@@ -36,11 +37,11 @@ import java.time.LocalDate
 
 class ConfirmDetailsViewSpec extends ViewSpec {
 
-  private implicit val request       = withFakeCSRF(fakeRegisterRequest)
-  private val formProvider           = new ConfirmDetailsFormProvider().apply()
-  private def form                   = formProvider.bind(Map("value" -> confirmedDetails.toString))
-  private def formWithError          = form.bind(Map("value" -> ""))
-  val xiSubscription: XiSubscription = XiSubscription("XI8989989797", Some("7978"))
+  private implicit val request: Request[AnyContentAsEmpty.type] = withFakeCSRF(fakeRegisterRequest)
+  private val formProvider                                      = new ConfirmDetailsFormProvider().apply()
+  private def form                                              = formProvider.bind(Map("value" -> confirmedDetails.toString))
+  private def formWithError                                     = form.bind(Map("value" -> ""))
+  val xiSubscription: XiSubscription                            = XiSubscription("XI8989989797", Some("7978"))
 
   private val response = SubscriptionDisplayResponseDetail(
     Some("EN123456789012345"),

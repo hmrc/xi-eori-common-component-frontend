@@ -26,9 +26,9 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.CachedData._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.Eori
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.{RegistrationDetails, SubscriptionDisplayMongo}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{AddressLookup, SubscriptionDisplayResponseDetail}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

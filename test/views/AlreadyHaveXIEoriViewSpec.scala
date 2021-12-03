@@ -18,13 +18,14 @@ package views
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.Helpers.contentAsString
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.already_have_xi_eori
 import util.ViewSpec
 
 class AlreadyHaveXIEoriViewSpec extends ViewSpec {
 
-  private implicit val request = withFakeCSRF(fakeRegisterRequest)
+  private implicit val request: Request[AnyContentAsEmpty.type] = withFakeCSRF(fakeRegisterRequest)
 
   private val alreadyhaveXIEoriView               = instanceOf[already_have_xi_eori]
   private lazy val alreadyhaveXIEoriDoc: Document = Jsoup.parse(contentAsString(alreadyhaveXIEoriView("XI8989989797")))

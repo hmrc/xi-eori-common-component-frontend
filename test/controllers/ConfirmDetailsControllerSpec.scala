@@ -19,9 +19,9 @@ package controllers
 import common.pages.RegistrationPage
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.{inject, Application}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
+import play.api.{inject, Application}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.{SessionCache, UserAnswersCache}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
@@ -29,7 +29,6 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, KeyV
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ConfirmDetails._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
   EstablishmentAddress,
-  ServiceUnavailableResponse,
   SubscriptionDisplayResponseDetail,
   XiSubscription
 }

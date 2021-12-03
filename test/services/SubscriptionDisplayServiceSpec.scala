@@ -60,7 +60,7 @@ class SubscriptionDisplayServiceSpec extends WordSpec with BeforeAndAfter with M
   }
   val xiSubscription: XiSubscription = XiSubscription("XI8989989797", Some("7978"))
 
-  val subscriptionResponse = SubscriptionDisplayResponseDetail(
+  val subscriptionResponse: SubscriptionDisplayResponseDetail = SubscriptionDisplayResponseDetail(
     Some("EN123456789012345"),
     "John Doe",
     EstablishmentAddress("house no Line 1", "city name", Some("SE28 1AA"), "ZZ"),

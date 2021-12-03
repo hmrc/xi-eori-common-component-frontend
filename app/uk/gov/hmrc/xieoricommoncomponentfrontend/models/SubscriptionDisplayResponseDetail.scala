@@ -17,10 +17,10 @@
 package uk.gov.hmrc.xieoricommoncomponentfrontend.models
 
 import play.api.libs.functional.syntax._
-import play.api.libs.json.{JsPath, Json, OFormat, OWrites, Reads}
+import play.api.libs.json._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.SubscriptionDisplayMongo
 
-import java.time.{Clock, LocalDate, LocalDateTime, ZoneId}
+import java.time.LocalDate
 
 case class SubscriptionInfoVatId(countryCode: Option[String], VATID: Option[String])
 
