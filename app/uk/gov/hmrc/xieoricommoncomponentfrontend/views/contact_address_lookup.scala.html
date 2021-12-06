@@ -29,6 +29,10 @@ fieldSet: components.fieldSet)
     messages("contact-address-lookup.page.title")
 }
 
+@manualAddressLink = @{
+    uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.onPageLoad()
+}
+
 @main_template(title,form = Some(contactAddressLookupForm)) {
 
     @formHelper(action = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressLookupController.submit(), 'autoComplete -> "off") {
@@ -62,6 +66,10 @@ fieldSet: components.fieldSet)
         @govukButton(Button(
             content = Text(messages("contact-address-lookup.postcode.find-address"))
         ))
+
+        <p class="govuk-body">
+            <a href="@manualAddressLink" id="cannot-find-address" class="govuk-link">@messages("contact-address-lookup.page.address-outside-uk")</a>
+        </p>
 
         @helpers.helpAndSupport()
     }
