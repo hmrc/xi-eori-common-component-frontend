@@ -62,5 +62,13 @@ class ContactAddressLookupViewSpec extends ViewSpec {
       doc.body().getElementsByClass("govuk-button").text() mustBe "Find address"
     }
 
+    "display manual address link" in {
+
+      val manualAddressLink = doc.body().getElementById("cannot-find-address")
+
+      manualAddressLink.text() mustBe "Contact address is outside the UK"
+      manualAddressLink.attr("href") mustBe "/xi-customs-registration-services/pbe-company-address"
+    }
+
   }
 }

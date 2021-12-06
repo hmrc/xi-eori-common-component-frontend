@@ -58,6 +58,10 @@ class SessionCacheSpec extends BaseSpec with MockitoSugar {
       "addressLookupParams missing " in {
         CachedData().addressLookupParams shouldBe None
       }
+
+      "contactAddressParams missing " in {
+        CachedData().contactAddressParams shouldBe None
+      }
     }
 
   }
