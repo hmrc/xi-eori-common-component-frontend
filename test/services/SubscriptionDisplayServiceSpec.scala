@@ -83,6 +83,10 @@ class SubscriptionDisplayServiceSpec extends WordSpec with BeforeAndAfter with M
         mockSessionCache
           .subscriptionDisplay(meq(headerCarrier))
       ).thenReturn(Future.successful(None))
+      when(
+        mockSessionCache
+          .saveSubscriptionDisplay(any())(any())
+      ).thenReturn(Future.successful(true))
 
       running(application) {
         await(service.getSubscriptionDisplay(eori.id)) shouldBe Right(subscriptionResponse)
