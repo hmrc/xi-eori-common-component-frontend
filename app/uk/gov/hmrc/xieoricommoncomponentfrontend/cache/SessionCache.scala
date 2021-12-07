@@ -26,13 +26,9 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.CachedData._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.Eori
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.{RegistrationDetails, SubscriptionDisplayMongo}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.{SubscriptionDisplayMongo, UserAnswers}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
-  AddressLookup,
-  EstablishmentAddress,
-  SubscriptionDisplayResponseDetail
-}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,26 +38,28 @@ sealed case class CachedData(
   eori: Option[String] = None,
   subscriptionDisplay: Option[SubscriptionDisplayMongo] = None,
   addressLookupParams: Option[PBEAddressLookup] = None,
-  registrationDetails: Option[RegistrationDetails] = None,
-  addressLookupResult: Option[Seq[AddressLookup]] = None
+  userAnswers: Option[UserAnswers] = None
 ) {
 
-  def subscriptionDisplayMongo(): SubscriptionDisplayResponseDetail = {
-    val resp = subscriptionDisplay.getOrElse(emptySubscriptionDisplay())
-    SubscriptionDisplayResponseDetail(
-      resp.EORINo,
-      resp.CDSFullName,
-      resp.CDSEstablishmentAddress,
-      resp.VATIDs,
-      resp.shortName,
-      resp.dateOfEstablishment,
-      resp.XIEORINo,
-      resp.XIVatNo
-    )
-  }
+  def subscriptionDisplayMongo(): Option[SubscriptionDisplayResponseDetail] =
+    subscriptionDisplay match {
+      case Some(resp) =>
+        Some(
+          SubscriptionDisplayResponseDetail(
+            resp.EORINo,
+            resp.CDSFullName,
+            resp.CDSEstablishmentAddress,
+            resp.VATIDs,
+            resp.shortName,
+            resp.dateOfEstablishment,
+            resp.XI_Subscription
+          )
+        )
+      case _ => None
+    }
 
-  def getRegistrationDetails: RegistrationDetails =
-    registrationDetails.getOrElse(emptyRegistrationDetails())
+  def getUserAnswers: UserAnswers =
+    userAnswers.getOrElse(emptyUserAnswers())
 
 }
 
@@ -69,15 +67,12 @@ object CachedData {
   val eoriKey                              = "eori"
   val subscriptionDisplayKey               = "subscriptionDisplay"
   val addressLookupParamsKey               = "addressLookupParams"
-  val registrationDetailsKey               = "registrationDetails"
+  val userAnswersKey                       = "userAnswers"
   val addressLookupResultsKey              = "addressLookupResult"
   implicit val format: OFormat[CachedData] = Json.format[CachedData]
 
-  def emptySubscriptionDisplay(): SubscriptionDisplayMongo =
-    SubscriptionDisplayMongo(None, "", EstablishmentAddress("", "", None, ""), None, None, None, None, None)
-
-  def emptyRegistrationDetails(): RegistrationDetails =
-    RegistrationDetails(None)
+  def emptyUserAnswers(): UserAnswers =
+    UserAnswers(None)
 
 }
 
@@ -87,7 +82,7 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
 
   private val eccLogger: Logger = Logger(this.getClass)
 
-  private def sessionId(implicit hc: HeaderCarrier): Id =
+  def sessionId(implicit hc: HeaderCarrier): Id =
     hc.sessionId match {
       case None =>
         throw new IllegalStateException("Session id is not available")
@@ -100,17 +95,15 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
   def saveSubscriptionDisplay(
     subscriptionDisplay: SubscriptionDisplayResponseDetail
   )(implicit hc: HeaderCarrier): Future[Boolean] =
-    createOrUpdate(
-      sessionId,
-      subscriptionDisplayKey,
-      Json.toJson(subscriptionDisplay.toSubscriptionDisplayMongo())
-    ) map (_ => true)
+    createOrUpdate(sessionId, subscriptionDisplayKey, Json.toJson(subscriptionDisplay.toSubscriptionDisplayMongo)) map (
+      _ => true
+    )
 
   def saveAddressLookupParams(addressLookupParams: PBEAddressLookup)(implicit hc: HeaderCarrier): Future[Boolean] =
     createOrUpdate(sessionId, addressLookupParamsKey, Json.toJson(addressLookupParams)).map(_ => true)
 
-  def saveRegistrationDetails(rdh: RegistrationDetails)(implicit hc: HeaderCarrier): Future[Boolean] =
-    createOrUpdate(sessionId, registrationDetailsKey, Json.toJson(rdh)) map (_ => true)
+  def saveUserAnswers(rdh: UserAnswers)(implicit hc: HeaderCarrier): Future[Boolean] =
+    createOrUpdate(sessionId, userAnswersKey, Json.toJson(rdh)) map (_ => true)
 
   private def getCached[T](sessionId: Id, t: (CachedData, Id) => T): Future[T] =
     findById(sessionId.id).map {
@@ -128,21 +121,21 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
 
   def eori(implicit hc: HeaderCarrier): Future[Option[String]] =
     getCached[Option[String]](sessionId, (cachedData, _) => cachedData.eori)
+      .recoverWith {
+        case _ => Future.successful(None)
+      }
 
   def subscriptionDisplay(implicit hc: HeaderCarrier): Future[Option[SubscriptionDisplayResponseDetail]] =
     getCached[Option[SubscriptionDisplayResponseDetail]](
       sessionId,
-      (cachedData, _) => Some(cachedData.subscriptionDisplayMongo())
+      (cachedData, _) => cachedData.subscriptionDisplayMongo()
     )
 
   def addressLookupParams(implicit hc: HeaderCarrier): Future[Option[PBEAddressLookup]] =
     getCached[Option[PBEAddressLookup]](sessionId, (cachedData, _) => cachedData.addressLookupParams)
 
-  def addressLookupResult(implicit hc: HeaderCarrier): Future[Option[Seq[AddressLookup]]] =
-    getCached[Option[Seq[AddressLookup]]](sessionId, (cachedData, _) => cachedData.addressLookupResult)
-
-  def registrationDetails(implicit hc: HeaderCarrier): Future[RegistrationDetails] =
-    getCached[RegistrationDetails](sessionId, (cachedData, _) => cachedData.getRegistrationDetails)
+  def userAnswers(implicit hc: HeaderCarrier): Future[UserAnswers] =
+    getCached[UserAnswers](sessionId, (cachedData, _) => cachedData.getUserAnswers)
 
   def remove(implicit hc: HeaderCarrier): Future[Boolean] =
     removeById(sessionId.id) map (x => x.writeErrors.isEmpty && x.writeConcernError.isEmpty)

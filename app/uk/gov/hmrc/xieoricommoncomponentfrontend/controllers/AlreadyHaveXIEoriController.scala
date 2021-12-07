@@ -18,25 +18,45 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-
-import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.already_have_xi_eori
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
+import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail
+import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{already_have_xi_eori, error_template}
 
 import javax.inject.Inject
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext
 
 class AlreadyHaveXIEoriController @Inject() (
   authAction: AuthAction,
+  sessionCache: SessionCache,
   xiEoriExistsView: already_have_xi_eori,
+  errorTemplateView: error_template,
   mcc: MessagesControllerComponents
-) extends FrontendController(mcc) with I18nSupport {
+)(implicit val ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport {
 
   def xiEoriAlreadyExists: Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
       implicit request => _: LoggedInUserWithEnrolments =>
-        Future.successful(Ok(xiEoriExistsView()))
+        sessionCache.subscriptionDisplay map {
+          case Some(response) =>
+            populateView(response)
+          case None =>
+            Redirect(
+              uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.displayTimeOutPage()
+            ).withNewSession
+        }
+    }
+
+  def populateView(
+    subscriptionDisplayDetails: SubscriptionDisplayResponseDetail
+  )(implicit hc: HeaderCarrier, request: Request[AnyContent]): Result =
+    subscriptionDisplayDetails.XI_Subscription match {
+      case Some(resp) => Ok(xiEoriExistsView(resp.XI_EORINo))
+      case None       => InternalServerError(errorTemplateView())
     }
 
 }

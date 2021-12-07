@@ -20,7 +20,11 @@ import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.SubscriptionDisplayConnector
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{ErrorResponse, SubscriptionDisplayResponseDetail}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
+  ErrorResponse,
+  ServiceUnavailableResponse,
+  SubscriptionDisplayResponseDetail
+}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.util.EoriUtils
 
 import javax.inject.{Inject, Singleton}
@@ -43,17 +47,15 @@ class SubscriptionDisplayService @Inject() (
     sessionCache.subscriptionDisplay flatMap {
       case Some(value) if value.EORINo.isDefined => Future.successful(Right(value))
       case _ =>
-        val subscriptionDisplayResponse = subscriptionDisplayConnector.call(buildQueryParameters(gbEori))
-        subscriptionDisplayResponse.map {
+        subscriptionDisplayConnector.call(buildQueryParameters(gbEori)).flatMap {
           case Right(resp) =>
-            sessionCache.saveSubscriptionDisplay(resp).map(
-              successfulWrite =>
-                if (!successfulWrite)
-                  logger.debug("SubscriptionDisplay SUB09 details retrieved successfully and saved into cache")
-            )
-          case Left(_) => logger.debug("SubscriptionDisplay SUB09 call failed and details are not saved into cache")
+            sessionCache.saveSubscriptionDisplay(resp).map(_ => Right(resp))
+          case Left(_) =>
+            logger.debug("SubscriptionDisplay SUB09 call failed and details are not saved into cache")
+            Future.successful(Left(ServiceUnavailableResponse))
+
         }
-        subscriptionDisplayResponse
+
     }
 
 }

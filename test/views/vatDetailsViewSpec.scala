@@ -18,12 +18,14 @@ package views
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.Helpers.contentAsString
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
   EstablishmentAddress,
   SubscriptionDisplayResponseDetail,
-  SubscriptionInfoVatId
+  SubscriptionInfoVatId,
+  XiSubscription
 }
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewModel
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.components.vat_details
@@ -33,7 +35,12 @@ import java.time.LocalDate
 
 class vatDetailsViewSpec extends ViewSpec {
 
-  private implicit val request = withFakeCSRF(fakeRegisterRequest)
+  private implicit val request: Request[AnyContentAsEmpty.type] = withFakeCSRF(fakeRegisterRequest)
+
+  val xiSubscriptionWithoutXIVat: XiSubscription =
+    XiSubscription("XI8989989797", None)
+
+  val xiSubscriptionWithVat: XiSubscription = XiSubscription("XI8989989797", Some("123"))
 
   private val response = SubscriptionDisplayResponseDetail(
     Some("EN123456789012345"),
@@ -42,16 +49,16 @@ class vatDetailsViewSpec extends ViewSpec {
     Some(List(SubscriptionInfoVatId(Some("GB"), Some("999999")), SubscriptionInfoVatId(Some("ES"), Some("888888")))),
     Some("Doe"),
     Some(LocalDate.of(1963, 4, 1)),
-    Some("XIE9XSDF10BCKEYAX")
+    Some(xiSubscriptionWithoutXIVat)
   )
 
   private val viewWithoutXIVATModel = ConfirmDetailsViewModel(response, AffinityGroup.Organisation)
 
   private val viewWithXIVATModel =
-    ConfirmDetailsViewModel(response.copy(XIVatNo = Some("XIVATNumber")), AffinityGroup.Organisation)
+    ConfirmDetailsViewModel(response.copy(XI_Subscription = Some(xiSubscriptionWithVat)), AffinityGroup.Organisation)
 
-  private val vatDetailsWithXIVATView             = instanceOf[vat_details].apply(viewWithXIVATModel)
-  private val vatDetailsWithoutXIVATView          = instanceOf[vat_details].apply(viewWithoutXIVATModel)
+  private val vatDetailsWithXIVATView             = instanceOf[vat_details].apply(viewWithXIVATModel, Some("123"))
+  private val vatDetailsWithoutXIVATView          = instanceOf[vat_details].apply(viewWithoutXIVATModel, None)
   private val vatDetailsDoc: Document             = Jsoup.parse(contentAsString(vatDetailsWithXIVATView))
   private val vatDetailsWithoutXIVATDoc: Document = Jsoup.parse(contentAsString(vatDetailsWithoutXIVATView))
 
@@ -79,7 +86,7 @@ class vatDetailsViewSpec extends ViewSpec {
       "display XI VAT number if XI VAT number is present" in {
         val vatNumber = vatDetailsDoc.body.getElementsByClass("xi-vat-number").get(0)
         vatNumber.getElementsByClass("govuk-summary-list__key").text mustBe "XI VAT number"
-        vatNumber.getElementsByClass("govuk-summary-list__value").text mustBe "XIVATNumber"
+        vatNumber.getElementsByClass("govuk-summary-list__value").text mustBe "123"
       }
 
       "display XI VAT register link if XI Vat number is not present" in {

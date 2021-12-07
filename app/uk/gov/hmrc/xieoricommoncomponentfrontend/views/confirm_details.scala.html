@@ -32,7 +32,7 @@ h1: components.h1,
 companyDetails: components.company_details,
 vatDetails: components.vat_details
 )
-@(confirmDetailsForm: Form[ConfirmDetails], model:ConfirmDetailsViewModel)(implicit messages: Messages, request: Request[_])
+@(confirmDetailsForm: Form[ConfirmDetails], model:ConfirmDetailsViewModel,xiVatNo: Option[String])(implicit messages: Messages, request: Request[_])
 @title = @{
     messages("confirmDetails.page.title")
 }
@@ -40,7 +40,7 @@ vatDetails: components.vat_details
 @main_template(title,form = Some(confirmDetailsForm)) {
     @h1("confirmDetails.page.title")
     @companyDetails(model)
-    @if(model.affinityGroup == AffinityGroup.Organisation){ @vatDetails(model)}
+    @if(model.affinityGroup == AffinityGroup.Organisation){ @vatDetails(model,xiVatNo)}
     @formHelper(action = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.submit, 'autoComplete -> "off") {
 
         @errorSummary(confirmDetailsForm.errors)
