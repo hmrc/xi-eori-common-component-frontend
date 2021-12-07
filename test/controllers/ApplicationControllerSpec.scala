@@ -24,7 +24,7 @@ import play.api.{inject, Application}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.{SessionCache, UserAnswersCache}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
-import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, KeyValue}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, Eori, KeyValue}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
   EstablishmentAddress,
   ServiceUnavailableResponse,
@@ -66,7 +66,7 @@ class ApplicationControllerSpec extends BaseSpec {
   val groupEnrolment =
     List(EnrolmentResponse("HMRC-ATAR-ORG", "Activated", List(KeyValue("EORINumber", "GB123456463324"))))
 
-  val existingEori: Option[String] = Some("XIE9XSDF10BCKEYAX")
+  val existingEori: Option[Eori] = Some(Eori("XIE9XSDF10BCKEYAX"))
 
   override def application: Application = new GuiceApplicationBuilder().overrides(
     inject.bind[AuthConnector].to(mockAuthConnector),
@@ -108,8 +108,6 @@ class ApplicationControllerSpec extends BaseSpec {
           .thenReturn(Future.successful(Right(subscriptionDisplayResponse)))
         when(mockGroupEnrolmentExtractor.getEori(any())(any()))
           .thenReturn(Future.successful(existingEori))
-        when(mockSessionCache.saveEori(any())(any()))
-          .thenReturn(Future.successful(true))
         when(mockSessionCache.saveUserAnswers(any())(any()))
           .thenReturn(Future.successful(true))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
@@ -137,8 +135,6 @@ class ApplicationControllerSpec extends BaseSpec {
           .thenReturn(Future.successful(existingEori))
         when(mockSessionCache.saveUserAnswers(any())(any()))
           .thenReturn(Future.successful(true))
-        when(mockSessionCache.saveEori(any())(any()))
-          .thenReturn(Future.successful(true))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ApplicationController.onPageLoad().url,
           defaultUserId
@@ -161,8 +157,6 @@ class ApplicationControllerSpec extends BaseSpec {
           .thenReturn(Future.successful(Left(ServiceUnavailableResponse)))
         when(mockGroupEnrolmentExtractor.getEori(any())(any()))
           .thenReturn(Future.successful(existingEori))
-        when(mockSessionCache.saveEori(any())(any()))
-          .thenReturn(Future.successful(true))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ApplicationController.onPageLoad().url,
           defaultUserId
