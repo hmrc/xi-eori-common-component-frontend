@@ -40,10 +40,8 @@ class GroupEnrolmentExtractor @Inject() (
       case Some(value) => Future.successful(Some(value))
       case None =>
         existingEoriForUser(user.enrolments.enrolments) match {
-          case Some(eori) =>
-            sessionCache.saveEori(Eori(eori))
-            Future.successful(Some(eori))
-          case None => existingEoriForGroup(user)
+          case Some(eori) => Future.successful(Some(eori))
+          case None       => existingEoriForGroup(user)
         }
     }
 
@@ -53,10 +51,7 @@ class GroupEnrolmentExtractor @Inject() (
     for {
       groupEnrolment <- groupIdEnrolments(GroupId(user.groupId))
       mayBeEori = groupEnrolment.find(_.eori.exists(_.nonEmpty)).flatMap(enrolment => enrolment.eori)
-    } yield {
-      if (mayBeEori.isDefined) sessionCache.saveEori(Eori(mayBeEori.get))
-      mayBeEori
-    }
+    } yield mayBeEori
 
   def existingEoriForUser(userEnrolments: Set[Enrolment]): Option[String] = {
     val userEnrolmentWithEori = userEnrolments.find(_.identifiers.exists(_.key == EoriIdentifier))

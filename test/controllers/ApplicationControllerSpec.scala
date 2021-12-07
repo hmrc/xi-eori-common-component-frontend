@@ -108,6 +108,10 @@ class ApplicationControllerSpec extends BaseSpec {
           .thenReturn(Future.successful(Right(subscriptionDisplayResponse)))
         when(mockGroupEnrolmentExtractor.getEori(any())(any()))
           .thenReturn(Future.successful(existingEori))
+        when(mockSessionCache.saveEori(any())(any()))
+          .thenReturn(Future.successful(true))
+        when(mockSessionCache.saveUserAnswers(any())(any()))
+          .thenReturn(Future.successful(true))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ApplicationController.onPageLoad().url,
           defaultUserId
@@ -133,6 +137,8 @@ class ApplicationControllerSpec extends BaseSpec {
           .thenReturn(Future.successful(existingEori))
         when(mockSessionCache.saveUserAnswers(any())(any()))
           .thenReturn(Future.successful(true))
+        when(mockSessionCache.saveEori(any())(any()))
+          .thenReturn(Future.successful(true))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ApplicationController.onPageLoad().url,
           defaultUserId
@@ -155,6 +161,8 @@ class ApplicationControllerSpec extends BaseSpec {
           .thenReturn(Future.successful(Left(ServiceUnavailableResponse)))
         when(mockGroupEnrolmentExtractor.getEori(any())(any()))
           .thenReturn(Future.successful(existingEori))
+        when(mockSessionCache.saveEori(any())(any()))
+          .thenReturn(Future.successful(true))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ApplicationController.onPageLoad().url,
           defaultUserId

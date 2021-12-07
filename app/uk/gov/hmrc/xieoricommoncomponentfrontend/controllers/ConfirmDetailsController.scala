@@ -43,7 +43,6 @@ class ConfirmDetailsController @Inject() (
   confirmDetailsView: confirm_details,
   formProvider: ConfirmDetailsFormProvider,
   mcc: MessagesControllerComponents,
-  errorTemplateView: error_template,
   userAnswersCache: UserAnswersCache,
   sessionCache: SessionCache
 )(implicit val ec: ExecutionContext)
@@ -76,10 +75,18 @@ class ConfirmDetailsController @Inject() (
         Ok(
           confirmDetailsView(
             form.fill(ConfirmDetails.mapValues(confirmDetails)),
-            ConfirmDetailsViewModel(subscriptionDisplayDetails, userAffinity)
+            ConfirmDetailsViewModel(subscriptionDisplayDetails, userAffinity),
+            getXIVatNumber(subscriptionDisplayDetails)
           )
         )
-      case None => Ok(confirmDetailsView(form, ConfirmDetailsViewModel(subscriptionDisplayDetails, userAffinity)))
+      case None =>
+        Ok(
+          confirmDetailsView(
+            form,
+            ConfirmDetailsViewModel(subscriptionDisplayDetails, userAffinity),
+            getXIVatNumber(subscriptionDisplayDetails)
+          )
+        )
     }
 
   def submit(): Action[AnyContent] = authAction.ggAuthorisedUserWithEnrolmentsAction {
@@ -91,7 +98,11 @@ class ConfirmDetailsController @Inject() (
             sessionCache.subscriptionDisplay.map {
               case Some(response) =>
                 BadRequest(
-                  confirmDetailsView(formWithErrors, ConfirmDetailsViewModel(response, loggedInUser.userAffinity()))
+                  confirmDetailsView(
+                    formWithErrors,
+                    ConfirmDetailsViewModel(response, loggedInUser.userAffinity()),
+                    getXIVatNumber(response)
+                  )
                 )
               case None =>
                 Redirect(
@@ -112,5 +123,11 @@ class ConfirmDetailsController @Inject() (
     case ConfirmDetails.changeDetails =>
       Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ChangeDetailsController.incorrectDetails())
   }
+
+  private def getXIVatNumber(subscriptionDisplayDetails: SubscriptionDisplayResponseDetail) =
+    for {
+      xiSubscription <- subscriptionDisplayDetails.XI_Subscription
+      xiVatNumber    <- xiSubscription.XI_VATNumber
+    } yield xiVatNumber
 
 }

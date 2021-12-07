@@ -54,8 +54,8 @@ class ConfirmDetailsViewSpec extends ViewSpec {
   )
 
   private val viewModelOrganisation                     = ConfirmDetailsViewModel(response, AffinityGroup.Organisation)
-  private val confirmDetailsView                        = instanceOf[confirm_details].apply(form, viewModelOrganisation)
-  private val confirmDetailsViewError                   = instanceOf[confirm_details].apply(formWithError, viewModelOrganisation)
+  private val confirmDetailsView                        = instanceOf[confirm_details].apply(form, viewModelOrganisation, None)
+  private val confirmDetailsViewError                   = instanceOf[confirm_details].apply(formWithError, viewModelOrganisation, None)
   private lazy val confirmDetailsDoc: Document          = Jsoup.parse(contentAsString(confirmDetailsView))
   private lazy val confirmDetailsDocWithError: Document = Jsoup.parse(contentAsString(confirmDetailsViewError))
 

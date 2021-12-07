@@ -103,7 +103,6 @@ class GroupEnrolmentExtractorSpec extends BaseSpec with BeforeAndAfterEach {
       val enrolments = Set(Enrolment("HMRC-CUS-ORG").withIdentifier("NINO", "NINO"))
       await(groupEnrolmentExtractor.getEori(loggedInUser(enrolments))(hc))
       verify(enrolmentStoreProxyService).enrolmentsForGroup(any())(meq(hc))
-      verify(sessionCache).saveEori(any())(meq(hc))
     }
 
     "return existing EORI for user and/or group" when {

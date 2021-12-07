@@ -57,8 +57,8 @@ class vatDetailsViewSpec extends ViewSpec {
   private val viewWithXIVATModel =
     ConfirmDetailsViewModel(response.copy(XI_Subscription = Some(xiSubscriptionWithVat)), AffinityGroup.Organisation)
 
-  private val vatDetailsWithXIVATView             = instanceOf[vat_details].apply(viewWithXIVATModel)
-  private val vatDetailsWithoutXIVATView          = instanceOf[vat_details].apply(viewWithoutXIVATModel)
+  private val vatDetailsWithXIVATView             = instanceOf[vat_details].apply(viewWithXIVATModel, Some("123"))
+  private val vatDetailsWithoutXIVATView          = instanceOf[vat_details].apply(viewWithoutXIVATModel, None)
   private val vatDetailsDoc: Document             = Jsoup.parse(contentAsString(vatDetailsWithXIVATView))
   private val vatDetailsWithoutXIVATDoc: Document = Jsoup.parse(contentAsString(vatDetailsWithoutXIVATView))
 

@@ -22,7 +22,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{AuthAction, GroupEnrolmentExtractor}
-import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
+import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{Eori, LoggedInUserWithEnrolments}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.XiSubscription
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.UserAnswers
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.SubscriptionDisplayService
@@ -46,10 +46,12 @@ class ApplicationController @Inject() (
       implicit request => loggedInUser: LoggedInUserWithEnrolments =>
         groupEnrolment.getEori(loggedInUser).flatMap {
           case Some(gbEori) =>
-            subscriptionDisplayService.getSubscriptionDisplay(gbEori).flatMap {
-              case Right(response) =>
-                destinationsByAnswer(response.XI_Subscription)
-              case Left(_) => Future.successful(InternalServerError(errorTemplateView()))
+            sessionCache.saveEori(Eori(gbEori)).flatMap { _ =>
+              subscriptionDisplayService.getSubscriptionDisplay(gbEori).flatMap {
+                case Right(response) =>
+                  destinationsByAnswer(response.XI_Subscription)
+                case Left(_) => Future.successful(InternalServerError(errorTemplateView()))
+              }
             }
           case None =>
             sessionCache.saveUserAnswers(UserAnswers()).map(
