@@ -29,7 +29,7 @@ p: components.p,
 languageUtils: LanguageUtils,
 appConfig: AppConfig
 )
-@(model:ConfirmDetailsViewModel)(implicit messages: Messages, request: Request[_])
+@(model:ConfirmDetailsViewModel,xiVatNo: Option[String])(implicit messages: Messages, request: Request[_])
 
 @formatDate(date: LocalDate) = @{
     languageUtils.Dates.formatDate(date)
@@ -45,8 +45,8 @@ appConfig: AppConfig
     @vatIDs.map(vatList => vatList.filter(_.countryCode == Some("GB")).map(vat => vatID(vat.VATID)) )
 }
 
-@xiVatNumber(xiVatNumber:Option[String],message: String) = @{
-    if(xiVatNumber.isDefined) Html(xiVatNumber.get)
+@xiVatNumber(message: String) = @{
+    if(xiVatNo.isDefined) Html(xiVatNo.get)
     else link(message,uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiVatRegisterController.onPageLoad().url)
 }
 
@@ -74,7 +74,7 @@ appConfig: AppConfig
             ),
             SummaryListRow(
                 key = Key(content = Text(messages("confirmDetails.xi-vat-number.label")),classes = "govuk-!-width-one-half"),
-                value = Value(content = HtmlContent(xiVatNumber(model.subscriptionDisplay.XIVatNo,messages("confirmDetails.do-you-need-xi-vat-number.label")))),
+                value = Value(content = HtmlContent(xiVatNumber(messages("confirmDetails.do-you-need-xi-vat-number.label")))),
                 classes = "xi-vat-number")
         ), "govuk-!-margin-bottom-9 govuk-summary-list--wide",attributes = Map("id"->"vat-details")))
 </div>

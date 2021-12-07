@@ -21,8 +21,10 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
   EstablishmentAddress,
   SubscriptionDisplayResponseDetail,
-  SubscriptionInfoVatId
+  SubscriptionInfoVatId,
+  XiSubscription
 }
+
 import java.time.LocalDate
 
 class SubscriptionDisplayResponseDetailSpec extends WordSpec with MustMatchers {
@@ -89,14 +91,17 @@ class SubscriptionDisplayResponseDetailSpec extends WordSpec with MustMatchers {
                                                               |      "dateOfEstablishment": "1963-04-01",
                                                               |      "typeOfPerson": "1",
                                                               |      "principalEconomicActivity": "2000",
-                                                              |      "XI_EORI" : "XIE9XSDF10BCKEYAX"
+                                                              |      "XI_Subscription": {
+                                                              |         "XI_EORINo":"XI8989989797",
+                                                              |         "XI_VATNumber":"7978"
+                                                              |      }
                                                               |    }
                                                               |  }
                                                               |}
                                                               | """.stripMargin)
 
-      val result = SubscriptionDisplayResponseDetail.subscriptionDisplayReads.reads(subscriptionDisplayJsonResponse)
-
+      val result                         = SubscriptionDisplayResponseDetail.subscriptionDisplayReads.reads(subscriptionDisplayJsonResponse)
+      val xiSubscription: XiSubscription = XiSubscription("XI8989989797", Some("7978"))
       val expectedModel = SubscriptionDisplayResponseDetail(
         Some("EN123456789012345"),
         "John Doe",
@@ -106,7 +111,7 @@ class SubscriptionDisplayResponseDetailSpec extends WordSpec with MustMatchers {
         ),
         Some("Doe"),
         Some(LocalDate.of(1963, 4, 1)),
-        Some("XIE9XSDF10BCKEYAX")
+        Some(xiSubscription)
       )
 
       result.get mustBe expectedModel

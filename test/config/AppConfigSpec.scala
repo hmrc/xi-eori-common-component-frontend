@@ -36,11 +36,11 @@ class AppConfigSpec extends BaseSpec with BeforeAndAfterEach {
   "AppConfig" should {
 
     "have enrolmentStoreProxyBaseUrl defined" in {
-      appConfig.enrolmentStoreProxyBaseUrl shouldBe "http://localhost:6754"
+      appConfig.enrolmentStoreProxyBaseUrl shouldBe "http://localhost:6757"
     }
 
     "have enrolmentStoreProxyServiceContext defined" in {
-      appConfig.enrolmentStoreProxyServiceContext shouldBe "enrolment-store-proxy"
+      appConfig.enrolmentStoreProxyServiceContext shouldBe "xi-eori-common-component-stubs/enrolment-store-proxy"
     }
 
     "have subscriptionDisplayBaseUrl defined" in {

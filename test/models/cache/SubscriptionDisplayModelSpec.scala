@@ -19,7 +19,7 @@ package models.cache
 import org.scalatest.{MustMatchers, WordSpec}
 import play.api.libs.json.Json
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.SubscriptionDisplayMongo
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, SubscriptionInfoVatId}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, SubscriptionInfoVatId, XiSubscription}
 
 import java.time.LocalDate
 
@@ -50,10 +50,13 @@ class SubscriptionDisplayModelSpec extends WordSpec with MustMatchers {
                                                               |      ],
                                                               |      "shortName": "Doe",
                                                               |      "dateOfEstablishment": "1963-04-01",
-                                                              |      "XIEORINo" : "XIE9XSDF10BCKEYAX"
+                                                              |      "XI_Subscription": {
+                                                              |         "XI_EORINo":"XI8989989797",
+                                                              |         "XI_VATNumber":"7978"
+                                                              |      }
                                                               |}
                                                               | """.stripMargin)
-
+      val xiSubscription: XiSubscription  = XiSubscription("XI8989989797", Some("7978"))
       val expectedModel = SubscriptionDisplayMongo(
         Some("EN123456789012345"),
         "John Doe",
@@ -63,7 +66,7 @@ class SubscriptionDisplayModelSpec extends WordSpec with MustMatchers {
         ),
         Some("Doe"),
         Some(LocalDate.of(1963, 4, 1)),
-        Some("XIE9XSDF10BCKEYAX")
+        Some(xiSubscription)
       )
 
       Json.toJson(expectedModel) mustBe subscriptionDisplayJsonResponse

@@ -92,7 +92,7 @@ class PBEConfirmDetailsControllerSpec extends BaseSpec {
       }
     }
 
-    "redirect InternalServerError when Session Cache doesn't hold address details" in {
+    "redirect Sign out page when Session Cache doesn't hold address details" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockUserAnswersCache.getAddressDetails()(any())).thenReturn(Future.successful(None))
@@ -104,7 +104,11 @@ class PBEConfirmDetailsControllerSpec extends BaseSpec {
         )
 
         val result = route(application, request).get
-        status(result) shouldBe INTERNAL_SERVER_ERROR
+        status(result) shouldBe SEE_OTHER
+
+        redirectLocation(
+          result
+        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.displayTimeOutPage().url
       }
     }
 

@@ -19,17 +19,17 @@ package controllers
 import common.pages.RegistrationPage
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.{inject, Application}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
+import play.api.{inject, Application}
 import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector}
-import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.UserAnswersCache
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.{SessionCache, UserAnswersCache}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, KeyValue}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
   EstablishmentAddress,
-  ServiceUnavailableResponse,
-  SubscriptionDisplayResponseDetail
+  SubscriptionDisplayResponseDetail,
+  XiSubscription
 }
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.SubscriptionDisplayService
 import util.BaseSpec
@@ -51,6 +51,8 @@ class SicCodeControllerSpec extends BaseSpec {
     countryCode = "GB"
   )
 
+  val xiSubscription: XiSubscription = XiSubscription("XI8989989797", Some("7978"))
+
   val nonNIsubscriptionDisplayResponse: SubscriptionDisplayResponseDetail = SubscriptionDisplayResponseDetail(
     EORINo = Some("GB123456789012"),
     CDSFullName = "FirstName LastName",
@@ -58,7 +60,7 @@ class SicCodeControllerSpec extends BaseSpec {
     VATIDs = None,
     shortName = Some("Short Name"),
     dateOfEstablishment = Some(LocalDate.now()),
-    XIEORINo = Some("XIE9XSDF10BCKEYAX")
+    XI_Subscription = Some(xiSubscription)
   )
 
   val niEstablishmentAddress: EstablishmentAddress = EstablishmentAddress(
@@ -75,7 +77,7 @@ class SicCodeControllerSpec extends BaseSpec {
     VATIDs = None,
     shortName = Some("Short Name"),
     dateOfEstablishment = Some(LocalDate.now()),
-    XIEORINo = Some("XIE9XSDF10BCKEYAX")
+    XI_Subscription = Some(xiSubscription)
   )
 
   val groupEnrolment =
@@ -85,9 +87,8 @@ class SicCodeControllerSpec extends BaseSpec {
 
   override def application: Application = new GuiceApplicationBuilder().overrides(
     inject.bind[AuthConnector].to(mockAuthConnector),
-    inject.bind[SubscriptionDisplayService].to(subscriptionDisplayService),
     inject.bind[UserAnswersCache].to(mockUserAnswersCache),
-    inject.bind[GroupEnrolmentExtractor].to(mockGroupEnrolmentExtractor)
+    inject.bind[SessionCache].to(mockSessionCache)
   ).configure("auditing.enabled" -> "false", "metrics.jvm" -> false, "metrics.enabled" -> false).build()
 
   "SicCode controller" should {
@@ -126,12 +127,10 @@ class SicCodeControllerSpec extends BaseSpec {
     "redirect to the next page when Organisation group with non NI postcode data is submitted" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Organisation)
-        when(subscriptionDisplayService.getSubscriptionDisplay(any())(any()))
-          .thenReturn(Future.successful(Right(nonNIsubscriptionDisplayResponse)))
-        when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
-          .thenReturn(Future.successful(groupEnrolment))
-        when(mockGroupEnrolmentExtractor.getEori(any())(any()))
-          .thenReturn(Future.successful(existingEori))
+
+        when(mockSessionCache.subscriptionDisplay(any())).thenReturn(
+          Future.successful(Some(nonNIsubscriptionDisplayResponse))
+        )
         when(mockUserAnswersCache.cacheSicCode(any())(any())).thenReturn(Future.successful(true))
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
@@ -152,12 +151,9 @@ class SicCodeControllerSpec extends BaseSpec {
     "redirect to the next page when Organisation group with NI postcode data is submitted" in {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Organisation)
-        when(subscriptionDisplayService.getSubscriptionDisplay(any())(any()))
-          .thenReturn(Future.successful(Right(niSubscriptionDisplayResponse)))
-        when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
-          .thenReturn(Future.successful(groupEnrolment))
-        when(mockGroupEnrolmentExtractor.getEori(any())(any()))
-          .thenReturn(Future.successful(existingEori))
+        when(mockSessionCache.subscriptionDisplay(any())).thenReturn(
+          Future.successful(Some(niSubscriptionDisplayResponse))
+        )
         when(mockUserAnswersCache.cacheSicCode(any())(any())).thenReturn(Future.successful(true))
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
@@ -215,38 +211,12 @@ class SicCodeControllerSpec extends BaseSpec {
       }
     }
 
-    "redirect InternalServerError when subscription display call fails" in {
-      running(application) {
-        withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Organisation)
-        when(subscriptionDisplayService.getSubscriptionDisplay(any())(any()))
-          .thenReturn(Future.successful(Left(ServiceUnavailableResponse)))
-        when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
-          .thenReturn(Future.successful(groupEnrolment))
-        when(mockGroupEnrolmentExtractor.getEori(any())(any()))
-          .thenReturn(Future.successful(existingEori))
-
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.submit().url,
-          defaultUserId,
-          Map("sic" -> "12345")
-        )
-
-        val result = route(application, request).get
-        status(result) shouldBe INTERNAL_SERVER_ERROR
-      }
-
-    }
-
-    "redirect to Error Page if logged in user doesn't have linked GB Eori" in {
+    "redirect to signout page if session cache doesn't have subscription display response" in {
 
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Organisation)
 
-        when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
-          .thenReturn(Future.successful(groupEnrolment))
-        when(mockGroupEnrolmentExtractor.getEori(any())(any()))
-          .thenReturn(Future.successful(None))
+        when(mockSessionCache.subscriptionDisplay(any())).thenReturn(Future.successful(None))
         val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
           "POST",
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.submit().url,
@@ -256,7 +226,11 @@ class SicCodeControllerSpec extends BaseSpec {
 
         val result = route(application, request).get
 
-        status(result) shouldBe INTERNAL_SERVER_ERROR
+        status(result) shouldBe SEE_OTHER
+
+        redirectLocation(
+          result
+        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.displayTimeOutPage().url
       }
     }
 

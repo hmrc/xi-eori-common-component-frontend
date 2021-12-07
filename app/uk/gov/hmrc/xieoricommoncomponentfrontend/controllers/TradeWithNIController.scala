@@ -19,7 +19,7 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.UserAnswersCache
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.{SessionCache, UserAnswersCache}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.TradeWithNIFormProvider
@@ -35,6 +35,7 @@ class TradeWithNIController @Inject() (
   tradeWithNIView: trade_with_ni,
   formProvider: TradeWithNIFormProvider,
   userAnswersCache: UserAnswersCache,
+  sessionCache: SessionCache,
   mcc: MessagesControllerComponents
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
@@ -44,11 +45,21 @@ class TradeWithNIController @Inject() (
   def onPageLoad: Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
       implicit request => _: LoggedInUserWithEnrolments =>
-        userAnswersCache.getTradeWithInNI() map {
-          case Some(tradeWithNI) =>
-            Ok(tradeWithNIView(form.fill(TradeWithNI.yesOrNo(tradeWithNI))))
-          case None => Ok(tradeWithNIView(form))
+        sessionCache.findById(sessionCache.sessionId) flatMap {
+          case Some(_) =>
+            userAnswersCache.getTradeWithInNI() map {
+              case Some(tradeWithNI) =>
+                Ok(tradeWithNIView(form.fill(TradeWithNI.yesOrNo(tradeWithNI))))
+              case None => Ok(tradeWithNIView(form))
+            }
+          case None =>
+            Future.successful(
+              Redirect(
+                uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.displayTimeOutPage()
+              ).withNewSession
+            )
         }
+
     }
 
   def submit: Action[AnyContent] = authAction.ggAuthorisedUserWithEnrolmentsAction {

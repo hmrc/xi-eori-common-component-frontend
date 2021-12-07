@@ -30,7 +30,8 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.domain._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
   EstablishmentAddress,
   SubscriptionDisplayResponseDetail,
-  SubscriptionInfoVatId
+  SubscriptionInfoVatId,
+  XiSubscription
 }
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.SubscriptionDisplayService
 
@@ -57,15 +58,16 @@ class SubscriptionDisplayServiceSpec extends WordSpec with BeforeAndAfter with M
   before {
     reset(mockSubscriptionDisplayConnector)
   }
+  val xiSubscription: XiSubscription = XiSubscription("XI8989989797", Some("7978"))
 
-  val subscriptionResponse = SubscriptionDisplayResponseDetail(
+  val subscriptionResponse: SubscriptionDisplayResponseDetail = SubscriptionDisplayResponseDetail(
     Some("EN123456789012345"),
     "John Doe",
     EstablishmentAddress("house no Line 1", "city name", Some("SE28 1AA"), "ZZ"),
     Some(List(SubscriptionInfoVatId(Some("GB"), Some("999999")), SubscriptionInfoVatId(Some("ES"), Some("888888")))),
     Some("Doe"),
     Some(LocalDate.of(1963, 4, 1)),
-    Some("XIE9XSDF10BCKEYAX")
+    Some(xiSubscription)
   )
 
   private val eori = Eori("GB123456789012")
@@ -81,6 +83,10 @@ class SubscriptionDisplayServiceSpec extends WordSpec with BeforeAndAfter with M
         mockSessionCache
           .subscriptionDisplay(meq(headerCarrier))
       ).thenReturn(Future.successful(None))
+      when(
+        mockSessionCache
+          .saveSubscriptionDisplay(any())(any())
+      ).thenReturn(Future.successful(true))
 
       running(application) {
         await(service.getSubscriptionDisplay(eori.id)) shouldBe Right(subscriptionResponse)

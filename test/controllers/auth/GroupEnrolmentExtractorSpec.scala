@@ -74,10 +74,12 @@ class GroupEnrolmentExtractorSpec extends BaseSpec with BeforeAndAfterEach {
         val response = enrolmentResponse.copy(identifiers = List(KeyValue("EORINumber", eori.id)))
         when(enrolmentStoreProxyService.enrolmentsForGroup(any())(any()))
           .thenReturn(Future.successful(List(response)))
+        when(sessionCache.saveEori(any())(any()))
+          .thenReturn(Future.successful(true))
         val enrolments = Set(Enrolment("HMRC-CUS-ORG").withIdentifier("EORINumber", eori.id))
         val result     = await(groupEnrolmentExtractor.existingEoriForGroup(loggedInUser(enrolments))(hc))
 
-        result shouldBe Some(eori.id)
+        result shouldBe Some(eori)
       }
 
     }
@@ -99,11 +101,11 @@ class GroupEnrolmentExtractorSpec extends BaseSpec with BeforeAndAfterEach {
         sessionCache
           .eori(any())
       ).thenReturn(Future.successful(None))
-
+      when(sessionCache.saveEori(any())(any()))
+        .thenReturn(Future.successful(true))
       val enrolments = Set(Enrolment("HMRC-CUS-ORG").withIdentifier("NINO", "NINO"))
       await(groupEnrolmentExtractor.getEori(loggedInUser(enrolments))(hc))
       verify(enrolmentStoreProxyService).enrolmentsForGroup(any())(meq(hc))
-      verify(sessionCache).saveEori(any())(meq(hc))
     }
 
     "return existing EORI for user and/or group" when {

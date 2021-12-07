@@ -35,27 +35,25 @@ class GroupEnrolmentExtractor @Inject() (
   def groupIdEnrolments(groupId: GroupId)(implicit hc: HeaderCarrier): Future[List[EnrolmentResponse]] =
     enrolmentStoreProxyService.enrolmentsForGroup(groupId)
 
-  def getEori(user: LoggedInUserWithEnrolments)(implicit headerCarrier: HeaderCarrier): Future[Option[String]] =
+  def getEori(user: LoggedInUserWithEnrolments)(implicit headerCarrier: HeaderCarrier): Future[Option[Eori]] =
     sessionCache.eori flatMap {
-      case Some(value) => Future.successful(Some(value))
+      case Some(value) => Future.successful(Some(Eori(value)))
       case None =>
         existingEoriForUser(user.enrolments.enrolments) match {
-          case Some(eori) =>
-            sessionCache.saveEori(Eori(eori))
-            Future.successful(Some(eori))
-          case None => existingEoriForGroup(user)
+          case Some(eori) => sessionCache.saveEori(Eori(eori)).map(_ => Some(Eori(eori)))
+          case None       => existingEoriForGroup(user)
         }
     }
 
   def existingEoriForGroup(
     user: LoggedInUserWithEnrolments
-  )(implicit headerCarrier: HeaderCarrier): Future[Option[String]] =
-    for {
-      groupEnrolment <- groupIdEnrolments(GroupId(user.groupId))
-      mayBeEori = groupEnrolment.find(_.eori.exists(_.nonEmpty)).flatMap(enrolment => enrolment.eori)
-    } yield {
-      if (mayBeEori.isDefined) sessionCache.saveEori(Eori(mayBeEori.get))
-      mayBeEori
+  )(implicit headerCarrier: HeaderCarrier): Future[Option[Eori]] =
+    groupIdEnrolments(GroupId(user.groupId)).flatMap {
+      groupEnrolment =>
+        groupEnrolment.find(_.eori.exists(_.nonEmpty)).flatMap(enrolment => enrolment.eori) match {
+          case Some(value) => sessionCache.saveEori(Eori(value)).map(_ => Some(Eori(value)))
+          case _           => Future.successful(None)
+        }
     }
 
   def existingEoriForUser(userEnrolments: Set[Enrolment]): Option[String] = {
