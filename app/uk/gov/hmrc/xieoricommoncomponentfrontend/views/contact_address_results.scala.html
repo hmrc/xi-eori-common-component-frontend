@@ -50,7 +50,7 @@ uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressCon
 
 @main_template(title,form = Some(pbeAddressResultsForm)) {
 
-    @formHelper(action = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.RegisteredAddressController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressResultController.submit(), 'autoComplete -> "off") {
 
         @errorSummary(pbeAddressResultsForm.errors)
 

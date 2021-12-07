@@ -91,10 +91,10 @@ class UserAnswersCacheSpec extends BaseSpec with MockitoSugar with BeforeAndAfte
     "save Contact Address Details in frontend cache" in {
 
       Await.result(subscriptionDetailsHolderService.cacheContactAddressDetails(addressDetails), Duration.Inf)
-      val requestCaptor = ArgumentCaptor.forClass(classOf[RegistrationDetails])
+      val requestCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
 
-      verify(mockSessionCache).saveRegistrationDetails(requestCaptor.capture())(ArgumentMatchers.eq(hc))
-      val holder: RegistrationDetails = requestCaptor.getValue
+      verify(mockSessionCache).saveUserAnswers(requestCaptor.capture())(ArgumentMatchers.eq(hc))
+      val holder: UserAnswers = requestCaptor.getValue
       holder.contactAddressDetails shouldBe Some(addressDetails)
 
     }
@@ -105,10 +105,10 @@ class UserAnswersCacheSpec extends BaseSpec with MockitoSugar with BeforeAndAfte
         subscriptionDetailsHolderService.cacheContactAddressDetails(addressDetails.copy(postcode = Some(""))),
         Duration.Inf
       )
-      val requestCaptor = ArgumentCaptor.forClass(classOf[RegistrationDetails])
+      val requestCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
 
-      verify(mockSessionCache).saveRegistrationDetails(requestCaptor.capture())(ArgumentMatchers.eq(hc))
-      val holder: RegistrationDetails = requestCaptor.getValue
+      verify(mockSessionCache).saveUserAnswers(requestCaptor.capture())(ArgumentMatchers.eq(hc))
+      val holder: UserAnswers = requestCaptor.getValue
       holder.contactAddressDetails shouldBe Some(addressDetails.copy(postcode = None))
     }
   }

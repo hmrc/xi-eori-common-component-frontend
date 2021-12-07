@@ -69,7 +69,7 @@ class UserAnswersCache @Inject() (sessionCache: SessionCache)(implicit ec: Execu
 
   def cacheContactAddressDetails(address: AddressViewModel)(implicit hc: HeaderCarrier): Future[Boolean] = {
     def noneForEmptyPostcode(a: AddressViewModel) = a.copy(postcode = a.postcode.filter(_.nonEmpty))
-    saveRegistrationDetails(sd => sd.copy(contactAddressDetails = Some(noneForEmptyPostcode(address))))
+    saveUserAnswers(sd => sd.copy(contactAddressDetails = Some(noneForEmptyPostcode(address))))
   }
 
   def getAddressDetails()(implicit hc: HeaderCarrier): Future[Option[AddressViewModel]] =

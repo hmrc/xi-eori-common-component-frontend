@@ -33,14 +33,14 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ContactAddressResultController @Inject() (
-                                                 authAction: AuthAction,
-                                                 mcc: MessagesControllerComponents,
-                                                 addressLookupConnector: AddressLookupConnector,
-                                                 sessionCache: SessionCache,
-                                                 userAnswersCache: UserAnswersCache,
-                                                 contactAddressResultsView: contact_address_results
-                                               )(implicit ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport {
+  authAction: AuthAction,
+  mcc: MessagesControllerComponents,
+  addressLookupConnector: AddressLookupConnector,
+  sessionCache: SessionCache,
+  userAnswersCache: UserAnswersCache,
+  contactAddressResultsView: contact_address_results
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
@@ -76,8 +76,8 @@ class ContactAddressResultController @Inject() (
     }
 
   private def fetchAddressWithoutLine1(
-                                        addressLookupParams: ContactAddressLookup
-                                      )(implicit request: Request[AnyContent], hc: HeaderCarrier): Future[Result] = {
+    addressLookupParams: ContactAddressLookup
+  )(implicit request: Request[AnyContent], hc: HeaderCarrier): Future[Result] = {
     val addressLookupParamsWithoutLine1 = ContactAddressLookup(addressLookupParams.postcode, None)
 
     addressLookupConnector.lookup(addressLookupParamsWithoutLine1.postcode, None).flatMap {
@@ -107,12 +107,14 @@ class ContactAddressResultController @Inject() (
 
               PBEAddressResultsFormProvider.form(addressesView).bindFromRequest.fold(
                 formWithErrors =>
-                  Future.successful(BadRequest(contactAddressResultsView(formWithErrors, addressLookupParams, addresses))),
+                  Future.successful(
+                    BadRequest(contactAddressResultsView(formWithErrors, addressLookupParams, addresses))
+                  ),
                 validAnswer => {
                   val address = addressesMap(validAnswer.address).toAddressViewModel
                   userAnswersCache.cacheContactAddressDetails(address).map { _ =>
                     Redirect(
-                      uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEConfirmAddressController.onPageLoad()
+                      uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressLookupController.onPageLoad()
                     )
                   }
                 }
