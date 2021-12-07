@@ -464,3 +464,13 @@ contact-address-lookup.postcode.required=Enter postcode
 contact-address-lookup.postcode.line1.error=Property name or number cannot have more than 35 characters
 contact-address-lookup.postcode.format.invalid=Enter a valid postcode
 contact-address-lookup.page.address-outside-uk=Contact address is outside the UK
+
+#contact-address-results
+contact-address-results.page.title=What is your XI EORI application contact address?
+contact-address-results.postcode.address.label= Select your address
+contact-address-results.page.cannot-find-address= I can''t find my address in the list
+contact-address-results.page.postcode.label=Postcode
+contact-address-results.page.property-name.label= Property name or number
+contact-address-results.page.address.required= Select your address from the list
+contact-address-results.page.property-name.not-known= Not known
+contact-address-results.postcode.address.hint= Choose your address below
