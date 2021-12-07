@@ -52,4 +52,12 @@ class AddressLookupErrorController @Inject() (
 
     }
 
+  def displayNoContactAddressResultsPage(): Action[AnyContent] =
+    authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => _: LoggedInUserWithEnrolments =>
+      sessionCache.contactAddressParams.map {
+        case Some(addressLookupParams) => Ok(addressLookupNoResultsPage(addressLookupParams.postcode))
+        case _                         => Redirect(routes.ContactAddressLookupController.onPageLoad())
+      }
+    }
+
 }

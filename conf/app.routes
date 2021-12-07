@@ -74,6 +74,7 @@ GET         /address-unavailable                @uk.gov.hmrc.xieoricommoncompone
 
 # address-lookup-error-no-results
 GET         /address-no-results                 @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.AddressLookupErrorController.displayNoResultsPage
+GET         /contact-address-no-results                 @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.AddressLookupErrorController.displayNoContactAddressResultsPage()
 
 
 #register
@@ -82,3 +83,7 @@ GET        /register                 @uk.gov.hmrc.xieoricommoncomponentfrontend.
 #contact-address-lookup
 GET        /contact-postcode                     @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ContactAddressLookupController.onPageLoad
 POST       /contact-postcode                     @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ContactAddressLookupController.submit
+
+#contact-address-results
+GET        /contact-address-match                             @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ContactAddressResultController.onPageLoad
+POST       /contact-address-match                             @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ContactAddressResultController.submit

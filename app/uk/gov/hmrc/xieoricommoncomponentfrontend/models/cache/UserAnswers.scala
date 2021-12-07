@@ -27,7 +27,8 @@ case class UserAnswers(
   personalDataDisclosureConsent: Option[Boolean] = None,
   sicCode: Option[String] = None,
   havePBEInNI: Option[Boolean] = None,
-  addressDetails: Option[AddressViewModel] = None
+  addressDetails: Option[AddressViewModel] = None,
+  contactAddressDetails: Option[AddressViewModel] = None
 )
 
 object UserAnswers {
