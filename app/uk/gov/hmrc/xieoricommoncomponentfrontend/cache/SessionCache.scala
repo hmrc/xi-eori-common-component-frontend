@@ -28,7 +28,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.Eori
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.{SubscriptionDisplayMongo, UserAnswers}
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.{ContactAddressLookup, PBEAddressLookup}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,7 +38,8 @@ sealed case class CachedData(
   eori: Option[String] = None,
   subscriptionDisplay: Option[SubscriptionDisplayMongo] = None,
   addressLookupParams: Option[PBEAddressLookup] = None,
-  userAnswers: Option[UserAnswers] = None
+  userAnswers: Option[UserAnswers] = None,
+  contactAddressParams: Option[ContactAddressLookup] = None
 ) {
 
   def subscriptionDisplayMongo(): Option[SubscriptionDisplayResponseDetail] =
@@ -67,6 +68,7 @@ object CachedData {
   val eoriKey                              = "eori"
   val subscriptionDisplayKey               = "subscriptionDisplay"
   val addressLookupParamsKey               = "addressLookupParams"
+  val contactAddressParamsKey              = "contactAddressParams"
   val userAnswersKey                       = "userAnswers"
   val addressLookupResultsKey              = "addressLookupResult"
   implicit val format: OFormat[CachedData] = Json.format[CachedData]
@@ -102,6 +104,11 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
   def saveAddressLookupParams(addressLookupParams: PBEAddressLookup)(implicit hc: HeaderCarrier): Future[Boolean] =
     createOrUpdate(sessionId, addressLookupParamsKey, Json.toJson(addressLookupParams)).map(_ => true)
 
+  def saveContactAddressParams(
+    contactAddressParams: ContactAddressLookup
+  )(implicit hc: HeaderCarrier): Future[Boolean] =
+    createOrUpdate(sessionId, contactAddressParamsKey, Json.toJson(contactAddressParams)).map(_ => true)
+
   def saveUserAnswers(rdh: UserAnswers)(implicit hc: HeaderCarrier): Future[Boolean] =
     createOrUpdate(sessionId, userAnswersKey, Json.toJson(rdh)) map (_ => true)
 
@@ -134,6 +141,9 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
   def addressLookupParams(implicit hc: HeaderCarrier): Future[Option[PBEAddressLookup]] =
     getCached[Option[PBEAddressLookup]](sessionId, (cachedData, _) => cachedData.addressLookupParams)
 
+  def contactAddressParams(implicit hc: HeaderCarrier): Future[Option[ContactAddressLookup]] =
+    getCached[Option[ContactAddressLookup]](sessionId, (cachedData, _) => cachedData.contactAddressParams)
+
   def userAnswers(implicit hc: HeaderCarrier): Future[UserAnswers] =
     getCached[UserAnswers](sessionId, (cachedData, _) => cachedData.getUserAnswers)
 
@@ -142,6 +152,9 @@ class SessionCache @Inject() (appConfig: AppConfig, mongo: ReactiveMongoComponen
 
   def clearAddressLookupParams(implicit hc: HeaderCarrier): Future[Unit] =
     createOrUpdate(sessionId, addressLookupParamsKey, Json.toJson(PBEAddressLookup("", None))).map(_ => ())
+
+  def clearContactAddressParams(implicit hc: HeaderCarrier): Future[Unit] =
+    createOrUpdate(sessionId, contactAddressParamsKey, Json.toJson(ContactAddressLookup("", None))).map(_ => ())
 
 }
 
