@@ -79,7 +79,7 @@ class GroupEnrolmentExtractorSpec extends BaseSpec with BeforeAndAfterEach {
         val enrolments = Set(Enrolment("HMRC-CUS-ORG").withIdentifier("EORINumber", eori.id))
         val result     = await(groupEnrolmentExtractor.existingEoriForGroup(loggedInUser(enrolments))(hc))
 
-        result shouldBe Some(eori.id)
+        result shouldBe Some(eori)
       }
 
     }
