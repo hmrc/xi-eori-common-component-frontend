@@ -47,17 +47,17 @@ languageUtils: LanguageUtils
     }
 }
 @addressHtml(address: ContactAddressViewModel) = {
-  @p(Html(address.streetAndNumber),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0")
-  @p(Html(address.city),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0")
-  @p(Html(address.postalCode),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0")
-  @p(Html(transformCountryCodeToOptionalLabel(Some(address.countryCode))))
+  @p(Html(address.streetAndNumber),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0 address-street")
+  @p(Html(address.city),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0 address-city")
+  @p(Html(address.postalCode),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0 address-post-code")
+  @p(Html(transformCountryCodeToOptionalLabel(Some(address.countryCode))),classes="address-country")
 }
 
 <div id="contact-details">
     @govukSummaryList(SummaryList(
         rows = Seq(Some(SummaryListRow(
             key = Key(content = Text(messages("confirm-contact-details.full-name")),classes = "govuk-!-width-one-half name"),
-            value = Value(content = HtmlContent(Html(viewModel.fullName))),
+            value = Value(content = HtmlContent(Html(viewModel.fullName)), classes = "name-value"),
             actions = Some(Actions(
                 items = Seq(
                     ActionItem(
@@ -71,7 +71,7 @@ languageUtils: LanguageUtils
         )),
         Some(SummaryListRow(
             key = Key(content = Text(messages("confirm-contact-details.email")),classes = "govuk-!-width-one-half email"),
-            value = Value(content = HtmlContent(Html(viewModel.email))),
+            value = Value(content = HtmlContent(Html(viewModel.email)), classes = "email-value"),
             actions = Some(Actions(
                 items = Seq(
                     ActionItem(
@@ -85,7 +85,7 @@ languageUtils: LanguageUtils
         )),
         Some(SummaryListRow(
             key = Key(content = Text(messages("confirm-contact-details.phone")),classes = "govuk-!-width-one-half phone"),
-            value = Value(content = HtmlContent(Html(viewModel.telephoneNumber))),
+            value = Value(content = HtmlContent(Html(viewModel.telephoneNumber)), classes = "phone-value"),
             actions = Some(Actions(
                 items = Seq(
                     ActionItem(
@@ -99,7 +99,7 @@ languageUtils: LanguageUtils
         )),
         Some(SummaryListRow(
             key = Key(content = Text(messages("confirm-contact-details.address")),classes = "govuk-!-width-one-half address"),
-            value = Value(content = HtmlContent(addressHtml(viewModel.contactAddressViewModel))),
+            value = Value(content = HtmlContent(addressHtml(viewModel.contactAddressViewModel)), classes = "address-value"),
             actions = Some(Actions(
                 items = Seq(
                     ActionItem(

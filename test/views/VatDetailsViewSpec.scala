@@ -26,7 +26,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewMo
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.components.vat_details
 import util.{SpecData, ViewSpec}
 
-class vatDetailsViewSpec extends ViewSpec with SpecData{
+class VatDetailsViewSpec extends ViewSpec with SpecData {
 
   private implicit val request: Request[AnyContentAsEmpty.type] = withFakeCSRF(fakeRegisterRequest)
 

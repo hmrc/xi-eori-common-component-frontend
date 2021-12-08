@@ -22,7 +22,7 @@ import org.scalatest.{BeforeAndAfter, Matchers, WordSpec}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.{await, defaultAwaitTimeout, running}
-import play.api.{Application, inject}
+import play.api.{inject, Application}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.SubscriptionDisplayConnector
@@ -32,7 +32,8 @@ import util.SpecData
 
 import scala.concurrent.Future
 
-class SubscriptionDisplayServiceSpec extends WordSpec with BeforeAndAfter with MockitoSugar with Matchers with SpecData{
+class SubscriptionDisplayServiceSpec
+    extends WordSpec with BeforeAndAfter with MockitoSugar with Matchers with SpecData {
 
   private val mockSubscriptionDisplayConnector =
     mock[SubscriptionDisplayConnector]

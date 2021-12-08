@@ -24,9 +24,15 @@ import uk.gov.hmrc.mongo.{MongoConnector, MongoSpecSupport}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.{CachedData, SessionCache}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.Eori
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail.ContactInformation
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.UserAnswers
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, SubscriptionDisplayResponseDetail, SubscriptionInfoVatId, XiSubscription}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
+  EstablishmentAddress,
+  SubscriptionDisplayResponseDetail,
+  SubscriptionInfoVatId,
+  XiSubscription
+}
 
 import java.time.LocalDate
 import java.util.UUID
@@ -39,23 +45,34 @@ class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoS
   private val reactiveMongoComponent = new ReactiveMongoComponent {
     override def mongoConnector: MongoConnector = mongoConnectorForTest
   }
+
   val sessionCache = new SessionCache(appConfig, reactiveMongoComponent)
 
-  val hc: HeaderCarrier = mock[HeaderCarrier]
+  val hc: HeaderCarrier              = mock[HeaderCarrier]
   val xiSubscription: XiSubscription = XiSubscription("XI8989989797", Some("7978"))
+
   val subscriptionDisplay: SubscriptionDisplayResponseDetail = SubscriptionDisplayResponseDetail(
     Some("EN123456789012345"),
     "John Doe",
     EstablishmentAddress("house no Line 1", "city name", Some("SE28 1AA"), "ZZ"),
     Some(
-      List(SubscriptionInfoVatId(Some("GB"), Some("999999")), SubscriptionInfoVatId(Some("ES"), Some("888888")))
+      ContactInformation(
+        personOfContact = Some("FirstName LastName"),
+        telephoneNumber = Some("1234567890"),
+        emailAddress = Some("test@example.com"),
+        streetAndNumber = Some("line 1"),
+        city = Some("Newcastle"),
+        postalCode = Some("AA1 1AA"),
+        countryCode = Some("GB")
+      )
     ),
+    Some(List(SubscriptionInfoVatId(Some("GB"), Some("999999")), SubscriptionInfoVatId(Some("ES"), Some("888888")))),
     Some("Doe"),
     Some(LocalDate.of(1963, 4, 1)),
     Some(xiSubscription)
   )
-  val userAnswers: UserAnswers = UserAnswers(Some(true),Some(true),None,None,None,Some("99976"),Some(true),None)
 
+  val userAnswers: UserAnswers = UserAnswers(Some(true), Some(true), None, None, None, Some("99976"), Some(true), None)
 
   val addressLookupParams: PBEAddressLookup = PBEAddressLookup("SE28 1AA", None)
 
@@ -66,8 +83,6 @@ class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoS
     "store, fetch and update Subscription Display details correctly" in {
       val sessionId: SessionId = setupSession
 
-
-
       await(sessionCache.saveSubscriptionDisplay(subscriptionDisplay)(hc))
 
       val expectedJson                     = toJson(CachedData(subscriptionDisplay = Some(subscriptionDisplay.toSubscriptionDisplayMongo)))
@@ -77,10 +92,8 @@ class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoS
 
       await(sessionCache.subscriptionDisplay(hc)) mustBe Some(subscriptionDisplay)
 
-      val updatedHolder = subscriptionDisplay.copy(
-        shortName = Some("different business name"),
-        CDSFullName = "Full Name"
-      )
+      val updatedHolder =
+        subscriptionDisplay.copy(shortName = Some("different business name"), CDSFullName = "Full Name")
 
       await(sessionCache.saveSubscriptionDisplay(updatedHolder)(hc))
 
@@ -89,7 +102,6 @@ class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoS
       val Some(Cache(_, Some(updatedJson), _, _)) = updatedCache
       updatedJson mustBe expectedUpdatedJson
     }
-
 
     "store, fetch and update Eori details correctly" in {
       val sessionId: SessionId = setupSession
@@ -116,8 +128,6 @@ class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoS
     "store, fetch and update Address Lookup param details correctly" in {
       val sessionId: SessionId = setupSession
 
-
-
       await(sessionCache.saveAddressLookupParams(addressLookupParams)(hc))
 
       val expectedJson                     = toJson(CachedData(addressLookupParams = Some(addressLookupParams)))
@@ -127,10 +137,7 @@ class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoS
 
       await(sessionCache.addressLookupParams(hc)) mustBe Some(addressLookupParams)
 
-      val updatedHolder = addressLookupParams.copy(
-        postcode = "SE28 1AC",
-        line1 = Some("line1")
-      )
+      val updatedHolder = addressLookupParams.copy(postcode = "SE28 1AC", line1 = Some("line1"))
 
       await(sessionCache.saveAddressLookupParams(updatedHolder)(hc))
 
@@ -158,11 +165,7 @@ class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoS
 
     "return None when subscription display details holder not in cache" in {
       val s = setupSession
-      await(
-        sessionCache.insert(
-          Cache(Id(s.value), data = Some(toJson(CachedData(eori = Some(eori.id)))))
-        )
-      )
+      await(sessionCache.insert(Cache(Id(s.value), data = Some(toJson(CachedData(eori = Some(eori.id)))))))
 
       await(sessionCache.subscriptionDisplay(hc)) mustBe None
     }
@@ -178,19 +181,13 @@ class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoS
 
     "provide default when registration details holder not in cache" in {
       val s = setupSession
-      await(
-        sessionCache.insert(
-          Cache(Id(s.value), data = Some(toJson(CachedData(eori = Some(eori.id)))))
-        )
-      )
+      await(sessionCache.insert(Cache(Id(s.value), data = Some(toJson(CachedData(eori = Some(eori.id)))))))
 
       await(sessionCache.userAnswers(hc)) mustBe UserAnswers(None)
     }
 
     "store, fetch and update Registration details correctly" in {
       val sessionId: SessionId = setupSession
-
-
 
       await(sessionCache.saveUserAnswers(userAnswers)(hc))
 
@@ -201,10 +198,8 @@ class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoS
 
       await(sessionCache.userAnswers(hc)) mustBe userAnswers
 
-      val updatedHolder = userAnswers.copy(
-        confirmDetails = Some("changeDetails"),
-        personalDataDisclosureConsent = Some(true)
-      )
+      val updatedHolder =
+        userAnswers.copy(confirmDetails = Some("changeDetails"), personalDataDisclosureConsent = Some(true))
 
       await(sessionCache.saveUserAnswers(updatedHolder)(hc))
 
@@ -214,7 +209,7 @@ class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoS
       updatedJson mustBe expectedUpdatedJson
     }
 
-    }
+  }
 
   private def setupSession: SessionId = {
     val sessionId = SessionId("sessionId-" + UUID.randomUUID())

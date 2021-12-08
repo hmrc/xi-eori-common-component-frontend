@@ -61,19 +61,19 @@ case class SubscriptionDisplayResponseDetail(
 object SubscriptionDisplayResponseDetail {
 
   case class ContactInformation(
-                                 personOfContact: Option[String],
-                                 telephoneNumber: Option[String],
-                                 emailAddress: Option[String],
-                                 streetAndNumber: Option[String],
-                                 city: Option[String],
-                                 postalCode: Option[String],
-                                 countryCode: Option[String]
-                               )
+    personOfContact: Option[String],
+    telephoneNumber: Option[String],
+    emailAddress: Option[String],
+    streetAndNumber: Option[String],
+    city: Option[String],
+    postalCode: Option[String],
+    countryCode: Option[String]
+  )
 
-  implicit val addressFormat: OFormat[EstablishmentAddress]  = Json.format[EstablishmentAddress]
-  implicit val vatFormat: OFormat[SubscriptionInfoVatId]     = Json.format[SubscriptionInfoVatId]
-  implicit val xiSubscriptionFormat: OFormat[XiSubscription] = Json.format[XiSubscription]
-  implicit val contactInformationFormat: OFormat[ContactInformation]  = Json.format[ContactInformation]
+  implicit val addressFormat: OFormat[EstablishmentAddress]          = Json.format[EstablishmentAddress]
+  implicit val vatFormat: OFormat[SubscriptionInfoVatId]             = Json.format[SubscriptionInfoVatId]
+  implicit val xiSubscriptionFormat: OFormat[XiSubscription]         = Json.format[XiSubscription]
+  implicit val contactInformationFormat: OFormat[ContactInformation] = Json.format[ContactInformation]
 
   implicit val subscriptionDisplayReads: Reads[SubscriptionDisplayResponseDetail] = (
     (JsPath \ "subscriptionDisplayResponse" \ "responseDetail" \ "EORINo").readNullable[String] and

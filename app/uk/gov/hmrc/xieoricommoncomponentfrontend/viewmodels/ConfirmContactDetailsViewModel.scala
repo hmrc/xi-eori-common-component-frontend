@@ -18,17 +18,23 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels
 
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail.ContactInformation
 
-case class ConfirmContactDetailsViewModel(fullName:String, telephoneNumber: String, email: String, contactAddressViewModel: ContactAddressViewModel)
+case class ConfirmContactDetailsViewModel(
+  fullName: String,
+  telephoneNumber: String,
+  email: String,
+  contactAddressViewModel: ContactAddressViewModel
+)
 
 case class ContactAddressViewModel(streetAndNumber: String, city: String, postalCode: String, countryCode: String)
 
-object ConfirmContactDetailsViewModel{
+object ConfirmContactDetailsViewModel {
+
   def apply(contactInformation: ContactInformation): ConfirmContactDetailsViewModel = {
     val address = ContactAddressViewModel(
       contactInformation.streetAndNumber.getOrElse(""),
       contactInformation.city.getOrElse(""),
       contactInformation.postalCode.getOrElse(""),
-      contactInformation.countryCode.getOrElse(""),
+      contactInformation.countryCode.getOrElse("")
     )
     ConfirmContactDetailsViewModel(
       contactInformation.personOfContact.getOrElse(""),
@@ -37,4 +43,5 @@ object ConfirmContactDetailsViewModel{
       address
     )
   }
+
 }

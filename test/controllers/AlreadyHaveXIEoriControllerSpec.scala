@@ -26,9 +26,7 @@ import util.{BaseSpec, SpecData}
 
 import scala.concurrent.Future
 
-class AlreadyHaveXIEoriControllerSpec extends BaseSpec with SpecData{
-
-
+class AlreadyHaveXIEoriControllerSpec extends BaseSpec with SpecData {
 
   "AlreadyHaveXIEori controller" should {
     "return OK and the correct view for a GET" in {

@@ -47,7 +47,7 @@ class ConfirmContactDetailsController @Inject() (
         sessionCache.subscriptionDisplay.flatMap {
           case Some(subscriptionDisplay) =>
             subscriptionDisplay.contactInformation.map(populateView(_))
-              .getOrElse(Future.successful(NotImplemented))
+              .getOrElse(Future.successful(Redirect("/")))
           case None =>
             Future.successful(
               Redirect(
@@ -61,4 +61,5 @@ class ConfirmContactDetailsController @Inject() (
     contactInformation: ContactInformation
   )(implicit hc: HeaderCarrier, request: Request[AnyContent]): Future[Result] =
     Future.successful(Ok(confirmContactDetailsView(ConfirmContactDetailsViewModel(contactInformation))))
+
 }

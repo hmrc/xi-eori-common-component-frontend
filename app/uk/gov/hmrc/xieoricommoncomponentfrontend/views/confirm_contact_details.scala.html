@@ -32,12 +32,13 @@ contactDetails: components.contact_details
 @main_template(title) {
     @h1(title)
 
-    <p id="contact-details-hint" class="govuk-hint">@messages("confirm-contact-details.hint")</p>
+    <p id="confirm-contact-details-hint" class="govuk-hint">@messages("confirm-contact-details.hint")</p>
 
     @contactDetails(viewModel)
 
     @govukButton(Button(
-        content = Text(messages("ecc.navigation.continue"))
+        content = Text(messages("ecc.navigation.continue")),
+        classes = "continue-button"
     ))
 
     @helpers.helpAndSupport()

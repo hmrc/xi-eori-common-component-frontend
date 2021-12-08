@@ -18,7 +18,12 @@ package util
 
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, Eori, KeyValue}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail.ContactInformation
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, SubscriptionDisplayResponseDetail, SubscriptionInfoVatId, XiSubscription}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
+  EstablishmentAddress,
+  SubscriptionDisplayResponseDetail,
+  SubscriptionInfoVatId,
+  XiSubscription
+}
 
 import java.time.LocalDate
 
@@ -56,11 +61,14 @@ trait SpecData {
     CDSFullName = "FirstName LastName",
     CDSEstablishmentAddress = establishmentAddress,
     contactInformation = Some(contactInformation),
-    VATIDs =     Some(List(SubscriptionInfoVatId(Some("GB"), Some("999999")), SubscriptionInfoVatId(Some("ES"), Some("888888")))),
+    VATIDs =
+      Some(List(SubscriptionInfoVatId(Some("GB"), Some("999999")), SubscriptionInfoVatId(Some("ES"), Some("888888")))),
     shortName = Some("Short Name"),
     dateOfEstablishment = Some(LocalDate.now()),
     XI_Subscription = Some(xiSubscription)
   )
 
-  def nonNiSubscriptionDisplayResponse: SubscriptionDisplayResponseDetail = subscriptionDisplayResponse.copy(CDSEstablishmentAddress = nonNiEstablishmentAddress)
+  def nonNiSubscriptionDisplayResponse: SubscriptionDisplayResponseDetail =
+    subscriptionDisplayResponse.copy(CDSEstablishmentAddress = nonNiEstablishmentAddress)
+
 }
