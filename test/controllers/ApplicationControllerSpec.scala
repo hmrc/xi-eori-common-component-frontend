@@ -20,53 +20,22 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
-import play.api.{inject, Application}
+import play.api.{Application, inject}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.{SessionCache, UserAnswersCache}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
-import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, Eori, KeyValue}
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
-  EstablishmentAddress,
-  ServiceUnavailableResponse,
-  SubscriptionDisplayResponseDetail,
-  XiSubscription
-}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.ServiceUnavailableResponse
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.SubscriptionDisplayService
-import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
+import util.{BaseSpec, SpecData}
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
-class ApplicationControllerSpec extends BaseSpec {
+class ApplicationControllerSpec extends BaseSpec with SpecData{
 
   val subscriptionDisplayService: SubscriptionDisplayService = mock[SubscriptionDisplayService]
   val mockGroupEnrolmentExtractor: GroupEnrolmentExtractor   = mock[GroupEnrolmentExtractor]
-
-  val establishmentAddress: EstablishmentAddress = EstablishmentAddress(
-    streetAndNumber = "line1",
-    city = "City name",
-    postalCode = Some("SE28 1AA"),
-    countryCode = "GB"
-  )
-
-  val xiSubscription: XiSubscription = XiSubscription("XI8989989797", None)
-
-  val subscriptionDisplayResponse: SubscriptionDisplayResponseDetail = SubscriptionDisplayResponseDetail(
-    EORINo = Some("GB123456789012"),
-    CDSFullName = "FirstName LastName",
-    CDSEstablishmentAddress = establishmentAddress,
-    VATIDs = None,
-    shortName = Some("Short Name"),
-    dateOfEstablishment = Some(LocalDate.now()),
-    XI_Subscription = Some(xiSubscription)
-  )
-
-  val groupEnrolment =
-    List(EnrolmentResponse("HMRC-ATAR-ORG", "Activated", List(KeyValue("EORINumber", "GB123456463324"))))
-
-  val existingEori: Option[Eori] = Some(Eori("XIE9XSDF10BCKEYAX"))
 
   override def application: Application = new GuiceApplicationBuilder().overrides(
     inject.bind[AuthConnector].to(mockAuthConnector),

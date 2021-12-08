@@ -21,34 +21,15 @@ import org.jsoup.nodes.Document
 import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.Helpers.contentAsString
 import uk.gov.hmrc.auth.core.AffinityGroup
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
-  EstablishmentAddress,
-  SubscriptionDisplayResponseDetail,
-  SubscriptionInfoVatId,
-  XiSubscription
-}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewModel
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.components.company_details
-import util.ViewSpec
+import util.{SpecData, ViewSpec}
 
-import java.time.LocalDate
-
-class CompanyDetailsViewSpec extends ViewSpec {
+class CompanyDetailsViewSpec extends ViewSpec with SpecData{
 
   private implicit val request: Request[AnyContentAsEmpty.type] = withFakeCSRF(fakeRegisterRequest)
-  val xiSubscription: XiSubscription                            = XiSubscription("XI8989989797", Some("7978"))
 
-  private val response = SubscriptionDisplayResponseDetail(
-    Some("EN123456789012345"),
-    "John Doe",
-    EstablishmentAddress("house no Line 1", "city name", Some("SE28 1AA"), "ZZ"),
-    Some(List(SubscriptionInfoVatId(Some("GB"), Some("999999")), SubscriptionInfoVatId(Some("ES"), Some("888888")))),
-    Some("Doe"),
-    Some(LocalDate.of(1963, 4, 1)),
-    Some(xiSubscription)
-  )
-
-  private val viewModelOrganisation               = ConfirmDetailsViewModel(response, AffinityGroup.Organisation)
+  private val viewModelOrganisation               = ConfirmDetailsViewModel(subscriptionDisplayResponse, AffinityGroup.Organisation)
   private val viewModelIndividual                 = viewModelOrganisation.copy(affinityGroup = AffinityGroup.Individual)
   private val companyDetailsOrgView               = instanceOf[company_details].apply(viewModelOrganisation)
   private val companyDetailsIndView               = instanceOf[company_details].apply(viewModelIndividual)

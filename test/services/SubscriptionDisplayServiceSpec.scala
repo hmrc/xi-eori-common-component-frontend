@@ -22,23 +22,17 @@ import org.scalatest.{BeforeAndAfter, Matchers, WordSpec}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.{await, defaultAwaitTimeout, running}
-import play.api.{inject, Application}
+import play.api.{Application, inject}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.SubscriptionDisplayConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain._
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
-  EstablishmentAddress,
-  SubscriptionDisplayResponseDetail,
-  SubscriptionInfoVatId,
-  XiSubscription
-}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.SubscriptionDisplayService
+import util.SpecData
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
-class SubscriptionDisplayServiceSpec extends WordSpec with BeforeAndAfter with MockitoSugar with Matchers {
+class SubscriptionDisplayServiceSpec extends WordSpec with BeforeAndAfter with MockitoSugar with Matchers with SpecData{
 
   private val mockSubscriptionDisplayConnector =
     mock[SubscriptionDisplayConnector]
@@ -58,17 +52,6 @@ class SubscriptionDisplayServiceSpec extends WordSpec with BeforeAndAfter with M
   before {
     reset(mockSubscriptionDisplayConnector)
   }
-  val xiSubscription: XiSubscription = XiSubscription("XI8989989797", Some("7978"))
-
-  val subscriptionResponse: SubscriptionDisplayResponseDetail = SubscriptionDisplayResponseDetail(
-    Some("EN123456789012345"),
-    "John Doe",
-    EstablishmentAddress("house no Line 1", "city name", Some("SE28 1AA"), "ZZ"),
-    Some(List(SubscriptionInfoVatId(Some("GB"), Some("999999")), SubscriptionInfoVatId(Some("ES"), Some("888888")))),
-    Some("Doe"),
-    Some(LocalDate.of(1963, 4, 1)),
-    Some(xiSubscription)
-  )
 
   private val eori = Eori("GB123456789012")
 
@@ -78,7 +61,7 @@ class SubscriptionDisplayServiceSpec extends WordSpec with BeforeAndAfter with M
       when(
         mockSubscriptionDisplayConnector
           .call(any())(meq(headerCarrier))
-      ).thenReturn(Future.successful(Right(subscriptionResponse)))
+      ).thenReturn(Future.successful(Right(subscriptionDisplayResponse)))
       when(
         mockSessionCache
           .subscriptionDisplay(meq(headerCarrier))
@@ -89,7 +72,7 @@ class SubscriptionDisplayServiceSpec extends WordSpec with BeforeAndAfter with M
       ).thenReturn(Future.successful(true))
 
       running(application) {
-        await(service.getSubscriptionDisplay(eori.id)) shouldBe Right(subscriptionResponse)
+        await(service.getSubscriptionDisplay(eori.id)) shouldBe Right(subscriptionDisplayResponse)
 
         verify(mockSubscriptionDisplayConnector).call(any())(meq(headerCarrier))
 
@@ -100,14 +83,14 @@ class SubscriptionDisplayServiceSpec extends WordSpec with BeforeAndAfter with M
       when(
         mockSubscriptionDisplayConnector
           .call(any())(meq(headerCarrier))
-      ).thenReturn(Future.successful(Right(subscriptionResponse)))
+      ).thenReturn(Future.successful(Right(subscriptionDisplayResponse)))
       when(
         mockSessionCache
           .subscriptionDisplay(meq(headerCarrier))
-      ).thenReturn(Future.successful(Some(subscriptionResponse)))
+      ).thenReturn(Future.successful(Some(subscriptionDisplayResponse)))
 
       running(application) {
-        await(service.getSubscriptionDisplay(eori.id)) shouldBe Right(subscriptionResponse)
+        await(service.getSubscriptionDisplay(eori.id)) shouldBe Right(subscriptionDisplayResponse)
 
         verify(mockSubscriptionDisplayConnector, never()).call(any())(meq(headerCarrier))
 

@@ -49,6 +49,7 @@ sealed case class CachedData(
             resp.EORINo,
             resp.CDSFullName,
             resp.CDSEstablishmentAddress,
+            resp.contactInformation,
             resp.VATIDs,
             resp.shortName,
             resp.dateOfEstablishment,

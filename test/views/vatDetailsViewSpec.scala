@@ -21,41 +21,23 @@ import org.jsoup.nodes.Document
 import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.Helpers.contentAsString
 import uk.gov.hmrc.auth.core.AffinityGroup
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
-  EstablishmentAddress,
-  SubscriptionDisplayResponseDetail,
-  SubscriptionInfoVatId,
-  XiSubscription
-}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.XiSubscription
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewModel
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.components.vat_details
-import util.ViewSpec
+import util.{SpecData, ViewSpec}
 
-import java.time.LocalDate
-
-class vatDetailsViewSpec extends ViewSpec {
+class vatDetailsViewSpec extends ViewSpec with SpecData{
 
   private implicit val request: Request[AnyContentAsEmpty.type] = withFakeCSRF(fakeRegisterRequest)
 
-  val xiSubscriptionWithoutXIVat: XiSubscription =
-    XiSubscription("XI8989989797", None)
+  val xiSubscriptionWithoutXIVat: XiSubscription = xiSubscription.copy(XI_VATNumber = None)
 
-  val xiSubscriptionWithVat: XiSubscription = XiSubscription("XI8989989797", Some("123"))
-
-  private val response = SubscriptionDisplayResponseDetail(
-    Some("EN123456789012345"),
-    "John Doe",
-    EstablishmentAddress("house no Line 1", "city name", Some("SE28 1AA"), "ZZ"),
-    Some(List(SubscriptionInfoVatId(Some("GB"), Some("999999")), SubscriptionInfoVatId(Some("ES"), Some("888888")))),
-    Some("Doe"),
-    Some(LocalDate.of(1963, 4, 1)),
-    Some(xiSubscriptionWithoutXIVat)
-  )
+  private val response = subscriptionDisplayResponse.copy(XI_Subscription = Some(xiSubscriptionWithoutXIVat))
 
   private val viewWithoutXIVATModel = ConfirmDetailsViewModel(response, AffinityGroup.Organisation)
 
   private val viewWithXIVATModel =
-    ConfirmDetailsViewModel(response.copy(XI_Subscription = Some(xiSubscriptionWithVat)), AffinityGroup.Organisation)
+    ConfirmDetailsViewModel(response.copy(XI_Subscription = Some(xiSubscription)), AffinityGroup.Organisation)
 
   private val vatDetailsWithXIVATView             = instanceOf[vat_details].apply(viewWithXIVATModel, Some("123"))
   private val vatDetailsWithoutXIVATView          = instanceOf[vat_details].apply(viewWithoutXIVATModel, None)

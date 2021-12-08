@@ -23,37 +23,18 @@ import play.api.test.Helpers.contentAsString
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.ConfirmDetailsFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ConfirmDetails.confirmedDetails
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
-  EstablishmentAddress,
-  SubscriptionDisplayResponseDetail,
-  SubscriptionInfoVatId,
-  XiSubscription
-}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewModel
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.confirm_details
-import util.ViewSpec
+import util.{SpecData, ViewSpec}
 
-import java.time.LocalDate
-
-class ConfirmDetailsViewSpec extends ViewSpec {
+class ConfirmDetailsViewSpec extends ViewSpec with SpecData{
 
   private implicit val request: Request[AnyContentAsEmpty.type] = withFakeCSRF(fakeRegisterRequest)
   private val formProvider                                      = new ConfirmDetailsFormProvider().apply()
   private def form                                              = formProvider.bind(Map("value" -> confirmedDetails.toString))
   private def formWithError                                     = form.bind(Map("value" -> ""))
-  val xiSubscription: XiSubscription                            = XiSubscription("XI8989989797", Some("7978"))
 
-  private val response = SubscriptionDisplayResponseDetail(
-    Some("EN123456789012345"),
-    "John Doe",
-    EstablishmentAddress("house no Line 1", "city name", Some("SE28 1AA"), "ZZ"),
-    Some(List(SubscriptionInfoVatId(Some("GB"), Some("999999")), SubscriptionInfoVatId(Some("ES"), Some("888888")))),
-    Some("Doe"),
-    Some(LocalDate.of(1963, 4, 1)),
-    Some(xiSubscription)
-  )
-
-  private val viewModelOrganisation                     = ConfirmDetailsViewModel(response, AffinityGroup.Organisation)
+  private val viewModelOrganisation                     = ConfirmDetailsViewModel(subscriptionDisplayResponse, AffinityGroup.Organisation)
   private val confirmDetailsView                        = instanceOf[confirm_details].apply(form, viewModelOrganisation, None)
   private val confirmDetailsViewError                   = instanceOf[confirm_details].apply(formWithError, viewModelOrganisation, None)
   private lazy val confirmDetailsDoc: Document          = Jsoup.parse(contentAsString(confirmDetailsView))

@@ -1,0 +1,115 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.play.language.LanguageUtils
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html._
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmContactDetailsViewModel
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ContactAddressViewModel
+
+@this(govukSummaryList : GovukSummaryList,
+h2:components.h2,
+p: components.p,
+languageUtils: LanguageUtils
+)
+@(viewModel:ConfirmContactDetailsViewModel)(implicit messages: Messages)
+
+
+@country(countryCode: String) = @{
+    messages(messageKeyForEUCountryCode(countryCode))
+}
+
+@messageKeyForEUCountryCode(countryCode: String) = @{
+    s"ecc.country.$countryCode"
+}
+
+@isCountryCodeDefined(countryCode: String) = @{
+    messages.isDefinedAt(messageKeyForEUCountryCode(countryCode))
+}
+@transformCountryCodeToOptionalLabel(code: Option[String]) = @{
+    code match {
+        case Some("GB") => Some(messages("ecc.country.GB"))
+        case Some(c) if isCountryCodeDefined(c) => Some(country(c))
+        case _ => None
+    }
+}
+@addressHtml(address: ContactAddressViewModel) = {
+  @p(Html(address.streetAndNumber),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0")
+  @p(Html(address.city),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0")
+  @p(Html(address.postalCode),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0")
+  @p(Html(transformCountryCodeToOptionalLabel(Some(address.countryCode))))
+}
+
+<div id="contact-details">
+    @govukSummaryList(SummaryList(
+        rows = Seq(Some(SummaryListRow(
+            key = Key(content = Text(messages("confirm-contact-details.full-name")),classes = "govuk-!-width-one-half name"),
+            value = Value(content = HtmlContent(Html(viewModel.fullName))),
+            actions = Some(Actions(
+                items = Seq(
+                    ActionItem(
+                        href = "/",
+                        content = Text(messages("ecc.form.change")),
+                        visuallyHiddenText = Some(messages("ecc.form.change") + " " + messages("confirm-contact-details.full-name"))
+                    )
+                ),
+                classes = "name-change"
+            )),
+        )),
+        Some(SummaryListRow(
+            key = Key(content = Text(messages("confirm-contact-details.email")),classes = "govuk-!-width-one-half email"),
+            value = Value(content = HtmlContent(Html(viewModel.email))),
+            actions = Some(Actions(
+                items = Seq(
+                    ActionItem(
+                        href = "/",
+                        content = Text(messages("ecc.form.change")),
+                        visuallyHiddenText = Some(messages("ecc.form.change") + " " + messages("confirm-contact-details.email"))
+                    )
+                ),
+                classes = "email-change"
+            )),
+        )),
+        Some(SummaryListRow(
+            key = Key(content = Text(messages("confirm-contact-details.phone")),classes = "govuk-!-width-one-half phone"),
+            value = Value(content = HtmlContent(Html(viewModel.telephoneNumber))),
+            actions = Some(Actions(
+                items = Seq(
+                    ActionItem(
+                        href = "/",
+                        content = Text(messages("ecc.form.change")),
+                        visuallyHiddenText = Some(messages("ecc.form.change") + " " + messages("confirm-contact-details.phone"))
+                    )
+                ),
+                classes = "phone-change"
+            )),
+        )),
+        Some(SummaryListRow(
+            key = Key(content = Text(messages("confirm-contact-details.address")),classes = "govuk-!-width-one-half address"),
+            value = Value(content = HtmlContent(addressHtml(viewModel.contactAddressViewModel))),
+            actions = Some(Actions(
+                items = Seq(
+                    ActionItem(
+                        href = "/",
+                        content = Text(messages("ecc.form.change")),
+                        visuallyHiddenText = Some(messages("ecc.form.change") + " " + messages("confirm-contact-details.address"))
+                    )
+                ),
+                classes = "address-change"
+            )),
+        ))
+    ).flatten,"govuk-!-margin-bottom-9 govuk-summary-list--wide",attributes = Map("id"->"details")))
+</div>
