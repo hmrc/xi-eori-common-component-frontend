@@ -21,6 +21,7 @@
 @this(main_template: Layout,
 formHelper: FormWithCSRF,
 govukButton: GovukButton,
+govukHint: GovukHint,
 inputText: components.inputText,
 errorSummary: components.errorSummary,
 fieldSet: components.fieldSet)
@@ -39,10 +40,10 @@ fieldSet: components.fieldSet)
 
         @errorSummary(contactAddressLookupForm.errors)
         @fieldSet(title) {
-            <div id="page-hint" class="govuk-hint">
-                @Html(messages("contact-address-lookup.page.hint"))
-                <br/><br/>
-            </div>
+
+            @govukHint(Hint(content = Text(messages("contact-address-lookup.page.hint")),classes="govuk-!-margin-top-0 govuk-!-margin-bottom-5"))
+
+
             @inputText(
                 form = contactAddressLookupForm,
                 id = "postcode",
