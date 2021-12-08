@@ -47,15 +47,7 @@ class SubscriptionDisplayService @Inject() (
     sessionCache.subscriptionDisplay flatMap {
       case Some(value) if value.EORINo.isDefined => Future.successful(Right(value))
       case _ =>
-        subscriptionDisplayConnector.call(buildQueryParameters(gbEori)).flatMap {
-          case Right(resp) =>
-            sessionCache.saveSubscriptionDisplay(resp).map(_ => Right(resp))
-          case Left(_) =>
-            logger.debug("SubscriptionDisplay SUB09 call failed and details are not saved into cache")
-            Future.successful(Left(ServiceUnavailableResponse))
-
-        }
-
+        subscriptionDisplayConnector.call(buildQueryParameters(gbEori))
     }
 
 }

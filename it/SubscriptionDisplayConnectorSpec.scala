@@ -16,18 +16,25 @@
 
 import externalservices.ExternalServiceConfig.{Host, Port}
 import externalservices.SubscriptionDisplay
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
-import play.api.Application
+import org.scalatestplus.mockito.MockitoSugar.mock
+import play.api.{Application, inject}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.mvc.Http.Status.SERVICE_UNAVAILABLE
 import uk.gov.hmrc.http._
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.SubscriptionDisplayConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{ServiceUnavailableResponse, SubscriptionDisplayResponseDetail}
 
-class SubscriptionDisplayConnectorSpec extends IntegrationTestSpec with ScalaFutures {
+import scala.concurrent.Future
 
+class SubscriptionDisplayConnectorSpec extends IntegrationTestSpec with ScalaFutures {
+ val mockSessionCache = mock[SessionCache]
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
+    .overrides( inject.bind[SessionCache].to(mockSessionCache))
     .configure(
       Map(
         "microservxi-eori-common-componentice.services.xi-eori-common-component.host"                         -> Host,
@@ -65,8 +72,12 @@ class SubscriptionDisplayConnectorSpec extends IntegrationTestSpec with ScalaFut
     resetMockServer()
   }
 
-  override def beforeAll: Unit =
+  override def beforeAll: Unit = {
     startMockServer()
+    when(mockSessionCache.saveSubscriptionDisplay(any())(any()))
+      .thenReturn(Future.successful(true))
+
+  }
 
   override def afterAll: Unit =
     stopMockServer()

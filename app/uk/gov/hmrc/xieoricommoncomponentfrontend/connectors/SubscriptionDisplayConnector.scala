@@ -18,6 +18,7 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.connectors
 
 import play.api.Logger
 import uk.gov.hmrc.http.{HttpClient, _}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
   ErrorResponse,
@@ -30,7 +31,9 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
 @Singleton
-class SubscriptionDisplayConnector @Inject() (http: HttpClient, appConfig: AppConfig)(implicit ec: ExecutionContext) {
+class SubscriptionDisplayConnector @Inject() (http: HttpClient, appConfig: AppConfig, sessionCache: SessionCache)(
+  implicit ec: ExecutionContext
+) {
 
   private val logger = Logger(this.getClass)
 
@@ -45,11 +48,13 @@ class SubscriptionDisplayConnector @Inject() (http: HttpClient, appConfig: AppCo
     logger.debug(s"Call: $url , body: $sub09Request, and hc: $hc")
     // $COVERAGE-ON
 
-    http.GET[SubscriptionDisplayResponseDetail](url, sub09Request) map { resp =>
+    http.GET[SubscriptionDisplayResponseDetail](url, sub09Request) flatMap { resp =>
       // $COVERAGE-OFF$Loggers
       logger.debug("SubscriptionDisplay SUB09 details retrieved successfully")
       // $COVERAGE-ON
-      Right(resp)
+
+      sessionCache.saveSubscriptionDisplay(resp).map(_ => Right(resp))
+
     }
   } recover {
     case NonFatal(e) =>
