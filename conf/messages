@@ -460,3 +460,16 @@ confirm-contact-details.full-name=Contact full name
 confirm-contact-details.email=Contact email
 confirm-contact-details.phone=Contact phone
 confirm-contact-details.address=Contact address
+
+#contact-address-lookup
+contact-address-lookup.page.title=What is your XI EORI application contact address?
+contact-address-lookup.page.hint=This is the address we will use to contact you about your XI Eori application
+contact-address-lookup.postcode.label=Postcode
+contact-address-lookup.line1.label=Property name or number (optional)
+contact-address-lookup.line1.hint=For example, The Mill, 116 or Flat 37a
+contact-address-lookup.postcode.find-address=Find address
+contact-address-lookup.postcode.required=Enter postcode
+contact-address-lookup.postcode.line1.error=Property name or number cannot have more than 35 characters
+contact-address-lookup.postcode.format.invalid=Enter a valid postcode
+contact-address-lookup.page.address-outside-uk=Contact address is outside the UK
+
