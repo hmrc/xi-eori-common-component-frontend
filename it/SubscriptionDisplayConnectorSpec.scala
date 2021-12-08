@@ -32,7 +32,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{ServiceUnavailableRespo
 import scala.concurrent.Future
 
 class SubscriptionDisplayConnectorSpec extends IntegrationTestSpec with ScalaFutures {
- val mockSessionCache = mock[SessionCache]
+ val mockSessionCache: SessionCache = mock[SessionCache]
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .overrides( inject.bind[SessionCache].to(mockSessionCache))
     .configure(

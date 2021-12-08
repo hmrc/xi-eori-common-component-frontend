@@ -20,11 +20,7 @@ import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.SubscriptionDisplayConnector
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
-  ErrorResponse,
-  ServiceUnavailableResponse,
-  SubscriptionDisplayResponseDetail
-}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{ErrorResponse, SubscriptionDisplayResponseDetail}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.util.EoriUtils
 
 import javax.inject.{Inject, Singleton}
@@ -36,7 +32,6 @@ class SubscriptionDisplayService @Inject() (
   utils: EoriUtils,
   sessionCache: SessionCache
 )(implicit ec: ExecutionContext) {
-  private val logger = Logger(this.getClass)
 
   def buildQueryParameters(eori: String) =
     List("EORI" -> eori, "regime" -> "CDS", "acknowledgementReference" -> utils.generateUUIDAsString)

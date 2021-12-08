@@ -40,19 +40,20 @@ class AddressLookupErrorController @Inject() (
 
   def displayErrorPage(): Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => _: LoggedInUserWithEnrolments =>
-      Future.successful(Ok(addressLookupErrorPage(true)))
+      Future.successful(Ok(addressLookupErrorPage(isPBEAddressLookupFailed = true)))
     }
 
   def displayContactAddressErrorPage(): Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => _: LoggedInUserWithEnrolments =>
-      Future.successful(Ok(addressLookupErrorPage(false)))
+      Future.successful(Ok(addressLookupErrorPage(isPBEAddressLookupFailed = false)))
     }
 
   def displayNoResultsPage(): Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => _: LoggedInUserWithEnrolments =>
       sessionCache.addressLookupParams.map {
-        case Some(addressLookupParams) => Ok(addressLookupNoResultsPage(addressLookupParams.postcode, true))
-        case _                         => Ok(addressLookupNoResultsPage("", false))
+        case Some(addressLookupParams) =>
+          Ok(addressLookupNoResultsPage(addressLookupParams.postcode, isPBEAddresLookupFailed = true))
+        case _ => Ok(addressLookupNoResultsPage("", isPBEAddresLookupFailed = true))
       }
 
     }
@@ -60,8 +61,9 @@ class AddressLookupErrorController @Inject() (
   def displayNoContactAddressResultsPage(): Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => _: LoggedInUserWithEnrolments =>
       sessionCache.contactAddressParams.map {
-        case Some(addressLookupParams) => Ok(addressLookupNoResultsPage(addressLookupParams.postcode, false))
-        case _                         => Redirect(routes.ContactAddressLookupController.onPageLoad())
+        case Some(addressLookupParams) =>
+          Ok(addressLookupNoResultsPage(addressLookupParams.postcode, isPBEAddresLookupFailed = false))
+        case _ => Redirect(routes.ContactAddressLookupController.onPageLoad())
       }
     }
 

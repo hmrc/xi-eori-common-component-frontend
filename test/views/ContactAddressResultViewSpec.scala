@@ -22,8 +22,8 @@ import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.Helpers.contentAsString
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.AddressResultsFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.AddressLookup
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.{ContactAddressLookup, PBEAddressLookup}
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{contact_address_results, registered_address}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ContactAddressLookup
+import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.contact_address_results
 import util.ViewSpec
 
 class ContactAddressResultViewSpec extends ViewSpec {

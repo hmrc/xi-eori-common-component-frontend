@@ -29,8 +29,8 @@ class AddressLookupErrorViewSpec extends ViewSpec {
 
   implicit val request: Request[Any] = withFakeCSRF(fakeRegisterRequest)
 
-  private val doc: Document                = Jsoup.parse(contentAsString(view(true)))
-  private val contactAddressdDoc: Document = Jsoup.parse(contentAsString(view(false)))
+  private val doc: Document                = Jsoup.parse(contentAsString(view(isPBEAddressLookupFailed = true)))
+  private val contactAddressdDoc: Document = Jsoup.parse(contentAsString(view(isPBEAddressLookupFailed = false)))
 
   "Address lookup error page" should {
 

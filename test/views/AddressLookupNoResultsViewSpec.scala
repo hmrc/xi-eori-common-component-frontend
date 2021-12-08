@@ -31,8 +31,10 @@ class AddressLookupNoResultsViewSpec extends ViewSpec {
 
   private val postcode = "AA11 1AA"
 
-  private val doc: Document               = Jsoup.parse(contentAsString(view(postcode, true)))
-  private val contactAddressDoc: Document = Jsoup.parse(contentAsString(view(postcode, false)))
+  private val doc: Document = Jsoup.parse(contentAsString(view(postcode, isPBEAddresLookupFailed = true)))
+
+  private val contactAddressDoc: Document =
+    Jsoup.parse(contentAsString(view(postcode, isPBEAddresLookupFailed = false)))
 
   "Address lookup error page" should {
 
