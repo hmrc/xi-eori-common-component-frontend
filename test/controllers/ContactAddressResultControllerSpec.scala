@@ -18,7 +18,7 @@ package controllers
 
 import common.pages.RegistrationPage
 import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
@@ -35,7 +35,7 @@ import util.builders.SessionBuilder
 import scala.concurrent.Future
 
 class ContactAddressResultControllerSpec extends BaseSpec with BeforeAndAfterEach {
-  private val addressLookupParams        = ContactAddressLookup("postcode", None)
+  private val addressLookupParams        = ContactAddressLookup("postcode", Some("line1"))
   private val addressLookup              = AddressLookup("line1", "city", "postcode", "GB")
   private val mockAddressLookupConnector = mock[AddressLookupConnector]
 
@@ -70,7 +70,7 @@ class ContactAddressResultControllerSpec extends BaseSpec with BeforeAndAfterEac
 
         val page = RegistrationPage(contentAsString(result))
 
-        page.title should startWith("What is your permanent business establishment address?")
+        page.title should startWith("What is your XI EORI application contact address?")
       }
     }
 
@@ -228,8 +228,34 @@ class ContactAddressResultControllerSpec extends BaseSpec with BeforeAndAfterEac
 
         redirectLocation(
           result
-        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AddressLookupErrorController.displayErrorPage().url
+        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AddressLookupErrorController.displayContactAddressErrorPage().url
 
+      }
+    }
+
+    "verify address lookup is invoked while submit and return no results if address line1 is empty" in {
+      running(application) {
+        when(mockSessionCache.contactAddressParams(any())).thenReturn(Future.successful(Some(addressLookupParams)))
+        when(mockAddressLookupConnector.lookup(any(), any())(any()))
+          .thenReturn(Future.successful(AddressLookupSuccess(Seq(AddressLookup("", "city", "postcode", "GB")))))
+
+        when(mockUserAnswersCache.cacheContactAddressDetails(any())(any())).thenReturn(Future.successful(true))
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+
+        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
+          "POST",
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressResultController.submit().url,
+          defaultUserId,
+          Map("address" -> addressLookup.dropDownView)
+        )
+
+        val result = route(application, request).get
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(
+          result
+        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AddressLookupErrorController.displayNoContactAddressResultsPage().url
+
+        verify(mockAddressLookupConnector).lookup(any(), any())(any())
       }
     }
 

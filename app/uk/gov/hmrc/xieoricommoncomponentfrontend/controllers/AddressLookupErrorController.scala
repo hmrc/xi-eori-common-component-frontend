@@ -40,14 +40,19 @@ class AddressLookupErrorController @Inject() (
 
   def displayErrorPage(): Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => _: LoggedInUserWithEnrolments =>
-      Future.successful(Ok(addressLookupErrorPage()))
+      Future.successful(Ok(addressLookupErrorPage(true)))
+    }
+
+  def displayContactAddressErrorPage(): Action[AnyContent] =
+    authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => _: LoggedInUserWithEnrolments =>
+      Future.successful(Ok(addressLookupErrorPage(false)))
     }
 
   def displayNoResultsPage(): Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => _: LoggedInUserWithEnrolments =>
       sessionCache.addressLookupParams.map {
-        case Some(addressLookupParams) => Ok(addressLookupNoResultsPage(addressLookupParams.postcode))
-        case _                         => Ok(addressLookupNoResultsPage(""))
+        case Some(addressLookupParams) => Ok(addressLookupNoResultsPage(addressLookupParams.postcode, true))
+        case _                         => Ok(addressLookupNoResultsPage("", false))
       }
 
     }
@@ -55,7 +60,7 @@ class AddressLookupErrorController @Inject() (
   def displayNoContactAddressResultsPage(): Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => _: LoggedInUserWithEnrolments =>
       sessionCache.contactAddressParams.map {
-        case Some(addressLookupParams) => Ok(addressLookupNoResultsPage(addressLookupParams.postcode))
+        case Some(addressLookupParams) => Ok(addressLookupNoResultsPage(addressLookupParams.postcode, false))
         case _                         => Redirect(routes.ContactAddressLookupController.onPageLoad())
       }
     }

@@ -26,7 +26,7 @@ import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, KeyValue}
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.{ContactAddressLookup, PBEAddressLookup}
 import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
@@ -37,6 +37,7 @@ class AddressLookupErrorControllerSpec extends BaseSpec {
   val reenterXpath                                         = "//*[@id='reenter-postcode-button']"
   val mockGroupEnrolmentExtractor: GroupEnrolmentExtractor = mock[GroupEnrolmentExtractor]
   private val addressLookupParams                          = PBEAddressLookup("BT281AF", None)
+  private val contactAddressLookupParams                   = ContactAddressLookup("BT281AF", None)
 
   val groupEnrolment =
     List(EnrolmentResponse("HMRC-ATAR-ORG", "Activated", List(KeyValue("EORINumber", "GB123456463324"))))
@@ -76,6 +77,47 @@ class AddressLookupErrorControllerSpec extends BaseSpec {
 
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AddressLookupErrorController.displayNoResultsPage().url,
+          defaultUserId
+        )
+        val result = route(application, request).get
+        status(result) shouldBe OK
+
+        val page = RegistrationPage(contentAsString(result))
+
+        page.title should startWith("No address found")
+
+      }
+    }
+
+    "display Error page when contact address search fails" in {
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+
+        val request = SessionBuilder.buildRequestWithSessionAndPath(
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AddressLookupErrorController.displayContactAddressErrorPage().url,
+          defaultUserId
+        )
+        val result = route(application, request).get
+        status(result) shouldBe OK
+
+        val page = RegistrationPage(contentAsString(result))
+
+        page.title should startWith("We have a problem")
+
+      }
+    }
+
+    "display No Address Found page when contact address returns no results" in {
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+        when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
+          .thenReturn(Future.successful(groupEnrolment))
+        when(mockSessionCache.contactAddressParams(any())).thenReturn(
+          Future.successful(Some(contactAddressLookupParams))
+        )
+
+        val request = SessionBuilder.buildRequestWithSessionAndPath(
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AddressLookupErrorController.displayNoContactAddressResultsPage().url,
           defaultUserId
         )
         val result = route(application, request).get

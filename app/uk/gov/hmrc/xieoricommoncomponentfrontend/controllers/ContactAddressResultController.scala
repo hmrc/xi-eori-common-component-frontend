@@ -135,7 +135,7 @@ class ContactAddressResultController @Inject() (
 
   def displayErrorPage(): Result =
     Redirect(
-      uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AddressLookupErrorController.displayErrorPage()
+      uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AddressLookupErrorController.displayContactAddressErrorPage()
     )
 
   def displayNoResultsPage(): Result =

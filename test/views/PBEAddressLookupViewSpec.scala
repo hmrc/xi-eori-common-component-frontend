@@ -62,10 +62,5 @@ class PBEAddressLookupViewSpec extends ViewSpec {
       doc.body().getElementsByClass("govuk-button").text() mustBe "Find address"
     }
 
-    /*    "display error summary" in {
-
-      docWithErrorSummary.getElementById("error-summary-title").text() mustBe "There is a problem"
-      docWithErrorSummary.getElementsByClass("govuk-error-summary__list").get(0).text() mustBe "Enter a valid postcode"
-    }*/
   }
 }
