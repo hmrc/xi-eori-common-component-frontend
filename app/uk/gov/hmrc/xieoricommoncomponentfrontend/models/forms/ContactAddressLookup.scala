@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,12 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this()
+package uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms
 
-@(msg: String, id: Option[String] = None, classes: String = "")(implicit messages: Messages)
+import play.api.libs.json.Json
 
-<h1 @{id.fold("")(id => s"id=$id")} class="govuk-heading-l @classes">@messages(msg)</h1>
+case class ContactAddressLookup(postcode: String, line1: Option[String]) {
 
+  def isEmpty(): Boolean  = postcode == "" && line1.forall(_.isEmpty)
+  def nonEmpty(): Boolean = !isEmpty()
+}
 
+object ContactAddressLookup {
+  implicit val format = Json.format[ContactAddressLookup]
+}

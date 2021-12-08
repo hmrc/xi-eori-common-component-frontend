@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,12 +12,24 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this()
+package models.forms
 
-@(msg: String, id: Option[String] = None, classes: String = "")(implicit messages: Messages)
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ContactAddressLookup
+import util.BaseSpec
 
-<h1 @{id.fold("")(id => s"id=$id")} class="govuk-heading-l @classes">@messages(msg)</h1>
+class ContactAddressLookupSpec extends BaseSpec {
 
+  "PBE Address Lookup model" should {
 
+    "return true if the address is empty" in {
+
+      val addressLookup = ContactAddressLookup("", None)
+
+      addressLookup.isEmpty() shouldBe true
+      addressLookup.nonEmpty() shouldBe false
+    }
+
+  }
+}
