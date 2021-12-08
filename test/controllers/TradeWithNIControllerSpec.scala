@@ -54,8 +54,7 @@ class TradeWithNIControllerSpec extends BaseSpec {
         )
         when(mockUserAnswersCache.getTradeWithInNI()(any())).thenReturn(Future.successful(None))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad().url
         )
 
         val result = route(application, request).get
@@ -75,8 +74,7 @@ class TradeWithNIControllerSpec extends BaseSpec {
         )
         when(mockUserAnswersCache.getTradeWithInNI()(any())).thenReturn(Future.successful(None))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad().url
         )
 
         val result = route(application, request).get
@@ -92,8 +90,7 @@ class TradeWithNIControllerSpec extends BaseSpec {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockUserAnswersCache.getTradeWithInNI()(any())).thenReturn(Future.successful(Some(true)))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.onPageLoad().url
         )
 
         val result = route(application, request).get
@@ -109,10 +106,8 @@ class TradeWithNIControllerSpec extends BaseSpec {
           Future.successful(Some(data))
         )
         when(mockUserAnswersCache.cacheTradeWithNI(any())(any())).thenReturn(Future.successful(true))
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.submit().url,
-          defaultUserId,
           Map("value" -> TradeWithNI.values.head.toString)
         )
 
@@ -129,10 +124,8 @@ class TradeWithNIControllerSpec extends BaseSpec {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockUserAnswersCache.cacheTradeWithNI(any())(any())).thenReturn(Future.successful(true))
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.submit().url,
-          defaultUserId,
           Map("value" -> TradeWithNI.values.last.toString)
         )
 
@@ -150,10 +143,8 @@ class TradeWithNIControllerSpec extends BaseSpec {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.TradeWithNIController.submit().url,
-          defaultUserId,
           Map("value" -> "")
         )
 

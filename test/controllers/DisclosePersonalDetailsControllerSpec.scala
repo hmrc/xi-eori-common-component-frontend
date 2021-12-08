@@ -46,8 +46,7 @@ class DisclosePersonalDetailsControllerSpec extends BaseSpec {
         withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Organisation)
         when(mockUserAnswersCache.getPersonalDataDisclosureConsent()(any())).thenReturn(Future.successful(None))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.onPageLoad().url
         )
 
         val result = route(app, request).get
@@ -63,8 +62,7 @@ class DisclosePersonalDetailsControllerSpec extends BaseSpec {
         withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Organisation)
         when(mockUserAnswersCache.getPersonalDataDisclosureConsent()(any())).thenReturn(Future.successful(Some(true)))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.onPageLoad().url
         )
 
         val result = route(app, request).get
@@ -81,10 +79,8 @@ class DisclosePersonalDetailsControllerSpec extends BaseSpec {
         when(mockUserAnswersCache.cacheConsentToDisclosePersonalDetails(any())(any())).thenReturn(
           Future.successful(true)
         )
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.submit().url,
-          defaultUserId,
           Map("value" -> DisclosePersonalDetails.values.head.toString)
         )
 
@@ -101,10 +97,8 @@ class DisclosePersonalDetailsControllerSpec extends BaseSpec {
       running(app) {
         withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Individual)
 
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.submit().url,
-          defaultUserId,
           Map("value" -> DisclosePersonalDetails.values.head.toString)
         )
 
@@ -121,10 +115,8 @@ class DisclosePersonalDetailsControllerSpec extends BaseSpec {
       running(app) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.submit().url,
-          defaultUserId,
           Map("value" -> "")
         )
 

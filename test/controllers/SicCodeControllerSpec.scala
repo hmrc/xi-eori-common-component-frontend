@@ -50,8 +50,7 @@ class SicCodeControllerSpec extends BaseSpec with SpecData{
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockUserAnswersCache.getSicCode()(any())).thenReturn(Future.successful(None))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.onPageLoad().url
         )
 
         val result = route(application, request).get
@@ -66,8 +65,7 @@ class SicCodeControllerSpec extends BaseSpec with SpecData{
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockUserAnswersCache.getSicCode()(any())).thenReturn(Future.successful(Some("99987")))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.onPageLoad().url
         )
 
         val result = route(application, request).get
@@ -84,10 +82,8 @@ class SicCodeControllerSpec extends BaseSpec with SpecData{
           Future.successful(Some(nonNiSubscriptionDisplayResponse))
         )
         when(mockUserAnswersCache.cacheSicCode(any())(any())).thenReturn(Future.successful(true))
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.submit().url,
-          defaultUserId,
           Map("sic" -> "12345")
         )
 
@@ -107,10 +103,8 @@ class SicCodeControllerSpec extends BaseSpec with SpecData{
           Future.successful(Some(subscriptionDisplayResponse))
         )
         when(mockUserAnswersCache.cacheSicCode(any())(any())).thenReturn(Future.successful(true))
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.submit().url,
-          defaultUserId,
           Map("sic" -> "12345")
         )
 
@@ -127,10 +121,8 @@ class SicCodeControllerSpec extends BaseSpec with SpecData{
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Individual)
 
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.submit().url,
-          defaultUserId,
           Map("sic" -> "12345")
         )
 
@@ -148,10 +140,8 @@ class SicCodeControllerSpec extends BaseSpec with SpecData{
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.submit().url,
-          defaultUserId,
           Map("sic" -> "")
         )
 
@@ -169,10 +159,8 @@ class SicCodeControllerSpec extends BaseSpec with SpecData{
         withAuthorisedUser(defaultUserId, mockAuthConnector, userAffinityGroup = AffinityGroup.Organisation)
 
         when(mockSessionCache.subscriptionDisplay(any())).thenReturn(Future.successful(None))
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.SicCodeController.submit().url,
-          defaultUserId,
           Map("sic" -> "12345")
         )
 

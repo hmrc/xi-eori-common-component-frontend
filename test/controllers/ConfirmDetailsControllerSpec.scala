@@ -55,8 +55,7 @@ class ConfirmDetailsControllerSpec extends BaseSpec with SpecData {
         )
         when(mockUserAnswersCache.getConfirmDetails()(any())).thenReturn(Future.successful(None))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad().url
         )
 
         val result = route(application, request).get
@@ -72,8 +71,7 @@ class ConfirmDetailsControllerSpec extends BaseSpec with SpecData {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockUserAnswersCache.getConfirmDetails()(any())).thenReturn(Future.successful(Some("changeDetails")))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad().url
         )
 
         val result = route(application, request).get
@@ -88,8 +86,7 @@ class ConfirmDetailsControllerSpec extends BaseSpec with SpecData {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockSessionCache.subscriptionDisplay(any())).thenReturn(Future.successful(None))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad().url
         )
 
         val result = route(application, request).get
@@ -105,10 +102,8 @@ class ConfirmDetailsControllerSpec extends BaseSpec with SpecData {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockSessionCache.subscriptionDisplay(any())).thenReturn(Future.successful(None))
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.submit().url,
-          defaultUserId,
           Map("value" -> "")
         )
 
@@ -127,10 +122,8 @@ class ConfirmDetailsControllerSpec extends BaseSpec with SpecData {
         when(mockSessionCache.subscriptionDisplay(any())).thenReturn(
           Future.successful(Some(subscriptionDisplayResponse))
         )
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.submit().url,
-          defaultUserId,
           Map("value" -> "")
         )
 
@@ -146,10 +139,8 @@ class ConfirmDetailsControllerSpec extends BaseSpec with SpecData {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockUserAnswersCache.cacheConfirmDetails(any())(any())).thenReturn(Future.successful(true))
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.submit().url,
-          defaultUserId,
           Map("value" -> confirmedDetails.toString)
         )
 
@@ -171,8 +162,7 @@ class ConfirmDetailsControllerSpec extends BaseSpec with SpecData {
           Future.successful(Some(subscriptionDisplayResponseWithoutXIVatId))
         )
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad().url
         )
 
         val result = route(application, request).get
@@ -187,10 +177,8 @@ class ConfirmDetailsControllerSpec extends BaseSpec with SpecData {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockUserAnswersCache.cacheConfirmDetails(any())(any())).thenReturn(Future.successful(true))
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.submit().url,
-          defaultUserId,
           Map("value" -> changeCredentials.toString)
         )
 
@@ -204,10 +192,8 @@ class ConfirmDetailsControllerSpec extends BaseSpec with SpecData {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockUserAnswersCache.cacheConfirmDetails(any())(any())).thenReturn(Future.successful(true))
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.submit().url,
-          defaultUserId,
           Map("value" -> changeDetails.toString)
         )
 

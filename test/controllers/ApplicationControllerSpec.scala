@@ -55,8 +55,7 @@ class ApplicationControllerSpec extends BaseSpec with SpecData{
         when(mockGroupEnrolmentExtractor.getEori(any())(any()))
           .thenReturn(Future.successful(None))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ApplicationController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ApplicationController.onPageLoad().url
         )
 
         val result = route(application, request).get
@@ -80,8 +79,7 @@ class ApplicationControllerSpec extends BaseSpec with SpecData{
         when(mockSessionCache.saveUserAnswers(any())(any()))
           .thenReturn(Future.successful(true))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ApplicationController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ApplicationController.onPageLoad().url
         )
 
         val result = route(application, request).get
@@ -105,8 +103,7 @@ class ApplicationControllerSpec extends BaseSpec with SpecData{
         when(mockSessionCache.saveUserAnswers(any())(any()))
           .thenReturn(Future.successful(true))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ApplicationController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ApplicationController.onPageLoad().url
         )
 
         val result = route(application, request).get
@@ -127,8 +124,7 @@ class ApplicationControllerSpec extends BaseSpec with SpecData{
         when(mockGroupEnrolmentExtractor.getEori(any())(any()))
           .thenReturn(Future.successful(existingEori))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ApplicationController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ApplicationController.onPageLoad().url
         )
 
         val result = route(application, request).get

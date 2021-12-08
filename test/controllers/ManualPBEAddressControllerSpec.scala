@@ -60,8 +60,7 @@ class ManualPBEAddressControllerSpec extends BaseSpec {
           .thenReturn(Future.successful(groupEnrolment))
 
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.onPageLoad().url
         )
 
         val result = route(application, request).get
@@ -79,8 +78,7 @@ class ManualPBEAddressControllerSpec extends BaseSpec {
           Future.successful(Some(AddressViewModel("line1", "town", Some("BT11AA"), "GB")))
         )
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.onPageLoad().url
         )
 
         val result = route(application, request).get
@@ -95,10 +93,8 @@ class ManualPBEAddressControllerSpec extends BaseSpec {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.submit().url,
-          defaultUserId,
           Map("line1" -> "", "townorcity" -> "test", "postcode" -> "BT11AA")
         )
 
@@ -116,10 +112,8 @@ class ManualPBEAddressControllerSpec extends BaseSpec {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.submit().url,
-          defaultUserId,
           Map("line1" -> "Abc", "townorcity" -> "", "postcode" -> "BT11AA")
         )
 
@@ -136,10 +130,8 @@ class ManualPBEAddressControllerSpec extends BaseSpec {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.submit().url,
-          defaultUserId,
           Map("line1" -> "Abc", "townorcity" -> "TEST Town Name greater than 35 chars", "postcode" -> "BT11AA")
         )
 
@@ -156,10 +148,8 @@ class ManualPBEAddressControllerSpec extends BaseSpec {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.submit().url,
-          defaultUserId,
           Map("line1" -> "Abc", "townorcity" -> "test", "postcode" -> "")
         )
 
@@ -176,10 +166,8 @@ class ManualPBEAddressControllerSpec extends BaseSpec {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.submit().url,
-          defaultUserId,
           Map("line1" -> "Abc", "townorcity" -> "test", "postcode" -> "TESTPOST")
         )
 
@@ -196,10 +184,8 @@ class ManualPBEAddressControllerSpec extends BaseSpec {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.submit().url,
-          defaultUserId,
           Map("line1" -> "Abc", "townorcity" -> "test", "postcode" -> "PR11UN")
         )
 
@@ -218,10 +204,8 @@ class ManualPBEAddressControllerSpec extends BaseSpec {
           .thenReturn(Future.successful(groupEnrolment))
         when(mockUserAnswersCache.cacheAddressDetails(any())(any())).thenReturn(Future.successful(true))
 
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.submit().url,
-          defaultUserId,
           Map("line1" -> "Abc", "townorcity" -> "test", "postcode" -> "BT11AA", "country" -> "GB")
         )
 
@@ -241,10 +225,8 @@ class ManualPBEAddressControllerSpec extends BaseSpec {
         when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
           .thenReturn(Future.successful(groupEnrolment))
 
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.submit().url,
-          defaultUserId,
           Map("line1" -> "Abc", "townorcity" -> "test", "postcode" -> "BT11AA", "country" -> "GB")
         )
 
@@ -263,8 +245,7 @@ class ManualPBEAddressControllerSpec extends BaseSpec {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.reviewPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.reviewPageLoad().url
         )
 
         val result = route(application, request).get
