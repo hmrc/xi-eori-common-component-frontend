@@ -70,5 +70,11 @@ class ContactAddressLookupViewSpec extends ViewSpec {
       manualAddressLink.attr("href") mustBe "/xi-customs-registration-services/pbe-company-address"
     }
 
+    "display hint" in {
+      doc.body.getElementsByClass(
+        "govuk-hint govuk-!-margin-top-0 govuk-!-margin-bottom-5"
+      ).text() mustBe "This is the address we will use to contact you about your XI Eori application"
+    }
+
   }
 }
