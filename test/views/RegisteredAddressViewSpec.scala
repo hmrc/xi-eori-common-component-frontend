@@ -20,7 +20,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.Helpers.contentAsString
-import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.PBEAddressResultsFormProvider
+import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.AddressResultsFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.AddressLookup
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.registered_address
@@ -35,10 +35,10 @@ class RegisteredAddressViewSpec extends ViewSpec {
   private val params         = PBEAddressLookup("AA11 1AA", Some("Flat 1"))
   private val allowedAddress = Seq(AddressLookup("Line 1", "City", "BB11 1BB", "GB"))
 
-  private val form = PBEAddressResultsFormProvider.form(allowedAddress.map(_.dropDownView))
+  private val form = AddressResultsFormProvider.form(allowedAddress.map(_.dropDownView))
 
   private val formWithError =
-    PBEAddressResultsFormProvider.form(allowedAddress.map(_.dropDownView)).bind(Map("address" -> "invalid"))
+    AddressResultsFormProvider.form(allowedAddress.map(_.dropDownView)).bind(Map("address" -> "invalid"))
 
   private val doc: Document =
     Jsoup.parse(contentAsString(view(form, params, allowedAddress)))

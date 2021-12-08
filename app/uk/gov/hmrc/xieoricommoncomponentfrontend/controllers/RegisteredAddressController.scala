@@ -24,7 +24,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.{SessionCache, UserAnswer
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.AddressLookupConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
-import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.PBEAddressResultsFormProvider
+import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.AddressResultsFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{AddressLookupFailure, AddressLookupSuccess}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.registered_address
@@ -56,7 +56,7 @@ class RegisteredAddressController @Inject() (
             Future.successful(
               Ok(
                 registeredAddressView(
-                  PBEAddressResultsFormProvider.form(addresses.map(_.dropDownView)),
+                  AddressResultsFormProvider.form(addresses.map(_.dropDownView)),
                   addressLookupParams,
                   addresses
                 )
@@ -85,7 +85,7 @@ class RegisteredAddressController @Inject() (
         sessionCache.saveAddressLookupParams(addressLookupParamsWithoutLine1).map { _ =>
           Ok(
             registeredAddressView(
-              PBEAddressResultsFormProvider.form(addresses.map(_.dropDownView)),
+              AddressResultsFormProvider.form(addresses.map(_.dropDownView)),
               addressLookupParams,
               addresses
             )
@@ -105,7 +105,7 @@ class RegisteredAddressController @Inject() (
               val addressesMap  = addresses.map(address => address.dropDownView -> address).toMap
               val addressesView = addressesMap.keys.toSeq
 
-              PBEAddressResultsFormProvider.form(addressesView).bindFromRequest.fold(
+              AddressResultsFormProvider.form(addressesView).bindFromRequest.fold(
                 formWithErrors =>
                   Future.successful(BadRequest(registeredAddressView(formWithErrors, addressLookupParams, addresses))),
                 validAnswer => {

@@ -15,7 +15,7 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.PBEAddressResultsFormProvider
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.AddressResultsFormProvider
 @import uk.gov.hmrc.xieoricommoncomponentfrontend.models.AddressLookup
 @import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html._
 @import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
@@ -32,7 +32,7 @@ fieldSet: components.fieldSet,
 inputAutoComplete: components.inputAutocomplete,
 govukSummaryList : GovukSummaryList,
 h1: components.h1)
-@(pbeAddressResultsForm: Form[PBEAddressResultsFormProvider],addressLookupParams: PBEAddressLookup,addresses: Seq[AddressLookup])(implicit messages: Messages, request: Request[_])
+@(pbeAddressResultsForm: Form[AddressResultsFormProvider],addressLookupParams: PBEAddressLookup,addresses: Seq[AddressLookup])(implicit messages: Messages, request: Request[_])
 @title = @{
     messages("registered-address.page.title")
 }

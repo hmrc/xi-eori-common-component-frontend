@@ -24,7 +24,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.{SessionCache, UserAnswer
 import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.AddressLookupConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
-import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.PBEAddressResultsFormProvider
+import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.AddressResultsFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ContactAddressLookup
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{AddressLookupFailure, AddressLookupSuccess}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.contact_address_results
@@ -56,7 +56,7 @@ class ContactAddressResultController @Inject() (
             Future.successful(
               Ok(
                 contactAddressResultsView(
-                  PBEAddressResultsFormProvider.form(addresses.map(_.dropDownView)),
+                  AddressResultsFormProvider.form(addresses.map(_.dropDownView)),
                   addressLookupParams,
                   addresses
                 )
@@ -85,7 +85,7 @@ class ContactAddressResultController @Inject() (
         sessionCache.saveContactAddressParams(addressLookupParamsWithoutLine1).map { _ =>
           Ok(
             contactAddressResultsView(
-              PBEAddressResultsFormProvider.form(addresses.map(_.dropDownView)),
+              AddressResultsFormProvider.form(addresses.map(_.dropDownView)),
               addressLookupParams,
               addresses
             )
@@ -105,7 +105,7 @@ class ContactAddressResultController @Inject() (
               val addressesMap  = addresses.map(address => address.dropDownView -> address).toMap
               val addressesView = addressesMap.keys.toSeq
 
-              PBEAddressResultsFormProvider.form(addressesView).bindFromRequest.fold(
+              AddressResultsFormProvider.form(addressesView).bindFromRequest.fold(
                 formWithErrors =>
                   Future.successful(
                     BadRequest(contactAddressResultsView(formWithErrors, addressLookupParams, addresses))
