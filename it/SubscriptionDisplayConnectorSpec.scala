@@ -37,7 +37,7 @@ class SubscriptionDisplayConnectorSpec extends IntegrationTestSpec with ScalaFut
     .overrides( inject.bind[SessionCache].to(mockSessionCache))
     .configure(
       Map(
-        "microservxi-eori-common-componentice.services.xi-eori-common-component.host"                         -> Host,
+        "microservice.services.xi-eori-common-component.host"                         -> Host,
         "microservice.services.xi-eori-common-component.port"                         -> Port,
         "microservice.services.xi-eori-common-component.context"                      -> "xi-eori-common-component",
         "auditing.enabled"                                                        -> false,
