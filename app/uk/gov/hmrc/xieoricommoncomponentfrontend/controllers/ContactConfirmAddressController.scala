@@ -24,18 +24,18 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.ConfirmAddressFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ConfirmAddress
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{error_template, pbe_confirm_address}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{contact_confirm_address, error_template}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class PBEConfirmAddressController @Inject() (
-                                              authAction: AuthAction,
-                                              mcc: MessagesControllerComponents,
-                                              userAnswersCache: UserAnswersCache,
-                                              formProvider: ConfirmAddressFormProvider,
-                                              pbeConfirmAddressView: pbe_confirm_address,
-                                              errorTemplateView: error_template
+class ContactConfirmAddressController @Inject()(
+  authAction: AuthAction,
+  mcc: MessagesControllerComponents,
+  userAnswersCache: UserAnswersCache,
+  formProvider: ConfirmAddressFormProvider,
+  contactConfirmAddressView: contact_confirm_address,
+  errorTemplateView: error_template
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
   private val form = formProvider()
@@ -43,12 +43,12 @@ class PBEConfirmAddressController @Inject() (
   def onPageLoad(): Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
       implicit request => _: LoggedInUserWithEnrolments =>
-        userAnswersCache.getAddressDetails().flatMap {
+        userAnswersCache.getContactAddressDetails().flatMap {
           case Some(address) =>
-            userAnswersCache.getConfirmPBEAddress().map {
+            userAnswersCache.getConfirmContactAddress().map {
               case Some(confirmAddress) =>
-                Ok(pbeConfirmAddressView(address, form.fill(ConfirmAddress.mapValues(confirmAddress))))
-              case None => Ok(pbeConfirmAddressView(address, form))
+                Ok(contactConfirmAddressView(address, form.fill(ConfirmAddress.mapValues(confirmAddress))))
+              case None => Ok(contactConfirmAddressView(address, form))
             }
           case None =>
             Future.successful(
@@ -65,7 +65,7 @@ class PBEConfirmAddressController @Inject() (
         case Some(address) =>
           form.bindFromRequest()
             .fold(
-              formWithErrors => Future.successful(BadRequest(pbeConfirmAddressView(address, formWithErrors))),
+              formWithErrors => Future.successful(BadRequest(contactConfirmAddressView(address, formWithErrors))),
               value => userAnswersCache.cacheConfirmAddress(value).map(_ => destinationsByAnswer(value))
             )
         case None =>
@@ -84,7 +84,7 @@ class PBEConfirmAddressController @Inject() (
         uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.onPageLoad()
       )
     case ConfirmAddress.changeAddress =>
-      Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEAddressLookupController.onPageLoad())
+      Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressLookupController.onPageLoad())
     case ConfirmAddress.enterManually =>
       Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.reviewPageLoad())
   }

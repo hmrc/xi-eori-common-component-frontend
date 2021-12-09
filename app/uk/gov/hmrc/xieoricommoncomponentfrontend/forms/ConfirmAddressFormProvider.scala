@@ -18,13 +18,13 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.forms
 
 import play.api.data.Form
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.mappings.Mappings
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEConfirmAddress
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ConfirmAddress
 
 import javax.inject.Inject
 
-class PBEConfirmAddressFormProvider @Inject() extends Mappings {
+class ConfirmAddressFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[PBEConfirmAddress] =
-    Form("value" -> enumerable[PBEConfirmAddress]("pbe-confirm-address.error.required"))
+  def apply(): Form[ConfirmAddress] =
+    Form("value" -> enumerable[ConfirmAddress]("pbe-confirm-address.error.required"))
 
 }

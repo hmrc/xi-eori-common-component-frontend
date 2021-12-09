@@ -474,3 +474,14 @@ contact-address-results.page.property-name.label= Property name or number
 contact-address-results.page.address.required= Select your address from the list
 contact-address-results.page.property-name.not-known= Not known
 contact-address-results.postcode.address.hint= Choose your address below
+
+#confirm-contact-address
+confirm-contact-address.page.title=Is this your XI EORI application contact address?
+confirm-contact-address.page.hint=This is the address we will use to contact you about your application
+confirm-contact-address.page.address.title=Is this address correct?
+confirm-contact-address.error.required=Confirm your address details
+confirm-contact-address.confirmedAddress=Yes, this address is correct
+confirm-contact-address.changeAddress=No, I want to change the address
+confirm-contact-address.enterManually=I want to enter the address manually
+
+

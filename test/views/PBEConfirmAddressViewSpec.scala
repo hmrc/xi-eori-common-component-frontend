@@ -20,7 +20,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.mvc.Request
 import play.api.test.Helpers.contentAsString
-import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.PBEConfirmAddressFormProvider
+import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.ConfirmAddressFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.AddressViewModel
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.pbe_confirm_address
 import util.ViewSpec
@@ -28,7 +28,7 @@ import util.ViewSpec
 class PBEConfirmAddressViewSpec extends ViewSpec {
 
   implicit val request: Request[Any] = withFakeCSRF(fakeRegisterRequest)
-  private val formProvider           = new PBEConfirmAddressFormProvider()
+  private val formProvider           = new ConfirmAddressFormProvider()
   private def form                   = formProvider.apply()
   private def formWithError          = form.bind(Map("value" -> ""))
   val address: AddressViewModel      = AddressViewModel("line1", "city", Some("postcode"), "GB")

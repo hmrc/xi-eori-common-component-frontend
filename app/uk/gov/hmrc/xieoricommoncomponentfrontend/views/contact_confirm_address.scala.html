@@ -35,7 +35,7 @@ inputRadioGroup: components.inputRadioGroup,
 h1: components.h1)
 @(address: AddressViewModel,confirmAddressForm: Form[ConfirmAddress])(implicit messages: Messages, request: Request[_])
 @title = @{
-    messages("pbe-confirm-address.page.title")
+    messages("confirm-contact-address.page.title")
 }
 @addressHtml = {
     <div id="address" class="govuk-body">
@@ -52,7 +52,7 @@ h1: components.h1)
     @formHelper(action = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEConfirmAddressController.submit(), 'autoComplete -> "off") {
 
         @errorSummary(confirmAddressForm.errors)
-        @h1(messages("pbe-confirm-address.page.title"))
+        @h1(messages("confirm-contact-address.page.title"))
 
         @govukInsetText(InsetText(
             content = HtmlContent(addressHtml)
@@ -60,7 +60,7 @@ h1: components.h1)
 
         @inputRadioGroup(
             confirmAddressForm("value"),
-            legend = messages("pbe-confirm-address.page.address.title"),
+            legend = messages("confirm-contact-address.page.address.title"),
             items = ConfirmAddress.options(confirmAddressForm),
             classes = "govuk-fieldset__legend--m",
             legendAsHeading = false

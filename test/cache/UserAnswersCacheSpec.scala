@@ -184,15 +184,15 @@ class UserAnswersCacheSpec extends BaseSpec with MockitoSugar with BeforeAndAfte
     }
   }
 
-  "Calling cacheConfirmAddress" should {
+  "Calling cacheConfirmPBEAddress" should {
     "save ConfirmAddress in frontend cache" in {
 
-      Await.result(subscriptionDetailsHolderService.cacheConfirmAddress(PBEConfirmAddress.changeAddress), Duration.Inf)
+      Await.result(subscriptionDetailsHolderService.cacheConfirmAddress(ConfirmAddress.changeAddress), Duration.Inf)
       val requestCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
 
       verify(mockSessionCache).saveUserAnswers(requestCaptor.capture())(ArgumentMatchers.eq(hc))
       val holder: UserAnswers = requestCaptor.getValue
-      holder.confirmAddress shouldBe Some("changeAddress")
+      holder.confirmPBEAddress shouldBe Some("changeAddress")
     }
   }
 

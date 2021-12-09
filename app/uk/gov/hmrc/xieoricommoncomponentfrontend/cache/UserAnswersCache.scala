@@ -19,14 +19,7 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.cache
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.UserAnswers
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.TradeWithNI.toBoolean
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.{
-  ConfirmDetails,
-  DisclosePersonalDetails,
-  HaveEUEori,
-  HavePBE,
-  PBEConfirmAddress,
-  TradeWithNI
-}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.{ConfirmDetails, DisclosePersonalDetails, HaveEUEori, HavePBE, ConfirmAddress, TradeWithNI}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.AddressViewModel
 
 import javax.inject.{Inject, Singleton}
@@ -73,6 +66,10 @@ class UserAnswersCache @Inject() (sessionCache: SessionCache)(implicit ec: Execu
   def getAddressDetails()(implicit hc: HeaderCarrier): Future[Option[AddressViewModel]] =
     sessionCache.userAnswers map (_.addressDetails)
 
+  def getContactAddressDetails()(implicit hc: HeaderCarrier): Future[Option[AddressViewModel]] =
+    sessionCache.userAnswers map (_.contactAddressDetails)
+
+
   def getTradeWithInNI()(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
     sessionCache.userAnswers map (_.tradeWithNI)
 
@@ -91,10 +88,17 @@ class UserAnswersCache @Inject() (sessionCache: SessionCache)(implicit ec: Execu
   def getConfirmDetails()(implicit hc: HeaderCarrier): Future[Option[String]] =
     sessionCache.userAnswers map (_.confirmDetails)
 
-  def cacheConfirmAddress(pbeConfirmAddress: PBEConfirmAddress)(implicit hc: HeaderCarrier): Future[Boolean] =
-    saveUserAnswers(sd => sd.copy(confirmAddress = Some(PBEConfirmAddress.transformString(pbeConfirmAddress))))
+  def cacheConfirmAddress(pbeConfirmAddress: ConfirmAddress)(implicit hc: HeaderCarrier): Future[Boolean] =
+    saveUserAnswers(sd => sd.copy(confirmPBEAddress = Some(ConfirmAddress.transformString(pbeConfirmAddress))))
 
-  def getConfirmAddress()(implicit hc: HeaderCarrier): Future[Option[String]] =
-    sessionCache.userAnswers map (_.confirmAddress)
+  def cacheContactConfirmAddress(contactConfirmAddress: ConfirmAddress)(implicit hc: HeaderCarrier): Future[Boolean] =
+    saveUserAnswers(sd => sd.copy(confirmContactAddress = Some(ConfirmAddress.transformString(contactConfirmAddress))))
+
+
+  def getConfirmPBEAddress()(implicit hc: HeaderCarrier): Future[Option[String]] =
+    sessionCache.userAnswers map (_.confirmPBEAddress)
+
+  def getConfirmContactAddress()(implicit hc: HeaderCarrier): Future[Option[String]] =
+    sessionCache.userAnswers map (_.confirmContactAddress)
 
 }

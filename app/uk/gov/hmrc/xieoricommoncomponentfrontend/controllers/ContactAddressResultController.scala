@@ -114,7 +114,7 @@ class ContactAddressResultController @Inject() (
                   val address = addressesMap(validAnswer.address).toAddressViewModel
                   userAnswersCache.cacheContactAddressDetails(address).map { _ =>
                     Redirect(
-                      uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressLookupController.onPageLoad()
+                      uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactConfirmAddressController.onPageLoad()
                     )
                   }
                 }
