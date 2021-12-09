@@ -100,6 +100,11 @@ class ContactAddressResultViewSpec extends ViewSpec {
       doc.body().getElementsByClass("govuk-button").text() mustBe "Continue"
     }
 
+    "display hint" in {
+
+      doc.body().getElementsByClass("govuk-hint").text() mustBe "Choose your address below"
+    }
+
     "display error summary" in {
 
       docWithErrorSummary.getElementById("error-summary-title").text() mustBe "There is a problem"

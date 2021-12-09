@@ -129,5 +129,27 @@ class AddressLookupErrorControllerSpec extends BaseSpec {
 
       }
     }
+
+    "redirect to Contact address lookup page when contact address cache returns no results" in {
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+        when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
+          .thenReturn(Future.successful(groupEnrolment))
+        when(mockSessionCache.contactAddressParams(any())).thenReturn(Future.successful(None))
+
+        val request = SessionBuilder.buildRequestWithSessionAndPath(
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AddressLookupErrorController.displayNoContactAddressResultsPage().url,
+          defaultUserId
+        )
+
+        val result = route(application, request).get
+        status(result) shouldBe SEE_OTHER
+
+        redirectLocation(
+          result
+        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressLookupController.onPageLoad().url
+
+      }
+    }
   }
 }

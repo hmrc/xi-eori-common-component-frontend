@@ -63,7 +63,7 @@ class ContactAddressResultController @Inject() (
               )
             )
           case AddressLookupSuccess(_) if addressLookupParams.line1.exists(_.nonEmpty) =>
-            fetchAddressWithoutLine1(addressLookupParams)
+            viewForAddressWithoutLine1Case(addressLookupParams)
           case AddressLookupSuccess(_) => Future.successful(displayNoResultsPage())
           case AddressLookupFailure    => throw AddressLookupException
         }.recoverWith {
@@ -75,7 +75,7 @@ class ContactAddressResultController @Inject() (
         )
     }
 
-  private def fetchAddressWithoutLine1(
+  private def viewForAddressWithoutLine1Case(
     addressLookupParams: ContactAddressLookup
   )(implicit request: Request[AnyContent], hc: HeaderCarrier): Future[Result] = {
     val addressLookupParamsWithoutLine1 = ContactAddressLookup(addressLookupParams.postcode, None)
@@ -127,7 +127,7 @@ class ContactAddressResultController @Inject() (
         case _ =>
           Future.successful(
             Redirect(
-              uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEAddressLookupController.onPageLoad()
+              uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressLookupController.onPageLoad()
             )
           )
       }
