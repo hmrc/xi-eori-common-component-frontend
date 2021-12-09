@@ -82,3 +82,7 @@ GET        /register                 @uk.gov.hmrc.xieoricommoncomponentfrontend.
 #contact-address-lookup
 GET        /contact-postcode                     @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ContactAddressLookupController.onPageLoad
 POST       /contact-postcode                     @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ContactAddressLookupController.submit
+
+#contact-address
+GET        /contact-address                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ManualContactAddressController.onPageLoad()
+POST       /contact-address                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ManualContactAddressController.submit
