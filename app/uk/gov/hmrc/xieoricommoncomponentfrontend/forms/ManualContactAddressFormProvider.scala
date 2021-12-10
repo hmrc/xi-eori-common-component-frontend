@@ -34,11 +34,11 @@ class ManualContactAddressFormProvider @Inject() extends Mappings {
         "line1" -> text("manual-contact-address.line1.required").verifying(
           maxLength(35, "manual-pbe-address.line1.error")
         ),
-        "line2" -> optional(text().verifying(maxLength(34, "manual-pbe-address.line2.error"))),
+        "line2" -> optional(text().verifying(maxLength(34, "manual-contact-address.line2.long.error"))),
         "townorcity" -> text("manual-pbe-address.town.required").verifying(
           maxLength(35, "manual-pbe-address.town.error")
         ),
-        "regionorstate" -> optional(text().verifying(maxLength(35, "manual-contact-address.line2.long.error"))),
+        "regionorstate" -> optional(text().verifying(maxLength(35, "manual-contact-address.region.error"))),
         "postcode" -> optional(
           text()
             .verifying(StopOnFirstFail(regexp(postcodeRegex, "manual-pbe-address.postcode.format.invalid")))
