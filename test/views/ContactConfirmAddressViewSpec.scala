@@ -55,5 +55,25 @@ class ContactConfirmAddressViewSpec extends ViewSpec {
         0
       ).text mustBe "Confirm your address details"
     }
+
+    "display heading for confirming the address " in {
+      docWithError.body().getElementsByClass("govuk-fieldset__legend").get(0).text mustBe "Is this address correct?"
+    }
+
+    "display option for confirming the address" in {
+      docWithError.body().getElementsByClass("govuk-radios__label").get(0).text mustBe "Yes, this address is correct"
+    }
+
+    "display option for changing the address" in {
+      docWithError.body().getElementsByClass("govuk-radios__label").get(
+        1
+      ).text mustBe "No, I want to change the address"
+    }
+
+    "display option for changing the address manually" in {
+      docWithError.body().getElementsByClass("govuk-radios__label").get(
+        2
+      ).text mustBe "I want to enter the address manually"
+    }
   }
 }
