@@ -27,18 +27,20 @@ class ConfirmContactDetailsViewModelSpec extends BaseSpec with SpecData {
     "create a view model successfully from a CaseInformation class" when {
       "all the fields are empty" in {
         val emptyContactInformation = ContactInformation(None, None, None, None, None, None, None)
-        val viewModel               = ConfirmContactDetailsViewModel(emptyContactInformation)
+        val viewModel               = ConfirmContactDetailsViewModel.fromContactInformation(emptyContactInformation)
 
-        viewModel shouldBe ConfirmContactDetailsViewModel("", "", "", ContactAddressViewModel("", "", "", ""))
+        viewModel shouldBe None
       }
       "all the fields provided" in {
-        val viewModel = ConfirmContactDetailsViewModel(contactInformation)
+        val viewModel = ConfirmContactDetailsViewModel.fromContactInformation(contactInformation)
 
-        viewModel shouldBe ConfirmContactDetailsViewModel(
-          "FirstName LastName",
-          "1234567890",
-          "test@example.com",
-          ContactAddressViewModel("line 1", "Newcastle", "AA1 1AA", "GB")
+        viewModel shouldBe Some(
+          ConfirmContactDetailsViewModel(
+            "FirstName LastName",
+            "1234567890",
+            "test@example.com",
+            ContactAddressViewModel("line 1", "Newcastle", "AA1 1AA", "GB")
+          )
         )
       }
     }

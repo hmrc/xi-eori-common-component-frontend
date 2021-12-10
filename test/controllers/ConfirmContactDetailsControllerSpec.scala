@@ -45,7 +45,7 @@ class ConfirmContactDetailsControllerSpec extends BaseSpec with SpecData {
   ).configure("auditing.enabled" -> "false", "metrics.jvm" -> false, "metrics.enabled" -> false).build()
 
   val registerLinkXpath: String = "//*[@id='vat-register-link']"
-  "ConfirmDetails controller" should {
+  "ConfirmContactDetails controller" should {
     "return OK and the correct view for a GET" in {
 
       running(application) {
@@ -63,7 +63,7 @@ class ConfirmContactDetailsControllerSpec extends BaseSpec with SpecData {
       }
     }
 
-    "redirect to ****Not Implemented**** page when session cache holds subscription display details but no contact information" in {
+    "display error page when session cache holds subscription display details but no contact information" in {
 
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
@@ -74,9 +74,28 @@ class ConfirmContactDetailsControllerSpec extends BaseSpec with SpecData {
 
         val result = route(application, request).get
 
-        status(result) shouldBe SEE_OTHER
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+    }
 
-        redirectLocation(result).get shouldBe "/"
+    "display error page when session cache holds subscription display details but contact information has missing field" in {
+
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+        when(mockSessionCache.subscriptionDisplay(any())).thenReturn(
+          Future.successful(
+            Some(
+              subscriptionDisplayResponse.copy(contactInformation =
+                Some(contactInformation.copy(personOfContact = None))
+              )
+            )
+          )
+        )
+        val request = SessionBuilder.buildRequestWithSessionAndPath(ConfirmContactDetailsController.onPageLoad().url)
+
+        val result = route(application, request).get
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
       }
     }
 

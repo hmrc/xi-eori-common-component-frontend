@@ -27,7 +27,7 @@ class ConfirmContactDetailsViewSpec extends ViewBehaviours with SpecData {
 
   private implicit val request: Request[AnyContentAsEmpty.type] = withFakeCSRF(fakeRegisterRequest)
 
-  private val viewModel                   = ConfirmContactDetailsViewModel(contactInformation)
+  private val viewModel                   = ConfirmContactDetailsViewModel.fromContactInformation(contactInformation).get
   private val view                        = instanceOf[confirm_contact_details].apply(viewModel)
   private implicit lazy val doc: Document = asDocument(view)
 

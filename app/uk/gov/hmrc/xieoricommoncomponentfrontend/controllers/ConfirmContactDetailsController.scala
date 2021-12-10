@@ -18,7 +18,7 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import play.api.{Configuration, Environment}
+import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
@@ -26,7 +26,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{AuthAction, A
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail.ContactInformation
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmContactDetailsViewModel
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.confirm_contact_details
+import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{confirm_contact_details, error_template}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,9 +37,12 @@ class ConfirmContactDetailsController @Inject() (
   authAction: AuthAction,
   confirmContactDetailsView: confirm_contact_details,
   mcc: MessagesControllerComponents,
+  errorTemplateView: error_template,
   sessionCache: SessionCache
 )(implicit val ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with AuthRedirectSupport {
+
+  private val logger = Logger(this.getClass)
 
   def onPageLoad: Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
@@ -47,7 +50,11 @@ class ConfirmContactDetailsController @Inject() (
         sessionCache.subscriptionDisplay.flatMap {
           case Some(subscriptionDisplay) =>
             subscriptionDisplay.contactInformation.map(populateView(_))
-              .getOrElse(Future.successful(Redirect("/")))
+              .getOrElse {
+                val errorMessage = "No subscription details could be retrieved";
+                logger.warn(errorMessage)
+                Future.successful(InternalServerError(errorTemplateView()))
+              }
           case None =>
             Future.successful(
               Redirect(
@@ -59,7 +66,13 @@ class ConfirmContactDetailsController @Inject() (
 
   def populateView(
     contactInformation: ContactInformation
-  )(implicit hc: HeaderCarrier, request: Request[AnyContent]): Future[Result] =
-    Future.successful(Ok(confirmContactDetailsView(ConfirmContactDetailsViewModel(contactInformation))))
+  )(implicit hc: HeaderCarrier, request: Request[AnyContent]): Future[Result] = {
+    val viewModel: Option[ConfirmContactDetailsViewModel] = ConfirmContactDetailsViewModel.fromContactInformation(contactInformation)
+    viewModel.map(v => Future.successful(Ok(confirmContactDetailsView(v)))).getOrElse {
+      val errorMessage = "Subscription details contact info has missing details";
+      logger.warn(errorMessage)
+      Future.successful(InternalServerError(errorTemplateView()))
+    }
+  }
 
 }
