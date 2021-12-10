@@ -49,7 +49,7 @@ h1: components.h1)
 
 @main_template(title) {
 
-    @formHelper(action = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEConfirmAddressController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactConfirmAddressController.submit(), 'autoComplete -> "off") {
 
         @errorSummary(confirmAddressForm.errors)
         @h1(messages("confirm-contact-address.page.title"))
