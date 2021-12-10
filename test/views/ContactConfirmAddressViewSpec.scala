@@ -57,23 +57,32 @@ class ContactConfirmAddressViewSpec extends ViewSpec {
     }
 
     "display heading for confirming the address " in {
-      docWithError.body().getElementsByClass("govuk-fieldset__legend").get(0).text mustBe "Is this address correct?"
+      doc.body().getElementsByClass("govuk-fieldset__legend").get(0).text mustBe "Is this address correct?"
     }
 
     "display option for confirming the address" in {
-      docWithError.body().getElementsByClass("govuk-radios__label").get(0).text mustBe "Yes, this address is correct"
+      doc.body().getElementsByClass("govuk-radios__label").get(0).text mustBe "Yes, this address is correct"
     }
 
     "display option for changing the address" in {
-      docWithError.body().getElementsByClass("govuk-radios__label").get(
-        1
-      ).text mustBe "No, I want to change the address"
+      doc.body().getElementsByClass("govuk-radios__label").get(1).text mustBe "No, I want to change the address"
     }
 
     "display option for changing the address manually" in {
-      docWithError.body().getElementsByClass("govuk-radios__label").get(
-        2
-      ).text mustBe "I want to enter the address manually"
+      doc.body().getElementsByClass("govuk-radios__label").get(2).text mustBe "I want to enter the address manually"
+    }
+
+    "display continue button" in {
+      doc.body().getElementsByClass("govuk-button").get(0).text mustBe "Continue"
+    }
+
+    "display back button" in {
+      doc.body().getElementsByClass("govuk-back-link").get(0).text mustBe "Back"
+    }
+
+    "display get Help link" in {
+      val helpAndSupport = doc.body().getElementById("helpAndSupport")
+      helpAndSupport.getElementsByTag("a").get(0).text mustBe "Get help with this page."
     }
   }
 }
