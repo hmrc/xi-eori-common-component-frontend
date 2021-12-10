@@ -54,7 +54,7 @@ class ContactAddressLookupController @Inject() (
         validAddressParams =>
           sessionCache.saveContactAddressParams(validAddressParams).map { _ =>
             Redirect(
-              uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded().url
+              uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressResultController.onPageLoad().url
             )
           }
       )

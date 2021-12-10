@@ -62,10 +62,13 @@ class UserAnswersCache @Inject() (sessionCache: SessionCache)(implicit ec: Execu
   def cacheHavePBEInNI(havePBE: HavePBE)(implicit hq: HeaderCarrier): Future[Boolean] =
     saveUserAnswers(sd => sd.copy(havePBEInNI = Some(HavePBE.toBoolean(havePBE))))
 
-  def cacheAddressDetails(address: AddressViewModel)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    def noneForEmptyPostcode(a: AddressViewModel) = a.copy(postcode = a.postcode.filter(_.nonEmpty))
+  def cacheAddressDetails(address: AddressViewModel)(implicit hc: HeaderCarrier): Future[Boolean] =
     saveUserAnswers(sd => sd.copy(addressDetails = Some(noneForEmptyPostcode(address))))
-  }
+
+  def noneForEmptyPostcode(address: AddressViewModel) = address.copy(postcode = address.postcode.filter(_.nonEmpty))
+
+  def cacheContactAddressDetails(address: AddressViewModel)(implicit hc: HeaderCarrier): Future[Boolean] =
+    saveUserAnswers(sd => sd.copy(contactAddressDetails = Some(noneForEmptyPostcode(address))))
 
   def getAddressDetails()(implicit hc: HeaderCarrier): Future[Option[AddressViewModel]] =
     sessionCache.userAnswers map (_.addressDetails)

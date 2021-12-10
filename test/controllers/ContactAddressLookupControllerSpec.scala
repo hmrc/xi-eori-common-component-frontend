@@ -107,7 +107,7 @@ class ContactAddressLookupControllerSpec extends BaseSpec {
 
         redirectLocation(
           result
-        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded().url
+        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressResultController.onPageLoad().url
       }
     }
   }

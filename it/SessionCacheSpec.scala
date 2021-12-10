@@ -33,6 +33,8 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
   SubscriptionInfoVatId,
   XiSubscription
 }
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.{ContactAddressLookup, PBEAddressLookup}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{EstablishmentAddress, SubscriptionDisplayResponseDetail, SubscriptionInfoVatId, XiSubscription}
 
 import java.time.LocalDate
 import java.util.UUID
@@ -75,6 +77,7 @@ class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoS
   val userAnswers: UserAnswers = UserAnswers(Some(true), Some(true), None, None, None, Some("99976"), Some(true), None)
 
   val addressLookupParams: PBEAddressLookup = PBEAddressLookup("SE28 1AA", None)
+  val contactAddressLookupParams: ContactAddressLookup = ContactAddressLookup("SE28 1AA", None)
 
   val eori: Eori = Eori("GB123456463324")
 
@@ -147,6 +150,32 @@ class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoS
       updatedJson mustBe expectedUpdatedJson
     }
 
+    "store, fetch and update Contact Address Lookup param details correctly" in {
+      val sessionId: SessionId = setupSession
+
+
+
+      await(sessionCache.saveContactAddressParams(contactAddressLookupParams)(hc))
+
+      val expectedJson                     = toJson(CachedData(contactAddressParams = Some(contactAddressLookupParams)))
+      val cache                            = await(sessionCache.findById(Id(sessionId.value)))
+      val Some(Cache(_, Some(json), _, _)) = cache
+      json mustBe expectedJson
+
+      await(sessionCache.contactAddressParams(hc)) mustBe Some(contactAddressLookupParams)
+
+      val updatedHolder = contactAddressLookupParams.copy(
+        postcode = "SE28 1AC",
+        line1 = Some("line1")
+      )
+
+      await(sessionCache.saveContactAddressParams(updatedHolder)(hc))
+
+      val expectedUpdatedJson                     = toJson(CachedData(contactAddressParams = Some(updatedHolder)))
+      val updatedCache                            = await(sessionCache.findById(Id(sessionId.value)))
+      val Some(Cache(_, Some(updatedJson), _, _)) = updatedCache
+      updatedJson mustBe expectedUpdatedJson
+    }
     "remove from the cache" in {
       val sessionId: SessionId = setupSession
       await(sessionCache.saveEori(Eori("GB123456463329"))(hc))
@@ -179,14 +208,14 @@ class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoS
       e1.getMessage mustBe "Session id is not available"
     }
 
-    "provide default when registration details holder not in cache" in {
+    "provide default when User Answers holder not in cache" in {
       val s = setupSession
       await(sessionCache.insert(Cache(Id(s.value), data = Some(toJson(CachedData(eori = Some(eori.id)))))))
 
       await(sessionCache.userAnswers(hc)) mustBe UserAnswers(None)
     }
 
-    "store, fetch and update Registration details correctly" in {
+    "store, fetch and update User Answers correctly" in {
       val sessionId: SessionId = setupSession
 
       await(sessionCache.saveUserAnswers(userAnswers)(hc))
