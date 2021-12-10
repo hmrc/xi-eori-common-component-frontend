@@ -67,12 +67,12 @@ class ContactAddressResultController @Inject() (
           case AddressLookupSuccess(_) if addressLookupParams.line1.exists(_.nonEmpty) =>
             viewForAddressWithoutLine1Case(addressLookupParams)
           case AddressLookupSuccess(_) => Future.successful(displayNoResultsPage())
-          case AddressLookupFailure    => throw AddressLookupException
+          case AddressLookupFailure =>
+            logger.info("Address Lookup Service unavailable")
+            throw AddressLookupException
         }.recoverWith {
           case _ =>
-            logger.info("Address Lookup Service unavailable")
             Future.successful(displayErrorPage())
-
         }
       case _ =>
         Future.successful(
