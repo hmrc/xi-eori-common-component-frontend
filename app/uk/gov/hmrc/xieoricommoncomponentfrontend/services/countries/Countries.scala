@@ -60,3 +60,4 @@ object Countries {
 sealed trait CountriesInCountryPicker
 
 case object AllCountriesInCountryPicker extends CountriesInCountryPicker
+case object NoCountriesInCountryPicker  extends CountriesInCountryPicker

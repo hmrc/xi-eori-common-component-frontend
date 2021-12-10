@@ -43,7 +43,7 @@ elements.args.getOrElse('_plainLabel, false).asInstanceOf[Boolean]
 @hintHtml = {
 <span class="govuk-visually-hidden">@Html(s". ${messages("manual-contact-address.country-picker.hint.screen-reader")}")</span>
 }
-<div>
+<div class="govuk-!-width-one-half">
     @inputSelect(
     form = form,
     id = field,
@@ -59,7 +59,7 @@ elements.args.getOrElse('_plainLabel, false).asInstanceOf[Boolean]
     isPageHeading = false
     )
 </div>
-<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("css/location-autocomplete.min.css")" type="text/css">
+<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/location-autocomplete.min.css")" type="text/css">
 
 <script type="text/javascript">
 (function(){
