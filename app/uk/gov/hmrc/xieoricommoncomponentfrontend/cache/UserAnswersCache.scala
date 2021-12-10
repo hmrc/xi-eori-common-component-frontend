@@ -19,7 +19,14 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.cache
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.UserAnswers
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.TradeWithNI.toBoolean
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.{ConfirmDetails, DisclosePersonalDetails, HaveEUEori, HavePBE, ConfirmAddress, TradeWithNI}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.{
+  ConfirmDetails,
+  DisclosePersonalDetails,
+  HaveEUEori,
+  HavePBE,
+  ConfirmAddress,
+  TradeWithNI
+}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.AddressViewModel
 
 import javax.inject.{Inject, Singleton}
@@ -58,7 +65,7 @@ class UserAnswersCache @Inject() (sessionCache: SessionCache)(implicit ec: Execu
   def cacheAddressDetails(address: AddressViewModel)(implicit hc: HeaderCarrier): Future[Boolean] =
     saveUserAnswers(sd => sd.copy(addressDetails = Some(noneForEmptyPostcode(address))))
 
-  def noneForEmptyPostcode(a: AddressViewModel) = a.copy(postcode = a.postcode.filter(_.nonEmpty))
+  def noneForEmptyPostcode(address: AddressViewModel) = address.copy(postcode = address.postcode.filter(_.nonEmpty))
 
   def cacheContactAddressDetails(address: AddressViewModel)(implicit hc: HeaderCarrier): Future[Boolean] =
     saveUserAnswers(sd => sd.copy(contactAddressDetails = Some(noneForEmptyPostcode(address))))

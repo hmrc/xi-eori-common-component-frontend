@@ -14,15 +14,14 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.AddressResultsFormProvider
-@import uk.gov.hmrc.xieoricommoncomponentfrontend.models.AddressLookup
-@import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html._
-@import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
 @import play.api.data.Form
 @import play.api.i18n.Messages
 @import play.api.mvc.Request
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.AddressResultsFormProvider
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.models.AddressLookup
 @import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ContactAddressLookup
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html._
 
 @this(main_template: Layout,
 formHelper: FormWithCSRF,
@@ -34,7 +33,7 @@ inputAutoComplete: components.inputAutocomplete,
 govukSummaryList : GovukSummaryList,
 govukHint: GovukHint,
 h1: components.h1)
-@(pbeAddressResultsForm: Form[AddressResultsFormProvider],addressLookupParams: ContactAddressLookup,addresses: Seq[AddressLookup])(implicit messages: Messages, request: Request[_])
+@(addressResultsForm: Form[AddressResultsFormProvider],addressLookupParams: ContactAddressLookup,addresses: Seq[AddressLookup])(implicit messages: Messages, request: Request[_])
 @title = @{
     messages("contact-address-results.page.title")
 }
@@ -49,11 +48,11 @@ h1: components.h1)
 uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.onPageLoad()
 }
 
-@main_template(title,form = Some(pbeAddressResultsForm)) {
+@main_template(title,form = Some(addressResultsForm)) {
 
     @formHelper(action = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressResultController.submit(), 'autoComplete -> "off") {
 
-        @errorSummary(pbeAddressResultsForm.errors)
+        @errorSummary(addressResultsForm.errors)
 
            @h1(messages("contact-address-results.page.title"),classes="govuk-!-margin-bottom-3")
            @govukHint(Hint(content = Text(messages("contact-address-results.postcode.address.hint")),classes="govuk-!-margin-top-0 govuk-!-margin-bottom-5"))
@@ -67,7 +66,7 @@ uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressCon
                             ActionItem(
                                 href = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressLookupController.onPageLoad().url,
                                 content = Text(messages("ecc.form.change")),
-                                visuallyHiddenText = Some(messages("ecc.form.change") + " " + messages("confirmDetails.company-name.label"))
+                                visuallyHiddenText = Some(messages("ecc.form.change") + " " + messages("contact-address-results.page.postcode.label"))
                             )
                         ),
                         classes = "review-tbl__postcode_change"
@@ -80,7 +79,7 @@ uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressCon
                                 ActionItem(
                                     href = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressLookupController.onPageLoad().url,
                                     content = Text(messages("ecc.form.change")),
-                                    visuallyHiddenText = Some(messages("ecc.form.change") + " " + messages("confirmDetails.company-name.label"))
+                                    visuallyHiddenText = Some(messages("ecc.form.change") + " " + messages("contact-address-results.page.property-name.label"))
                                 )
                             ),
                             classes = "review-tbl__line1_change"
@@ -89,8 +88,8 @@ uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressCon
         </div>
         <div class="govuk-!-margin-bottom-2 govuk-!-width-one-half">
         @inputAutoComplete(
-            pbeAddressResultsForm,
-            pbeAddressResultsForm("address"),
+            addressResultsForm,
+            addressResultsForm("address"),
             messages("contact-address-results.postcode.address.label"),
             addresses.toList
         )
