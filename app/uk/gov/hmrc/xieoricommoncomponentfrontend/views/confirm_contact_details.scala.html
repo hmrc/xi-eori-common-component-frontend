@@ -21,6 +21,7 @@
 
 @this(main_template: Layout,
 govukButton: GovukButton,
+govukHint: GovukHint,
 h1: components.h1,
 contactDetails: components.contact_details
 )
@@ -32,7 +33,11 @@ contactDetails: components.contact_details
 @main_template(title) {
     @h1(title)
 
-    <p id="confirm-contact-details-hint" class="govuk-hint">@messages("confirm-contact-details.hint")</p>
+    @govukHint(Hint(
+        content = Text(messages("confirm-contact-details.hint")),
+        classes="govuk-!-margin-top-0 govuk-!-margin-bottom-5",
+        id=Some("confirm-contact-details-hint")
+    ))
 
     @contactDetails(viewModel)
 
