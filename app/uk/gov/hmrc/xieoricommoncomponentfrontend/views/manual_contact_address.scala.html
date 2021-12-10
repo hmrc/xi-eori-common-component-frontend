@@ -32,7 +32,7 @@ fieldSet: components.fieldSet)
     messages("manual-contact-address.page.title")
 }
 
-@displayCountryField = {
+@displayROWCountryField = {
     @defining(Seq('_plainLabel -> true)) { args =>
         @rowCountryField(manualContactAddressForm, "countryCode", "manual-contact-address.country.label", countries, args: _*)
     }
@@ -90,7 +90,7 @@ fieldSet: components.fieldSet)
                 labelClasses = Some("postcode")
             )
 
-        @displayCountryField
+        @displayROWCountryField
 
         }
         @govukButton(Button(
