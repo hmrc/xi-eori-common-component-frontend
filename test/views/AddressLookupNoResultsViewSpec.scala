@@ -31,7 +31,10 @@ class AddressLookupNoResultsViewSpec extends ViewSpec {
 
   private val postcode = "AA11 1AA"
 
-  private val doc: Document = Jsoup.parse(contentAsString(view(postcode)))
+  private val doc: Document = Jsoup.parse(contentAsString(view(postcode, isPBEAddresLookupFailed = true)))
+
+  private val contactAddressDoc: Document =
+    Jsoup.parse(contentAsString(view(postcode, isPBEAddresLookupFailed = false)))
 
   "Address lookup error page" should {
 
@@ -58,6 +61,14 @@ class AddressLookupNoResultsViewSpec extends ViewSpec {
 
       reenterPostcodeButton.text() mustBe "Change"
       reenterPostcodeButton.attr("href") mustBe "/xi-customs-registration-services/pbe-postcode"
+    }
+
+    "display change postcode link for Contact Address search" in {
+
+      val reenterPostcodeButton = contactAddressDoc.body().getElementById("reenter-postcode-button")
+
+      reenterPostcodeButton.text() mustBe "Change"
+      reenterPostcodeButton.attr("href") mustBe "/xi-customs-registration-services/contact-postcode"
     }
 
     "display enter manually address link" in {

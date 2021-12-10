@@ -40,16 +40,31 @@ class AddressLookupErrorController @Inject() (
 
   def displayErrorPage(): Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => _: LoggedInUserWithEnrolments =>
-      Future.successful(Ok(addressLookupErrorPage()))
+      Future.successful(Ok(addressLookupErrorPage(isPBEAddressLookupFailed = true)))
+    }
+
+  def displayContactAddressErrorPage(): Action[AnyContent] =
+    authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => _: LoggedInUserWithEnrolments =>
+      Future.successful(Ok(addressLookupErrorPage(isPBEAddressLookupFailed = false)))
     }
 
   def displayNoResultsPage(): Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => _: LoggedInUserWithEnrolments =>
       sessionCache.addressLookupParams.map {
-        case Some(addressLookupParams) => Ok(addressLookupNoResultsPage(addressLookupParams.postcode))
-        case _                         => Ok(addressLookupNoResultsPage(""))
+        case Some(addressLookupParams) =>
+          Ok(addressLookupNoResultsPage(addressLookupParams.postcode, isPBEAddresLookupFailed = true))
+        case _ => Ok(addressLookupNoResultsPage("", isPBEAddresLookupFailed = true))
       }
 
+    }
+
+  def displayNoContactAddressResultsPage(): Action[AnyContent] =
+    authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => _: LoggedInUserWithEnrolments =>
+      sessionCache.contactAddressParams.map {
+        case Some(addressLookupParams) =>
+          Ok(addressLookupNoResultsPage(addressLookupParams.postcode, isPBEAddresLookupFailed = false))
+        case _ => Redirect(routes.ContactAddressLookupController.onPageLoad())
+      }
     }
 
 }
