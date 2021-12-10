@@ -30,12 +30,12 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PBEConfirmAddressController @Inject() (
-                                              authAction: AuthAction,
-                                              mcc: MessagesControllerComponents,
-                                              userAnswersCache: UserAnswersCache,
-                                              formProvider: ConfirmAddressFormProvider,
-                                              pbeConfirmAddressView: pbe_confirm_address,
-                                              errorTemplateView: error_template
+  authAction: AuthAction,
+  mcc: MessagesControllerComponents,
+  userAnswersCache: UserAnswersCache,
+  formProvider: ConfirmAddressFormProvider,
+  pbeConfirmAddressView: pbe_confirm_address,
+  errorTemplateView: error_template
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
   private val form = formProvider()

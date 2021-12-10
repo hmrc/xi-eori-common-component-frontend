@@ -29,7 +29,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{contact_confirm_add
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ContactConfirmAddressController @Inject()(
+class ContactConfirmAddressController @Inject() (
   authAction: AuthAction,
   mcc: MessagesControllerComponents,
   userAnswersCache: UserAnswersCache,

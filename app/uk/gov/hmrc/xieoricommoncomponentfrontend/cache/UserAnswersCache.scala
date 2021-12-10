@@ -20,11 +20,11 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.UserAnswers
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.TradeWithNI.toBoolean
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.{
+  ConfirmAddress,
   ConfirmDetails,
   DisclosePersonalDetails,
   HaveEUEori,
   HavePBE,
-  ConfirmAddress,
   TradeWithNI
 }
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.AddressViewModel
@@ -76,7 +76,6 @@ class UserAnswersCache @Inject() (sessionCache: SessionCache)(implicit ec: Execu
   def getContactAddressDetails()(implicit hc: HeaderCarrier): Future[Option[AddressViewModel]] =
     sessionCache.userAnswers map (_.contactAddressDetails)
 
-
   def getTradeWithInNI()(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
     sessionCache.userAnswers map (_.tradeWithNI)
 
@@ -100,7 +99,6 @@ class UserAnswersCache @Inject() (sessionCache: SessionCache)(implicit ec: Execu
 
   def cacheContactConfirmAddress(contactConfirmAddress: ConfirmAddress)(implicit hc: HeaderCarrier): Future[Boolean] =
     saveUserAnswers(sd => sd.copy(confirmContactAddress = Some(ConfirmAddress.transformString(contactConfirmAddress))))
-
 
   def getConfirmPBEAddress()(implicit hc: HeaderCarrier): Future[Option[String]] =
     sessionCache.userAnswers map (_.confirmPBEAddress)
