@@ -70,10 +70,12 @@ POST        /pbe-confirm-address                             @uk.gov.hmrc.xieori
 GET        /already-have-xi-eori                 @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.AlreadyHaveXIEoriController.xiEoriAlreadyExists
 
 # address-lookup-error-page
-GET         /address-unavailable                @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.AddressLookupErrorController.displayErrorPage
+GET         /address-unavailable                @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.AddressLookupErrorController.displayErrorPage()
+GET         /contact-address-unavailable                @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.AddressLookupErrorController.displayContactAddressErrorPage()
 
 # address-lookup-error-no-results
 GET         /address-no-results                 @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.AddressLookupErrorController.displayNoResultsPage
+GET         /contact-address-no-results                 @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.AddressLookupErrorController.displayNoContactAddressResultsPage()
 
 
 #register
@@ -83,6 +85,6 @@ GET        /register                 @uk.gov.hmrc.xieoricommoncomponentfrontend.
 GET        /contact-postcode                     @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ContactAddressLookupController.onPageLoad
 POST       /contact-postcode                     @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ContactAddressLookupController.submit
 
-#contact-address
-GET        /contact-address                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ManualContactAddressController.onPageLoad()
-POST       /contact-address                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ManualContactAddressController.submit
+#contact-address-results
+GET        /contact-address-match                             @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ContactAddressResultController.onPageLoad
+POST       /contact-address-match                             @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ContactAddressResultController.submit

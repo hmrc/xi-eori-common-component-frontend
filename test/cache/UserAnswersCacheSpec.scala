@@ -73,7 +73,7 @@ class UserAnswersCacheSpec extends BaseSpec with MockitoSugar with BeforeAndAfte
 
     }
 
-    "should not save emptry strings in postcode field" in {
+    "should not save empty strings in postcode field" in {
 
       Await.result(
         subscriptionDetailsHolderService.cacheAddressDetails(addressDetails.copy(postcode = Some(""))),
@@ -84,6 +84,32 @@ class UserAnswersCacheSpec extends BaseSpec with MockitoSugar with BeforeAndAfte
       verify(mockSessionCache).saveUserAnswers(requestCaptor.capture())(ArgumentMatchers.eq(hc))
       val holder: UserAnswers = requestCaptor.getValue
       holder.addressDetails shouldBe Some(addressDetails.copy(postcode = None))
+    }
+  }
+
+  "Calling cacheContactAddressDetails" should {
+    "save Contact Address Details in frontend cache" in {
+
+      Await.result(subscriptionDetailsHolderService.cacheContactAddressDetails(addressDetails), Duration.Inf)
+      val requestCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
+
+      verify(mockSessionCache).saveUserAnswers(requestCaptor.capture())(ArgumentMatchers.eq(hc))
+      val holder: UserAnswers = requestCaptor.getValue
+      holder.contactAddressDetails shouldBe Some(addressDetails)
+
+    }
+
+    "should not save empty strings in postcode field" in {
+
+      Await.result(
+        subscriptionDetailsHolderService.cacheContactAddressDetails(addressDetails.copy(postcode = Some(""))),
+        Duration.Inf
+      )
+      val requestCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
+
+      verify(mockSessionCache).saveUserAnswers(requestCaptor.capture())(ArgumentMatchers.eq(hc))
+      val holder: UserAnswers = requestCaptor.getValue
+      holder.contactAddressDetails shouldBe Some(addressDetails.copy(postcode = None))
     }
   }
 

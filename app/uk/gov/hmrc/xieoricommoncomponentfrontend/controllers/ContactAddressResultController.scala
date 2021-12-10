@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -25,22 +26,23 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.connectors.AddressLookupConnect
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.AuthAction
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.AddressResultsFormProvider
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ContactAddressLookup
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{AddressLookupFailure, AddressLookupSuccess}
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.registered_address
+import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.contact_address_results
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RegisteredAddressController @Inject() (
+class ContactAddressResultController @Inject() (
   authAction: AuthAction,
   mcc: MessagesControllerComponents,
   addressLookupConnector: AddressLookupConnector,
   sessionCache: SessionCache,
   userAnswersCache: UserAnswersCache,
-  registeredAddressView: registered_address
+  contactAddressResultsView: contact_address_results
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
+  private val logger = Logger(this.getClass)
 
   def onPageLoad(): Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
@@ -49,13 +51,13 @@ class RegisteredAddressController @Inject() (
     }
 
   private def displayPage()(implicit request: Request[AnyContent]): Future[Result] =
-    sessionCache.addressLookupParams.flatMap {
+    sessionCache.contactAddressParams.flatMap {
       case Some(addressLookupParams) if !addressLookupParams.isEmpty() =>
         addressLookupConnector.lookup(addressLookupParams.postcode, addressLookupParams.line1).flatMap {
           case AddressLookupSuccess(addresses) if addresses.nonEmpty && addresses.forall(_.nonEmpty) =>
             Future.successful(
               Ok(
-                registeredAddressView(
+                contactAddressResultsView(
                   AddressResultsFormProvider.form(addresses.map(_.dropDownView)),
                   addressLookupParams,
                   addresses
@@ -63,11 +65,14 @@ class RegisteredAddressController @Inject() (
               )
             )
           case AddressLookupSuccess(_) if addressLookupParams.line1.exists(_.nonEmpty) =>
-            fetchAddressWithoutLine1(addressLookupParams)
+            viewForAddressWithoutLine1Case(addressLookupParams)
           case AddressLookupSuccess(_) => Future.successful(displayNoResultsPage())
-          case AddressLookupFailure    => throw AddressLookupException
+          case AddressLookupFailure =>
+            logger.info("Address Lookup Service unavailable")
+            throw AddressLookupException
         }.recoverWith {
-          case _ => Future.successful(displayErrorPage())
+          case _ =>
+            Future.successful(displayErrorPage())
         }
       case _ =>
         Future.successful(
@@ -75,16 +80,16 @@ class RegisteredAddressController @Inject() (
         )
     }
 
-  private def fetchAddressWithoutLine1(
-    addressLookupParams: PBEAddressLookup
+  private def viewForAddressWithoutLine1Case(
+    addressLookupParams: ContactAddressLookup
   )(implicit request: Request[AnyContent], hc: HeaderCarrier): Future[Result] = {
-    val addressLookupParamsWithoutLine1 = PBEAddressLookup(addressLookupParams.postcode, None)
+    val addressLookupParamsWithoutLine1 = ContactAddressLookup(addressLookupParams.postcode, None)
 
     addressLookupConnector.lookup(addressLookupParamsWithoutLine1.postcode, None).flatMap {
       case AddressLookupSuccess(addresses) if addresses.nonEmpty && addresses.forall(_.nonEmpty) =>
-        sessionCache.saveAddressLookupParams(addressLookupParamsWithoutLine1).map { _ =>
+        sessionCache.saveContactAddressParams(addressLookupParamsWithoutLine1).map { _ =>
           Ok(
-            registeredAddressView(
+            contactAddressResultsView(
               AddressResultsFormProvider.form(addresses.map(_.dropDownView)),
               addressLookupParams,
               addresses
@@ -92,13 +97,15 @@ class RegisteredAddressController @Inject() (
           )
         }
       case AddressLookupSuccess(_) => Future.successful(displayNoResultsPage())
-      case AddressLookupFailure    => throw AddressLookupException
+      case AddressLookupFailure =>
+        logger.info("Address Lookup Service unavailable")
+        throw AddressLookupException
     }
   }
 
   def submit(): Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => _: LoggedInUserWithEnrolments =>
-      sessionCache.addressLookupParams.flatMap {
+      sessionCache.contactAddressParams.flatMap {
         case Some(addressLookupParams) =>
           addressLookupConnector.lookup(addressLookupParams.postcode, addressLookupParams.line1).flatMap {
             case AddressLookupSuccess(addresses) if addresses.nonEmpty && addresses.forall(_.nonEmpty) =>
@@ -107,25 +114,29 @@ class RegisteredAddressController @Inject() (
 
               AddressResultsFormProvider.form(addressesView).bindFromRequest.fold(
                 formWithErrors =>
-                  Future.successful(BadRequest(registeredAddressView(formWithErrors, addressLookupParams, addresses))),
+                  Future.successful(
+                    BadRequest(contactAddressResultsView(formWithErrors, addressLookupParams, addresses))
+                  ),
                 validAnswer => {
                   val address = addressesMap(validAnswer.address).toAddressViewModel
-                  userAnswersCache.cacheAddressDetails(address).map { _ =>
+                  userAnswersCache.cacheContactAddressDetails(address).map { _ =>
                     Redirect(
-                      uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEConfirmAddressController.onPageLoad()
+                      uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressLookupController.onPageLoad()
                     )
                   }
                 }
               )
             case AddressLookupSuccess(_) => Future.successful(displayNoResultsPage())
-            case AddressLookupFailure    => throw AddressLookupException
+            case AddressLookupFailure =>
+              logger.info("Address Lookup Service unavailable")
+              throw AddressLookupException
           }.recoverWith {
             case _ => Future.successful(displayErrorPage())
           }
         case _ =>
           Future.successful(
             Redirect(
-              uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEAddressLookupController.onPageLoad()
+              uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressLookupController.onPageLoad()
             )
           )
       }
@@ -133,14 +144,12 @@ class RegisteredAddressController @Inject() (
 
   def displayErrorPage(): Result =
     Redirect(
-      uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AddressLookupErrorController.displayErrorPage()
+      uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AddressLookupErrorController.displayContactAddressErrorPage()
     )
 
   def displayNoResultsPage(): Result =
     Redirect(
-      uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AddressLookupErrorController.displayNoResultsPage()
+      uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AddressLookupErrorController.displayNoContactAddressResultsPage()
     )
 
 }
-
-case object AddressLookupException extends Exception("Address Lookup service is not available")

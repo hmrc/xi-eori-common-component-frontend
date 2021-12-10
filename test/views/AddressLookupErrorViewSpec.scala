@@ -29,7 +29,8 @@ class AddressLookupErrorViewSpec extends ViewSpec {
 
   implicit val request: Request[Any] = withFakeCSRF(fakeRegisterRequest)
 
-  private val doc: Document = Jsoup.parse(contentAsString(view()))
+  private val doc: Document                = Jsoup.parse(contentAsString(view(isPBEAddressLookupFailed = true)))
+  private val contactAddressdDoc: Document = Jsoup.parse(contentAsString(view(isPBEAddressLookupFailed = false)))
 
   "Address lookup error page" should {
 
@@ -56,6 +57,13 @@ class AddressLookupErrorViewSpec extends ViewSpec {
 
       reenterPostcodeButton.text() mustBe "Re-enter postcode"
       reenterPostcodeButton.attr("href") mustBe "/xi-customs-registration-services/pbe-postcode"
+    }
+    "display change postcode link when searching contact address" in {
+
+      val reenterPostcodeButton = contactAddressdDoc.body().getElementsByClass("reenter-postcode-button")
+
+      reenterPostcodeButton.text() mustBe "Re-enter postcode"
+      reenterPostcodeButton.attr("href") mustBe "/xi-customs-registration-services/contact-postcode"
     }
 
     "display enter manually address link" in {

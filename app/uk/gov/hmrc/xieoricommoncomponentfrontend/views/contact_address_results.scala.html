@@ -14,14 +14,14 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.AddressResultsFormProvider
-@import uk.gov.hmrc.xieoricommoncomponentfrontend.models.AddressLookup
-@import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html._
-@import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
 @import play.api.data.Form
 @import play.api.i18n.Messages
 @import play.api.mvc.Request
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.AddressResultsFormProvider
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.models.AddressLookup
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ContactAddressLookup
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html._
 
 @this(main_template: Layout,
 formHelper: FormWithCSRF,
@@ -31,15 +31,16 @@ errorSummary: components.errorSummary,
 fieldSet: components.fieldSet,
 inputAutoComplete: components.inputAutocomplete,
 govukSummaryList : GovukSummaryList,
+govukHint: GovukHint,
 h1: components.h1)
-@(pbeAddressResultsForm: Form[AddressResultsFormProvider],addressLookupParams: PBEAddressLookup,addresses: Seq[AddressLookup])(implicit messages: Messages, request: Request[_])
+@(addressResultsForm: Form[AddressResultsFormProvider],addressLookupParams: ContactAddressLookup,addresses: Seq[AddressLookup])(implicit messages: Messages, request: Request[_])
 @title = @{
-    messages("registered-address.page.title")
+    messages("contact-address-results.page.title")
 }
     @propertyName = @{
       addressLookupParams.line1 match {
           case Some(value) => value
-          case _ => messages("registered-address.page.property-name.not-known")
+          case _ => messages("contact-address-results.page.property-name.not-known")
       }
     }
 
@@ -47,38 +48,38 @@ h1: components.h1)
 uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.onPageLoad()
 }
 
-@main_template(title,form = Some(pbeAddressResultsForm)) {
+@main_template(title,form = Some(addressResultsForm)) {
 
-    @formHelper(action = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.RegisteredAddressController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressResultController.submit(), 'autoComplete -> "off") {
 
-        @errorSummary(pbeAddressResultsForm.errors)
+        @errorSummary(addressResultsForm.errors)
 
-           @h1(messages("registered-address.page.title"))
-
+           @h1(messages("contact-address-results.page.title"),classes="govuk-!-margin-bottom-3")
+           @govukHint(Hint(content = Text(messages("contact-address-results.postcode.address.hint")),classes="govuk-!-margin-top-0 govuk-!-margin-bottom-5"))
         <div id="postcode-details">
             @govukSummaryList(SummaryList(
                 rows = Seq(SummaryListRow(
-                    key = Key(content = Text(messages("registered-address.page.postcode.label")),classes = "govuk-!-width-one-half postcode"),
+                    key = Key(content = Text(messages("contact-address-results.page.postcode.label")),classes = "govuk-!-width-one-half postcode"),
                     value = Value(content = HtmlContent(Html(addressLookupParams.postcode))),
                     actions = Some(Actions(
                         items = Seq(
                             ActionItem(
-                                href = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEAddressLookupController.onPageLoad().url,
+                                href = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressLookupController.onPageLoad().url,
                                 content = Text(messages("ecc.form.change")),
-                                visuallyHiddenText = Some(messages("ecc.form.change") + " " + messages("registered-address.page.postcode.label"))
+                                visuallyHiddenText = Some(messages("ecc.form.change") + " " + messages("contact-address-results.page.postcode.label"))
                             )
                         ),
                         classes = "review-tbl__postcode_change"
                     )), classes="review-tbl__postcode"),
                     SummaryListRow(
-                        key = Key(content = Text(messages("registered-address.page.property-name.label")),classes = "govuk-!-width-one-half propertyName"),
+                        key = Key(content = Text(messages("contact-address-results.page.property-name.label")),classes = "govuk-!-width-one-half propertyName"),
                         value = Value(content = HtmlContent(Html(propertyName))),
                         actions = Some(Actions(
                             items = Seq(
                                 ActionItem(
-                                    href = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEAddressLookupController.onPageLoad().url,
+                                    href = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressLookupController.onPageLoad().url,
                                     content = Text(messages("ecc.form.change")),
-                                    visuallyHiddenText = Some(messages("ecc.form.change") + " " + messages("registered-address.page.property-name.label"))
+                                    visuallyHiddenText = Some(messages("ecc.form.change") + " " + messages("contact-address-results.page.property-name.label"))
                                 )
                             ),
                             classes = "review-tbl__line1_change"
@@ -87,15 +88,15 @@ uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressCon
         </div>
         <div class="govuk-!-margin-bottom-2 govuk-!-width-one-half">
         @inputAutoComplete(
-            pbeAddressResultsForm,
-            pbeAddressResultsForm("address"),
-            messages("registered-address.postcode.address.label"),
+            addressResultsForm,
+            addressResultsForm("address"),
+            messages("contact-address-results.postcode.address.label"),
             addresses.toList
         )
         </div>
 
         <p class="govuk-body">
-            <a href="@manualAddressLink" id="cannot-find-address" class="govuk-link">@messages("registered-address.page.cannot-find-address")</a>
+            <a href="@manualAddressLink" id="cannot-find-address" class="govuk-link">@messages("contact-address-results.page.cannot-find-address")</a>
         </p>
 
         @govukButton(Button(

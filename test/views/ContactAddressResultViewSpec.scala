@@ -22,17 +22,17 @@ import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.Helpers.contentAsString
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.AddressResultsFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.AddressLookup
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEAddressLookup
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.registered_address
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ContactAddressLookup
+import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.contact_address_results
 import util.ViewSpec
 
-class RegisteredAddressViewSpec extends ViewSpec {
+class ContactAddressResultViewSpec extends ViewSpec {
 
-  private val view = instanceOf[registered_address]
+  private val view = instanceOf[contact_address_results]
 
   private implicit val request: Request[AnyContentAsEmpty.type] = withFakeCSRF(fakeRegisterRequest)
 
-  private val params         = PBEAddressLookup("AA11 1AA", Some("Flat 1"))
+  private val params         = ContactAddressLookup("AA11 1AA", Some("Flat 1"))
   private val allowedAddress = Seq(AddressLookup("Line 1", "City", "BB11 1BB", "GB"))
 
   private val form = AddressResultsFormProvider.form(allowedAddress.map(_.dropDownView))
@@ -49,11 +49,11 @@ class RegisteredAddressViewSpec extends ViewSpec {
   private val docWithErrorSummary =
     Jsoup.parse(contentAsString(view(formWithError, params, allowedAddress)))
 
-  "Address Lookup Postcode page" should {
+  "Contact Address Lookup Postcode page" should {
 
     "display title for company" in {
 
-      doc.title() must startWith("What is your permanent business establishment address?")
+      doc.title() must startWith("What is your XI EORI application contact address?")
     }
 
     "display summary of params" in {
@@ -79,10 +79,10 @@ class RegisteredAddressViewSpec extends ViewSpec {
       val line1ChangeLink    = doc.body().getElementsByClass("review-tbl__line1_change").get(0)
 
       postcodeChangeLink.getElementsByTag("a").text() must startWith("Change")
-      postcodeChangeLink.getElementsByTag("a").attr("href") mustBe "/xi-customs-registration-services/pbe-postcode"
+      postcodeChangeLink.getElementsByTag("a").attr("href") mustBe "/xi-customs-registration-services/contact-postcode"
 
       line1ChangeLink.getElementsByTag("a").text() must startWith("Change")
-      line1ChangeLink.getElementsByTag("a").attr("href") mustBe "/xi-customs-registration-services/pbe-postcode"
+      line1ChangeLink.getElementsByTag("a").attr("href") mustBe "/xi-customs-registration-services/contact-postcode"
     }
 
     "display dropdown with label" in {
@@ -95,17 +95,14 @@ class RegisteredAddressViewSpec extends ViewSpec {
       dropdown.getElementsByTag("option").get(1).text() mustBe "Line 1, City, BB11 1BB"
     }
 
-    "display manual address link" in {
-
-      val manualAddressLink = doc.body().getElementById("cannot-find-address")
-
-      manualAddressLink.text() mustBe "I can't find my address in the list"
-      manualAddressLink.attr("href") mustBe "/xi-customs-registration-services/pbe-company-address"
-    }
-
     "display Continue button" in {
 
       doc.body().getElementsByClass("govuk-button").text() mustBe "Continue"
+    }
+
+    "display hint" in {
+
+      doc.body().getElementsByClass("govuk-hint").text() mustBe "Choose your address below"
     }
 
     "display error summary" in {
