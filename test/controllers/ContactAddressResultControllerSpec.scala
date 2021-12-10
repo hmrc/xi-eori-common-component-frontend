@@ -171,10 +171,8 @@ class ContactAddressResultControllerSpec extends BaseSpec with BeforeAndAfterEac
           when(mockSessionCache.contactAddressParams(any())).thenReturn(Future.successful(Some(addressLookupParams)))
           when(mockAddressLookupConnector.lookup(any(), any())(any()))
             .thenReturn(Future.successful(AddressLookupSuccess(Seq(addressLookup))))
-          val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-            "POST",
+          val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
             uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressResultController.submit().url,
-            defaultUserId,
             Map("address" -> "")
           )
 
@@ -194,10 +192,8 @@ class ContactAddressResultControllerSpec extends BaseSpec with BeforeAndAfterEac
           when(mockUserAnswersCache.cacheContactAddressDetails(any())(any())).thenReturn(Future.successful(true))
           withAuthorisedUser(defaultUserId, mockAuthConnector)
 
-          val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-            "POST",
+          val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
             uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressResultController.submit().url,
-            defaultUserId,
             Map("address" -> addressLookup.dropDownView)
           )
 
@@ -217,10 +213,8 @@ class ContactAddressResultControllerSpec extends BaseSpec with BeforeAndAfterEac
 
           withAuthorisedUser(defaultUserId, mockAuthConnector)
 
-          val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-            "POST",
+          val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
             uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressResultController.submit().url,
-            defaultUserId,
             Map("address" -> addressLookup.dropDownView)
           )
 
@@ -241,10 +235,8 @@ class ContactAddressResultControllerSpec extends BaseSpec with BeforeAndAfterEac
           when(mockUserAnswersCache.cacheContactAddressDetails(any())(any())).thenReturn(Future.successful(true))
           withAuthorisedUser(defaultUserId, mockAuthConnector)
 
-          val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-            "POST",
+          val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
             uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressResultController.submit().url,
-            defaultUserId,
             Map("address" -> addressLookup.dropDownView)
           )
 
@@ -267,10 +259,8 @@ class ContactAddressResultControllerSpec extends BaseSpec with BeforeAndAfterEac
 
           withAuthorisedUser(defaultUserId, mockAuthConnector)
 
-          val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-            "POST",
+          val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
             uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressResultController.submit().url,
-            defaultUserId,
             Map("address" -> addressLookup.dropDownView)
           )
 

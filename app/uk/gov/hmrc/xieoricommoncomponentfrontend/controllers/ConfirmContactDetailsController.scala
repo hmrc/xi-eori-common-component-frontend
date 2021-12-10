@@ -67,7 +67,8 @@ class ConfirmContactDetailsController @Inject() (
   def populateView(
     contactInformation: ContactInformation
   )(implicit hc: HeaderCarrier, request: Request[AnyContent]): Future[Result] = {
-    val viewModel: Option[ConfirmContactDetailsViewModel] = ConfirmContactDetailsViewModel.fromContactInformation(contactInformation)
+    val viewModel: Option[ConfirmContactDetailsViewModel] =
+      ConfirmContactDetailsViewModel.fromContactInformation(contactInformation)
     viewModel.map(v => Future.successful(Ok(confirmContactDetailsView(v)))).getOrElse {
       val errorMessage = "Subscription details contact info has missing details";
       logger.warn(errorMessage)
