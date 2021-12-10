@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -41,6 +42,7 @@ class ContactAddressResultController @Inject() (
   contactAddressResultsView: contact_address_results
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
+  private val logger = Logger(this.getClass)
 
   def onPageLoad(): Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
@@ -67,7 +69,10 @@ class ContactAddressResultController @Inject() (
           case AddressLookupSuccess(_) => Future.successful(displayNoResultsPage())
           case AddressLookupFailure    => throw AddressLookupException
         }.recoverWith {
-          case _ => Future.successful(displayErrorPage())
+          case _ =>
+            logger.info("Address Lookup Service unavailable")
+            Future.successful(displayErrorPage())
+
         }
       case _ =>
         Future.successful(
@@ -92,7 +97,9 @@ class ContactAddressResultController @Inject() (
           )
         }
       case AddressLookupSuccess(_) => Future.successful(displayNoResultsPage())
-      case AddressLookupFailure    => throw AddressLookupException
+      case AddressLookupFailure =>
+        logger.info("Address Lookup Service unavailable")
+        throw AddressLookupException
     }
   }
 
@@ -120,7 +127,9 @@ class ContactAddressResultController @Inject() (
                 }
               )
             case AddressLookupSuccess(_) => Future.successful(displayNoResultsPage())
-            case AddressLookupFailure    => throw AddressLookupException
+            case AddressLookupFailure =>
+              logger.info("Address Lookup Service unavailable")
+              throw AddressLookupException
           }.recoverWith {
             case _ => Future.successful(displayErrorPage())
           }
