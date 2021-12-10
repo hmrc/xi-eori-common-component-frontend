@@ -478,7 +478,6 @@ manual-contact-address.town.required=Enter town or city
 manual-contact-address.country.required=Select Country
 manual-contact-address.line1.error=The first line of the address must be 35 characters or less
 manual-contact-address.line2.long.error=The second line of the address must be 34 characters or less
-manual-contact-address.line1andline2.error=The first and second line of the address must be 70 characters or less
 manual-contact-address.town.error=Town or city must be 35 characters or less
 manual-contact-address.region.error=Region or state must be 35 characters or less
 manual-contact-address.postcode.format.invalid=Enter a valid postcode
