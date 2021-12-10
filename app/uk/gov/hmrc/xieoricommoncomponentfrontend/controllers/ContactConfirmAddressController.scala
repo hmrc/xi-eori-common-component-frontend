@@ -61,12 +61,12 @@ class ContactConfirmAddressController @Inject()(
 
   def submit: Action[AnyContent] = authAction.ggAuthorisedUserWithEnrolmentsAction {
     implicit request => _: LoggedInUserWithEnrolments =>
-      userAnswersCache.getAddressDetails().flatMap {
+      userAnswersCache.getContactAddressDetails().flatMap {
         case Some(address) =>
           form.bindFromRequest()
             .fold(
               formWithErrors => Future.successful(BadRequest(contactConfirmAddressView(address, formWithErrors))),
-              value => userAnswersCache.cacheConfirmAddress(value).map(_ => destinationsByAnswer(value))
+              value => userAnswersCache.cacheContactConfirmAddress(value).map(_ => destinationsByAnswer(value))
             )
         case None =>
           Future.successful(
