@@ -18,7 +18,14 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.models
 
 import play.api.libs.json.Json
 
-case class AddressDetails(street: String, city: String, postcode: Option[String], countryCode: String)
+case class AddressDetails(
+  street: String,
+  city: String,
+  postcode: Option[String],
+  countryCode: String,
+  line2: Option[String],
+  region: Option[String]
+)
 
 object AddressDetails {
   implicit val jsonFormat = Json.format[AddressDetails]

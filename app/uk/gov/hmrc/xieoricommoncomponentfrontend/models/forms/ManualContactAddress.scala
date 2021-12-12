@@ -21,27 +21,33 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.AddressViewModel
 
 case class ManualContactAddress(
   line1: String,
-  line2: Option[String],
   townorcity: String,
-  regionorstate: Option[String],
   postcode: Option[String],
-  country: String
+  country: String,
+  line2: Option[String],
+  regionorstate: Option[String]
 ) {}
 
 object ManualContactAddress {
   implicit val format = Json.format[ManualContactAddress]
 
   def fetchAddressDetail(addressViewModel: AddressViewModel): ManualContactAddress = {
-    val line1       = addressViewModel.street
-    val line2       = addressViewModel.street
-    val townCity    = addressViewModel.city
-    val regionState = addressViewModel.street
+    val line1    = addressViewModel.street
+    val townCity = addressViewModel.city
     val postCode: String = addressViewModel.postcode match {
       case None            => ""
       case Some(p: String) => p
     }
     val country = addressViewModel.countryCode
-    ManualContactAddress.apply(line1, Option(line2), townCity, Option(regionState), Option(postCode), country)
+    val line2 = addressViewModel.line2 match {
+      case None            => ""
+      case Some(p: String) => p
+    }
+    val regionState = addressViewModel.region match {
+      case None            => ""
+      case Some(p: String) => p
+    }
+    ManualContactAddress.apply(line1, townCity, Option(postCode), country, Option(line2), Option(regionState))
   }
 
   def toAddressModel(validContactAddressParams: ManualContactAddress): AddressViewModel = {
@@ -49,7 +55,9 @@ object ManualContactAddress {
     val townCity    = validContactAddressParams.townorcity
     val postCode    = validContactAddressParams.postcode
     val countryCode = validContactAddressParams.country
-    AddressViewModel(line1, townCity, postCode, countryCode)
+    val line2       = validContactAddressParams.line2
+    val regionState = validContactAddressParams.regionorstate
+    AddressViewModel(line1, townCity, postCode, countryCode, line2, regionState)
   }
 
 }

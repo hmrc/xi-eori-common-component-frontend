@@ -48,8 +48,17 @@ class ManualContactAddressController @Inject() (
   def onPageLoad: Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
       implicit request => _: LoggedInUserWithEnrolments =>
-        Future.successful(Ok(manualContactAddressView(form, countries, picker)))
-
+        userAnswersCache.getContactAddressDetails() map {
+          case Some(contactAddressDetails) =>
+            Ok(
+              manualContactAddressView(
+                form.fill(ManualContactAddress.fetchAddressDetail(contactAddressDetails)),
+                countries,
+                picker
+              )
+            )
+          case None => Ok(manualContactAddressView(form, countries, picker))
+        }
     }
 
   def reviewPageLoad(): Action[AnyContent] =
@@ -63,14 +72,16 @@ class ManualContactAddressController @Inject() (
     authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => loggedInUser: LoggedInUserWithEnrolments =>
       form.bindFromRequest.fold(
         invalidForm => Future.successful(BadRequest(manualContactAddressView(invalidForm, countries, picker))),
-        validAddressParams =>
+        validContactAddressParams =>
           loggedInUser.affinityGroup match {
             case Some(AffinityGroup.Organisation) =>
               for {
-                _ <- userAnswersCache.cacheAddressDetails(ManualContactAddress.toAddressModel(validAddressParams))
-                _ <- sessionCache.clearAddressLookupParams
+                _ <- userAnswersCache.cacheContactAddressDetails(
+                  ManualContactAddress.toAddressModel(validContactAddressParams)
+                )
+                _ <- sessionCache.clearContactAddressParams
               } yield Redirect(
-                uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEConfirmAddressController.onPageLoad()
+                uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded()
               )
             case _ =>
               Future.successful(

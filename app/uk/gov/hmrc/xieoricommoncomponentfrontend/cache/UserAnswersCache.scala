@@ -73,6 +73,9 @@ class UserAnswersCache @Inject() (sessionCache: SessionCache)(implicit ec: Execu
   def getAddressDetails()(implicit hc: HeaderCarrier): Future[Option[AddressViewModel]] =
     sessionCache.userAnswers map (_.addressDetails)
 
+  def getContactAddressDetails()(implicit hc: HeaderCarrier): Future[Option[AddressViewModel]] =
+    sessionCache.userAnswers map (_.contactAddressDetails)
+
   def getTradeWithInNI()(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
     sessionCache.userAnswers map (_.tradeWithNI)
 
