@@ -73,24 +73,14 @@ class ManualContactAddressController @Inject() (
       form.bindFromRequest.fold(
         invalidForm => Future.successful(BadRequest(manualContactAddressView(invalidForm, countries, picker))),
         validContactAddressParams =>
-          loggedInUser.affinityGroup match {
-            case Some(AffinityGroup.Organisation) =>
-              for {
-                _ <- userAnswersCache.cacheContactAddressDetails(
-                  ManualContactAddress.toAddressModel(validContactAddressParams)
-                )
-                _ <- sessionCache.clearContactAddressParams
-              } yield Redirect(
-                uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded()
-              )
-            case _ =>
-              Future.successful(
-                Redirect(
-                  uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded()
-                )
-              )
-
-          }
+          for {
+            _ <- userAnswersCache.cacheContactAddressDetails(
+              ManualContactAddress.toAddressModel(validContactAddressParams)
+            )
+            _ <- sessionCache.clearContactAddressParams
+          } yield Redirect(
+            uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded()
+          )
       )
     }
 

@@ -476,7 +476,7 @@ contact-address-results.page.property-name.not-known= Not known
 contact-address-results.postcode.address.hint= Choose your address below
 
 #manual-contact-address
-manual-contact-address.page.title=What is your permanent business establishment address?
+manual-contact-address.page.title=What is your XI EORI application contact address?
 manual-contact-address.line1.label=Address line 1
 manual-contact-address.line2.label=Address line 2 (optional)
 manual-contact-address.town.label=Town or city
