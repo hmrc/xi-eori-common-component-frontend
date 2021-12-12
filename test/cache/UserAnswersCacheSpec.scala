@@ -40,7 +40,14 @@ class UserAnswersCacheSpec extends BaseSpec with MockitoSugar with BeforeAndAfte
   private val mockpersonalDataDisclosureConsent = mock[Option[Boolean]]
 
   private val addressDetails =
-    AddressViewModel(street = "street", city = "city", postcode = Some("postcode"), countryCode = "GB")
+    AddressViewModel(
+      street = "street",
+      city = "city",
+      postcode = Some("postcode"),
+      countryCode = "GB",
+      line2 = Some(""),
+      region = Some("")
+    )
 
   private val subscriptionDetailsHolderService =
     new UserAnswersCache(mockSessionCache)

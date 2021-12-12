@@ -52,9 +52,9 @@
 
         <div id="manual-address" class="govuk-!-margin-bottom-4">
             @if(isPBEAddressLookupFailed){
-                <a href="@uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.onPageLoad()" class="govuk-link" id="enter-pbe-manually-button">@messages("ecc.address-lookup.postcode.no-results.manual")</a>
+                <a href="@uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.onPageLoad()" class="govuk-link" id="enter-manually-button">@messages("ecc.address-lookup.postcode.no-results.manual")</a>
             }else {
-                <a href="@uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualContactAddressController.reviewPageLoad()" class="govuk-link" id="enter-manually-button">@messages("ecc.address-lookup.postcode.no-results.manual")</a>
+                <a href="@uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualContactAddressController.reviewPageLoad()" class="govuk-link" id="enter-manual-button">@messages("ecc.address-lookup.postcode.no-results.manual")</a>
             }
         </div>
 

@@ -65,7 +65,7 @@ class AddressLookupNoResultsViewSpec extends ViewSpec {
 
     "display change postcode link for Contact Address search" in {
 
-      val reenterPostcodeButton = contactAddressDoc.body().getElementById("reenter-postcode-button")
+      val reenterPostcodeButton = contactAddressDoc.body().getElementById("reenter-manual-postcode-button")
 
       reenterPostcodeButton.text() mustBe "Change"
       reenterPostcodeButton.attr("href") mustBe "/xi-customs-registration-services/contact-postcode"
