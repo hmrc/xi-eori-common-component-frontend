@@ -103,5 +103,35 @@ class ManualContactAddressControllerSpec extends BaseSpec {
 
       }
     }
+
+    "redirect to the next page when data is valid" in {
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+        when(mockGroupEnrolmentExtractor.groupIdEnrolments(any())(any()))
+          .thenReturn(Future.successful(groupEnrolment))
+        when(mockUserAnswersCache.cacheContactAddressDetails(any())(any())).thenReturn(Future.successful(true))
+
+        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
+          "POST",
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualContactAddressController.submit().url,
+          defaultUserId,
+          Map(
+            "line1"         -> "Abc",
+            "townorcity"    -> "test",
+            "postcode"      -> "BT11AA",
+            "countryCode"   -> "GB",
+            "line2"         -> "line 2",
+            "regionorstate" -> "state"
+          )
+        )
+
+        val result = route(application, request).get
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(
+          result
+        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded().url
+
+      }
+    }
   }
 }
