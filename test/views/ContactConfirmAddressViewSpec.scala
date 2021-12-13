@@ -91,5 +91,10 @@ class ContactConfirmAddressViewSpec extends ViewSpec {
         "govuk-hint"
       ).text() mustBe "This is the address we will use to contact you about your application"
     }
+
+    "display address details properly" in {
+
+      doc.body().getElementsByClass("govuk-inset-text").text() mustBe "line1 city postcode United Kingdom"
+    }
   }
 }
