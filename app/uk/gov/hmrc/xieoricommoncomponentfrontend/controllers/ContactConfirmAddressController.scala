@@ -86,7 +86,7 @@ class ContactConfirmAddressController @Inject() (
     case ConfirmAddress.changeAddress =>
       Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressLookupController.onPageLoad())
     case ConfirmAddress.enterManually =>
-      Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.reviewPageLoad())
+      Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualContactAddressController.onPageLoad())
   }
 
 }

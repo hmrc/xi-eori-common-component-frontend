@@ -31,7 +31,7 @@ class ContactConfirmAddressViewSpec extends ViewSpec {
   private val formProvider           = new ConfirmAddressFormProvider()
   private def form                   = formProvider.apply()
   private def formWithError          = form.bind(Map("value" -> ""))
-  val address: AddressViewModel      = AddressViewModel("line1", "city", Some("postcode"), "GB")
+  val address: AddressViewModel      = AddressViewModel("line1", "city", Some("postcode"), "GB", None, None)
   private val view                   = instanceOf[contact_confirm_address]
   private val viewError              = instanceOf[contact_confirm_address].apply(address, formWithError)
 

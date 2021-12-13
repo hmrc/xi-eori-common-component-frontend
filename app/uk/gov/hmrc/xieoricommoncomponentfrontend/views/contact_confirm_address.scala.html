@@ -41,7 +41,9 @@ h1: components.h1)
 @addressHtml = {
     <div id="address" class="govuk-body">
         @p(Html(address.street),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0")
+        @address.line2.map( line2 => p(Html(line2),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0"))
         @p(Html(address.city),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0")
+        @address.region.map( region => p(Html(region),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0"))
         @address.postcode.map( postalCode => p(Html(postalCode),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0"))
         @p(Html(Some(messages("ecc.country.GB"))))
     </div>

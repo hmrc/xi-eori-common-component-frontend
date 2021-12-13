@@ -34,7 +34,7 @@ import scala.concurrent.Future
 
 class ContactConfirmDetailsControllerSpec extends BaseSpec {
 
-  val address: AddressViewModel = AddressViewModel("line1", "city", Some("postcode"), "GB")
+  val address: AddressViewModel = AddressViewModel("line1", "city", Some("postcode"), "GB", None, None)
   "ContactConfirmDetails controller" should {
 
     "calling onPageLoad " should {
@@ -168,7 +168,7 @@ class ContactConfirmDetailsControllerSpec extends BaseSpec {
           status(result) shouldBe SEE_OTHER
           redirectLocation(
             result
-          ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.reviewPageLoad().url
+          ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualContactAddressController.onPageLoad().url
         }
       }
     }
