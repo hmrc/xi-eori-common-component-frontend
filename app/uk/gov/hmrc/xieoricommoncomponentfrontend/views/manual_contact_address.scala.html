@@ -37,7 +37,7 @@ fieldSet: components.fieldSet)
         @rowCountryField(manualContactAddressForm, "countryCode", "manual-contact-address.country.label", countries, args: _*)
     }
 }
-@main_template(title, form = Some(manualContactAddressForm), false, countriesInCountryPicker) {
+@main_template(title, form = Some(manualContactAddressForm), true, countriesInCountryPicker) {
 
     @formHelper(action = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualContactAddressController.submit(), 'autoComplete -> "off") {
 

@@ -127,6 +127,11 @@ class ManualContactAddressViewSpec extends ViewSpec {
       doc.body.getElementsByClass("govuk-label line1").text() mustBe "Address line 1"
     }
 
+    "display Address line 2 input with label" in {
+
+      doc.body.getElementsByClass("govuk-label line2").text() mustBe "Address line 2 (optional)"
+    }
+
     "display Town or city input with label" in {
 
       doc.body.getElementsByClass("govuk-label town").text() mustBe "Town or city"

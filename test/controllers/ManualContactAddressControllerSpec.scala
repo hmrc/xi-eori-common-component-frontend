@@ -71,7 +71,7 @@ class ManualContactAddressControllerSpec extends BaseSpec {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualContactAddressController.reviewPageLoad().url,
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualContactAddressController.onPageLoad().url,
           defaultUserId
         )
 
@@ -80,6 +80,27 @@ class ManualContactAddressControllerSpec extends BaseSpec {
         val page = RegistrationPage(contentAsString(result))
 
         page.title should startWith("What is your XI EORI application contact address?")
+      }
+    }
+
+    "return a Bad Request and errors when no line1 is submitted" in {
+
+      running(application) {
+        withAuthorisedUser(defaultUserId, mockAuthConnector)
+
+        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
+          "POST",
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualContactAddressController.submit().url,
+          defaultUserId,
+          Map("line1" -> "", "townorcity" -> "test", "postcode" -> "BT11AA")
+        )
+
+        val result = route(application, request).get
+        status(result) shouldBe BAD_REQUEST
+
+        val page = RegistrationPage(contentAsString(result))
+        page.errors should startWith("Enter Address line 1")
+
       }
     }
   }
