@@ -29,6 +29,7 @@
 formHelper: FormWithCSRF,
 govukButton: GovukButton,
 p: components.p,
+govukHint: GovukHint,
 errorSummary: components.errorSummary,
 govukInsetText : GovukInsetText,
 inputRadioGroup: components.inputRadioGroup,
@@ -52,8 +53,8 @@ h1: components.h1)
     @formHelper(action = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactConfirmAddressController.submit(), 'autoComplete -> "off") {
 
         @errorSummary(confirmAddressForm.errors)
-        @h1(messages("confirm-contact-address.page.title"))
-
+        @h1(messages("confirm-contact-address.page.title"),classes="govuk-!-margin-bottom-3")
+        @govukHint(Hint(content = Text(messages("confirm-contact-address.address.hint")),classes="govuk-!-margin-top-0 govuk-!-margin-bottom-5"))
         @govukInsetText(InsetText(
             content = HtmlContent(addressHtml)
         ))

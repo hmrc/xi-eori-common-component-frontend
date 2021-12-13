@@ -25,6 +25,6 @@ import javax.inject.Inject
 class ConfirmAddressFormProvider @Inject() extends Mappings {
 
   def apply(): Form[ConfirmAddress] =
-    Form("value" -> enumerable[ConfirmAddress]("pbe-confirm-address.error.required"))
+    Form("value" -> enumerable[ConfirmAddress]("confirm-address.error.required"))
 
 }

@@ -84,5 +84,12 @@ class ContactConfirmAddressViewSpec extends ViewSpec {
       val helpAndSupport = doc.body().getElementById("helpAndSupport")
       helpAndSupport.getElementsByTag("a").get(0).text mustBe "Get help with this page."
     }
+
+    "display hint" in {
+
+      doc.body().getElementsByClass(
+        "govuk-hint"
+      ).text() mustBe "This is the address we will use to contact you about your application"
+    }
   }
 }
