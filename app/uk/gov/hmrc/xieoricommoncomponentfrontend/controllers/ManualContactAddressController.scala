@@ -18,7 +18,6 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.{SessionCache, UserAnswersCache}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{AuthAction, EnrolmentExtractor}
@@ -26,6 +25,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolmen
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.ManualContactAddressFormProvider
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ManualContactAddress
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.countries.Countries
+import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.AddressViewModel
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.manual_contact_address
 
 import javax.inject.Inject
@@ -51,11 +51,7 @@ class ManualContactAddressController @Inject() (
         userAnswersCache.getContactAddressDetails() map {
           case Some(contactAddressDetails) =>
             Ok(
-              manualContactAddressView(
-                form.fill(ManualContactAddress.fetchAddressDetail(contactAddressDetails)),
-                countries,
-                picker
-              )
+              manualContactAddressView(form.fill(ManualContactAddress.apply(contactAddressDetails)), countries, picker)
             )
           case None => Ok(manualContactAddressView(form, countries, picker))
         }
@@ -67,9 +63,7 @@ class ManualContactAddressController @Inject() (
         invalidForm => Future.successful(BadRequest(manualContactAddressView(invalidForm, countries, picker))),
         validContactAddressParams =>
           for {
-            _ <- userAnswersCache.cacheContactAddressDetails(
-              ManualContactAddress.toAddressModel(validContactAddressParams)
-            )
+            _ <- userAnswersCache.cacheContactAddressDetails(AddressViewModel.apply(validContactAddressParams))
             _ <- sessionCache.clearContactAddressParams
           } yield Redirect(
             uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactConfirmAddressController.onPageLoad()

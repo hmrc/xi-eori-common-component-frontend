@@ -21,43 +21,24 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.AddressViewModel
 
 case class ManualContactAddress(
   line1: String,
-  townorcity: String,
+  townOrCity: String,
   postcode: Option[String],
   country: String,
   line2: Option[String],
-  regionorstate: Option[String]
+  regionOrState: Option[String]
 ) {}
 
 object ManualContactAddress {
   implicit val format = Json.format[ManualContactAddress]
 
-  def fetchAddressDetail(addressViewModel: AddressViewModel): ManualContactAddress = {
-    val line1    = addressViewModel.street
-    val townCity = addressViewModel.city
-    val postCode: String = addressViewModel.postcode match {
-      case None            => ""
-      case Some(p: String) => p
-    }
-    val country = addressViewModel.countryCode
-    val line2 = addressViewModel.line2 match {
-      case None            => ""
-      case Some(p: String) => p
-    }
-    val regionState = addressViewModel.region match {
-      case None            => ""
-      case Some(p: String) => p
-    }
+  def apply(addressViewModel: AddressViewModel): ManualContactAddress = {
+    val line1            = addressViewModel.street
+    val townCity         = addressViewModel.city
+    val postCode: String = addressViewModel.postcode.getOrElse("")
+    val country          = addressViewModel.countryCode
+    val line2            = addressViewModel.line2.getOrElse("")
+    val regionState      = addressViewModel.region.getOrElse("")
     ManualContactAddress.apply(line1, townCity, Option(postCode), country, Option(line2), Option(regionState))
-  }
-
-  def toAddressModel(validContactAddressParams: ManualContactAddress): AddressViewModel = {
-    val line1       = validContactAddressParams.line1
-    val townCity    = validContactAddressParams.townorcity
-    val postCode    = validContactAddressParams.postcode
-    val countryCode = validContactAddressParams.country
-    val line2       = validContactAddressParams.line2
-    val regionState = validContactAddressParams.regionorstate
-    AddressViewModel(line1, townCity, postCode, countryCode, line2, regionState)
   }
 
 }

@@ -30,22 +30,22 @@ class ManualContactAddressViewSpec extends ViewSpec {
   implicit val request: Request[Any] = withFakeCSRF(fakeRegisterRequest)
   private val formProvider           = new ManualContactAddressFormProvider()
   private def form                   = formProvider.apply()
-  private def formWithNoDataError    = form.bind(Map("line1" -> "", "townorcity" -> "", "postcode" -> ""))
+  private def formWithNoDataError    = form.bind(Map("line1" -> "", "townOrCity" -> "", "postcode" -> ""))
 
   private def formWithNoLine1Error =
-    form.bind(Map("line1" -> "", "townorcity" -> "test", "postcode" -> "BT11AA", "countryCode" -> "GB"))
+    form.bind(Map("line1" -> "", "townOrCity" -> "test", "postcode" -> "BT11AA", "countryCode" -> "GB"))
 
   private def formWithNoTownError =
-    form.bind(Map("line1" -> "Abc", "townorcity" -> "", "postcode" -> "BT11AA", "countryCode" -> "GB"))
+    form.bind(Map("line1" -> "Abc", "townOrCity" -> "", "postcode" -> "BT11AA", "countryCode" -> "GB"))
 
   private def formWithNoCountryError =
-    form.bind(Map("line1" -> "Abc", "townorcity" -> "test", "postcode" -> "BT11AA"))
+    form.bind(Map("line1" -> "Abc", "townOrCity" -> "test", "postcode" -> "BT11AA"))
 
   private def formWithLine1LenError =
     form.bind(
       Map(
         "line1"       -> "This Address line in PBE Address page cannot exceed more than 70 characters",
-        "townorcity"  -> "test",
+        "townOrCity"  -> "test",
         "postcode"    -> "BT11UN",
         "countryCode" -> "GB"
       )
@@ -55,7 +55,7 @@ class ManualContactAddressViewSpec extends ViewSpec {
     form.bind(
       Map(
         "line1"       -> "This Address line 1",
-        "townorcity"  -> "test",
+        "townOrCity"  -> "test",
         "postcode"    -> "BT11UN",
         "countryCode" -> "GB",
         "line2"       -> "This Address line 2 cannot exceed more than 35 characters"
@@ -66,11 +66,11 @@ class ManualContactAddressViewSpec extends ViewSpec {
     form.bind(
       Map(
         "line1"         -> "This Address line 1",
-        "townorcity"    -> "test",
+        "townOrCity"    -> "test",
         "postcode"      -> "BT11UN",
         "countryCode"   -> "GB",
         "line2"         -> "This Address line 2",
-        "regionorstate" -> "This Region or state cannot exceed more than 35 characters"
+        "regionOrState" -> "This Region or state cannot exceed more than 35 characters"
       )
     )
 
@@ -78,7 +78,7 @@ class ManualContactAddressViewSpec extends ViewSpec {
     form.bind(
       Map(
         "line1"       -> "Abc",
-        "townorcity"  -> "Town or city cannot exceed 35 characters",
+        "townOrCity"  -> "Town or city cannot exceed 35 characters",
         "postcode"    -> "BT11UN",
         "countryCode" -> "GB"
       )

@@ -92,7 +92,7 @@ class ManualContactAddressControllerSpec extends BaseSpec {
           "POST",
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualContactAddressController.submit().url,
           defaultUserId,
-          Map("line1" -> "", "townorcity" -> "test", "postcode" -> "BT11AA")
+          Map("line1" -> "", "townOrCity" -> "test", "postcode" -> "BT11AA")
         )
 
         val result = route(application, request).get
@@ -117,11 +117,11 @@ class ManualContactAddressControllerSpec extends BaseSpec {
           defaultUserId,
           Map(
             "line1"         -> "Abc",
-            "townorcity"    -> "test",
+            "townOrCity"    -> "test",
             "postcode"      -> "BT11AA",
             "countryCode"   -> "GB",
             "line2"         -> "line 2",
-            "regionorstate" -> "state"
+            "regionOrState" -> "state"
           )
         )
 

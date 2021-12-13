@@ -14,22 +14,13 @@
  * limitations under the License.
  */
 
-package models.forms
+package uk.gov.hmrc.xieoricommoncomponentfrontend.util
 
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ContactAddressLookup
-import util.BaseSpec
+trait Constants
 
-class ContactAddressLookupSpec extends BaseSpec {
+object Constants {
 
-  "Contact Address Lookup model" should {
+  val postcodeRegex: String =
+    "^(?i)(GIR 0AA)|((([A-Z][0-9][0-9]?)|(([A-Z][A-HJ-Y][0-9][0-9]?)|(([A-Z][0-9][A-Z])|([A-Z][A-HJ-Y][0-9]?[A-Z])))) ?[0-9][A-Z]{2})$"
 
-    "return true if the address is empty" in {
-
-      val addressLookup = ContactAddressLookup("", None)
-
-      addressLookup.isEmpty() shouldBe true
-      addressLookup.nonEmpty() shouldBe false
-    }
-
-  }
 }

@@ -18,6 +18,7 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels
 
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.AddressDetails
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ManualContactAddress
 
 case class AddressViewModel(
   street: String,
@@ -42,5 +43,15 @@ object AddressViewModel {
     region: Option[String]
   ): AddressViewModel =
     new AddressViewModel(street.trim, city.trim, postcode.map(_.trim), countryCode, line2, region)
+
+  def apply(validContactAddressParams: ManualContactAddress): AddressViewModel = {
+    val line1       = validContactAddressParams.line1
+    val townCity    = validContactAddressParams.townOrCity
+    val postCode    = validContactAddressParams.postcode
+    val countryCode = validContactAddressParams.country
+    val line2       = validContactAddressParams.line2
+    val regionState = validContactAddressParams.regionOrState
+    AddressViewModel(line1, townCity, postCode, countryCode, line2, regionState)
+  }
 
 }

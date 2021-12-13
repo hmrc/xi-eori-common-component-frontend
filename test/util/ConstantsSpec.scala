@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package models.forms
+package util
 
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ContactAddressLookup
-import util.BaseSpec
+import org.scalatest.{MustMatchers, WordSpec}
 
-class ContactAddressLookupSpec extends BaseSpec {
+import uk.gov.hmrc.xieoricommoncomponentfrontend.util.Constants
 
-  "Contact Address Lookup model" should {
+class ConstantsSpec extends WordSpec with MustMatchers with Constants {
 
-    "return true if the address is empty" in {
+  "regexp" must {
 
-      val addressLookup = ContactAddressLookup("", None)
-
-      addressLookup.isEmpty() shouldBe true
-      addressLookup.nonEmpty() shouldBe false
+    "return Valid for an input that matches the expression" in {
+      val result = Constants.postcodeRegex
+      result mustEqual "^(?i)(GIR 0AA)|((([A-Z][0-9][0-9]?)|(([A-Z][A-HJ-Y][0-9][0-9]?)|(([A-Z][0-9][A-Z])|([A-Z][A-HJ-Y][0-9]?[A-Z])))) ?[0-9][A-Z]{2})$"
     }
 
   }
