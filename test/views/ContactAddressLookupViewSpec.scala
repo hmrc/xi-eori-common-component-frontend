@@ -67,7 +67,7 @@ class ContactAddressLookupViewSpec extends ViewSpec {
       val manualAddressLink = doc.body().getElementById("cannot-find-address")
 
       manualAddressLink.text() mustBe "Contact address is outside the UK"
-      manualAddressLink.attr("href") mustBe "/xi-customs-registration-services/pbe-company-address"
+      manualAddressLink.attr("href") mustBe "/xi-customs-registration-services/contact-address"
     }
 
     "display hint" in {
