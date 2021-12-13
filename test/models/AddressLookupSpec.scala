@@ -38,7 +38,7 @@ class AddressLookupSpec extends BaseSpec {
 
       val addressLookup = AddressLookup("Line1", "City", "Postcode", "GB")
 
-      val expectedAddressViewModel = AddressViewModel("Line1", "City", Some("Postcode"), "GB")
+      val expectedAddressViewModel = AddressViewModel("Line1", "City", Some("Postcode"), "GB", None, None)
 
       addressLookup.toAddressViewModel shouldBe expectedAddressViewModel
     }

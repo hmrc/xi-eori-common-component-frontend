@@ -40,7 +40,7 @@ object ManualPBEAddress {
     val townCity    = validPBEAddressParams.townorcity
     val postCode    = Some(validPBEAddressParams.postcode)
     val countryCode = "GB"
-    AddressViewModel(line1, townCity, postCode, countryCode)
+    AddressViewModel(line1, townCity, postCode, countryCode, None, None)
   }
 
 }

@@ -36,7 +36,7 @@
                 @if(isPBEAddresLookupFailed){
                     <a href="@uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEAddressLookupController.onPageLoad()" class="govuk-link" id="reenter-postcode-button">@messages("ecc.form.change")</a>
                 }else {
-                    <a href="@uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressLookupController.onPageLoad()" class="govuk-link" id="reenter-postcode-button">@messages("ecc.form.change")</a>
+                    <a href="@uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressLookupController.onPageLoad()" class="govuk-link" id="reenter-manual-postcode-button">@messages("ecc.form.change")</a>
                 }
             </p>
         </div>
@@ -45,7 +45,7 @@
             @if(isPBEAddresLookupFailed){
                 <a href="@uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.onPageLoad()" class="govuk-link" id="enter-manually-button">@messages("ecc.address-lookup.postcode.no-results.manual")</a>
             }else {
-                <a href="@uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.onPageLoad()" class="govuk-link" id="enter-manually-button">@messages("ecc.address-lookup.postcode.no-results.manual")</a>
+                <a href="@uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualContactAddressController.reviewPageLoad()" class="govuk-link" id="enter-manual-button">@messages("ecc.address-lookup.postcode.no-results.manual")</a>
             }
         </div>
 

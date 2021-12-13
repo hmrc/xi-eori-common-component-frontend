@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.xieoricommoncomponentfrontend.models
+package uk.gov.hmrc.xieoricommoncomponentfrontend.services.countries
 
-import play.api.libs.json.Json
+import play.api.libs.json._
 
-case class AddressDetails(
-  street: String,
-  city: String,
-  postcode: Option[String],
-  countryCode: String,
-  line2: Option[String],
-  region: Option[String]
-)
+case class Country(countryName: String, countryCode: String)
 
-object AddressDetails {
-  implicit val jsonFormat = Json.format[AddressDetails]
+case object Country {
+  implicit val formats = Json.format[Country]
 }

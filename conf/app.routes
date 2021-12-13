@@ -89,6 +89,11 @@ POST       /contact-postcode                     @uk.gov.hmrc.xieoricommoncompon
 GET        /contact-address-match                             @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ContactAddressResultController.onPageLoad
 POST       /contact-address-match                             @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ContactAddressResultController.submit
 
+#contact-address
+GET        /contact-address                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ManualContactAddressController.onPageLoad
+GET        /contact-address/review               @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ManualContactAddressController.reviewPageLoad
+POST       /contact-address                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ManualContactAddressController.submit
+
 #contact-confirm-address
 GET        /contact-confirm-address                             @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ContactConfirmAddressController.onPageLoad
 POST        /contact-confirm-address                             @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ContactConfirmAddressController.submit
