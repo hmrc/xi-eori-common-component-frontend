@@ -21,7 +21,7 @@ import util.BaseSpec
 
 class ContactAddressLookupSpec extends BaseSpec {
 
-  "PBE Address Lookup model" should {
+  "Contact Address Lookup model" should {
 
     "return true if the address is empty" in {
 
