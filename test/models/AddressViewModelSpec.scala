@@ -40,5 +40,9 @@ class AddressViewModelSpec extends BaseSpec {
       AddressViewModel.apply(actualAddress) shouldEqual expectedAddress
     }
 
+    "Handle AddressViewModel to ManualContactAddress" in {
+      ManualContactAddress.apply(expectedAddress) shouldEqual actualAddress
+    }
+
   }
 }
