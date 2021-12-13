@@ -34,6 +34,11 @@ class AddressViewModelSpec extends BaseSpec {
 
   val expectedAddress = new AddressViewModel(street, city, Some(postcode), countryCode, Some(line2), Some(region))
 
+  val actualAddressNoValue =
+    new ManualContactAddress(street, city, Some(""), countryCode, Some(""), Some(""))
+
+  val expectedAddressEmpty = new AddressViewModel(street, city, Some(""), countryCode, Some(""), Some(""))
+
   "AddressViewModel" should {
 
     "Handle ManualContactAddress to AddressViewModel" in {
@@ -42,6 +47,10 @@ class AddressViewModelSpec extends BaseSpec {
 
     "Handle AddressViewModel to ManualContactAddress" in {
       ManualContactAddress.apply(expectedAddress) shouldEqual actualAddress
+    }
+
+    "Handle Empty data in ManualContactAddress to AddressViewModel" in {
+      AddressViewModel.apply(actualAddressNoValue) shouldEqual expectedAddressEmpty
     }
 
   }

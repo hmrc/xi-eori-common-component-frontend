@@ -32,21 +32,12 @@ object ManualContactAddress {
   implicit val format = Json.format[ManualContactAddress]
 
   def apply(addressViewModel: AddressViewModel): ManualContactAddress = {
-    val line1    = addressViewModel.street
-    val townCity = addressViewModel.city
-    val postCode: String = addressViewModel.postcode match {
-      case None            => ""
-      case Some(p: String) => p
-    }
-    val country = addressViewModel.countryCode
-    val line2 = addressViewModel.line2 match {
-      case None            => ""
-      case Some(p: String) => p
-    }
-    val regionState = addressViewModel.region match {
-      case None            => ""
-      case Some(p: String) => p
-    }
+    val line1            = addressViewModel.street
+    val townCity         = addressViewModel.city
+    val postCode: String = addressViewModel.postcode.getOrElse("")
+    val country          = addressViewModel.countryCode
+    val line2            = addressViewModel.line2.getOrElse("")
+    val regionState      = addressViewModel.region.getOrElse("")
     ManualContactAddress.apply(line1, townCity, Option(postCode), country, Option(line2), Option(regionState))
   }
 
