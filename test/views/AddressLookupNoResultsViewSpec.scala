@@ -57,7 +57,7 @@ class AddressLookupNoResultsViewSpec extends ViewSpec {
 
     "display change postcode link" in {
 
-      val reenterPostcodeButton = doc.body().getElementById("reenter-postcode-button")
+      val reenterPostcodeButton = doc.body().getElementById("reenter-pbe-postcode-button")
 
       reenterPostcodeButton.text() mustBe "Change"
       reenterPostcodeButton.attr("href") mustBe "/xi-customs-registration-services/pbe-postcode"
@@ -65,7 +65,7 @@ class AddressLookupNoResultsViewSpec extends ViewSpec {
 
     "display change postcode link for Contact Address search" in {
 
-      val reenterPostcodeButton = contactAddressDoc.body().getElementById("reenter-manual-postcode-button")
+      val reenterPostcodeButton = contactAddressDoc.body().getElementById("reenter-contact-postcode-button")
 
       reenterPostcodeButton.text() mustBe "Change"
       reenterPostcodeButton.attr("href") mustBe "/xi-customs-registration-services/contact-postcode"
@@ -73,7 +73,7 @@ class AddressLookupNoResultsViewSpec extends ViewSpec {
 
     "display enter manually address link" in {
 
-      val enterManuallyAddressLink = doc.body().getElementById("enter-manually-button")
+      val enterManuallyAddressLink = doc.body().getElementById("enter-pbe-manually-button")
 
       enterManuallyAddressLink.text() mustBe "I want to enter my address manually."
       enterManuallyAddressLink.attr("href") mustBe "/xi-customs-registration-services/pbe-company-address"

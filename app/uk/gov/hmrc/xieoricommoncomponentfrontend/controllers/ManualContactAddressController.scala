@@ -61,13 +61,6 @@ class ManualContactAddressController @Inject() (
         }
     }
 
-  def reviewPageLoad(): Action[AnyContent] =
-    authAction.ggAuthorisedUserWithEnrolmentsAction {
-      implicit request => _: LoggedInUserWithEnrolments =>
-        Future.successful(Ok(manualContactAddressView(form, countries, picker)))
-
-    }
-
   def submit: Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => _: LoggedInUserWithEnrolments =>
       form.bindFromRequest.fold(
