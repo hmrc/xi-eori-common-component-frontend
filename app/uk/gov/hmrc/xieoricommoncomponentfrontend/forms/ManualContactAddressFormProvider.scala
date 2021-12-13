@@ -20,13 +20,11 @@ import play.api.data.Form
 import play.api.data.Forms._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.mappings.Mappings
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.{ManualContactAddress, StopOnFirstFail}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.util.Constants
 
 import javax.inject.Inject
 
-class ManualContactAddressFormProvider @Inject() extends Mappings {
-
-  val postcodeRegex: String =
-    "^(?i)(GIR 0AA)|((([A-Z][0-9][0-9]?)|(([A-Z][A-HJ-Y][0-9][0-9]?)|(([A-Z][0-9][A-Z])|([A-Z][A-HJ-Y][0-9]?[A-Z])))) ?[0-9][A-Z]{2})$"
+class ManualContactAddressFormProvider @Inject() extends Mappings with Constants {
 
   def apply(): Form[ManualContactAddress] =
     Form(
@@ -34,16 +32,16 @@ class ManualContactAddressFormProvider @Inject() extends Mappings {
         "line1" -> text("manual-contact-address.line1.required").verifying(
           maxLength(35, "manual-contact-address.line1.error")
         ),
-        "townorcity" -> text("manual-pbe-address.town.required").verifying(
+        "townOrCity" -> text("manual-pbe-address.town.required").verifying(
           maxLength(35, "manual-pbe-address.town.error")
         ),
         "postcode" -> optional(
           text()
-            .verifying(StopOnFirstFail(regexp(postcodeRegex, "manual-pbe-address.postcode.format.invalid")))
+            .verifying(StopOnFirstFail(regexp(Constants.postcodeRegex, "manual-pbe-address.postcode.format.invalid")))
         ),
         "countryCode"   -> text("manual-contact-address.country.required"),
         "line2"         -> optional(text().verifying(maxLength(34, "manual-contact-address.line2.long.error"))),
-        "regionorstate" -> optional(text().verifying(maxLength(35, "manual-contact-address.region.error")))
+        "regionOrState" -> optional(text().verifying(maxLength(35, "manual-contact-address.region.error")))
       )(ManualContactAddress.apply)(ManualContactAddress.unapply)
     )
 

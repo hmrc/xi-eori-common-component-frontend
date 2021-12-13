@@ -21,17 +21,17 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.AddressViewModel
 
 case class ManualContactAddress(
   line1: String,
-  townorcity: String,
+  townOrCity: String,
   postcode: Option[String],
   country: String,
   line2: Option[String],
-  regionorstate: Option[String]
+  regionOrState: Option[String]
 ) {}
 
 object ManualContactAddress {
   implicit val format = Json.format[ManualContactAddress]
 
-  def fetchAddressDetail(addressViewModel: AddressViewModel): ManualContactAddress = {
+  def apply(addressViewModel: AddressViewModel): ManualContactAddress = {
     val line1    = addressViewModel.street
     val townCity = addressViewModel.city
     val postCode: String = addressViewModel.postcode match {
@@ -48,16 +48,6 @@ object ManualContactAddress {
       case Some(p: String) => p
     }
     ManualContactAddress.apply(line1, townCity, Option(postCode), country, Option(line2), Option(regionState))
-  }
-
-  def toAddressModel(validContactAddressParams: ManualContactAddress): AddressViewModel = {
-    val line1       = validContactAddressParams.line1
-    val townCity    = validContactAddressParams.townorcity
-    val postCode    = validContactAddressParams.postcode
-    val countryCode = validContactAddressParams.country
-    val line2       = validContactAddressParams.line2
-    val regionState = validContactAddressParams.regionorstate
-    AddressViewModel(line1, townCity, postCode, countryCode, line2, regionState)
   }
 
 }
