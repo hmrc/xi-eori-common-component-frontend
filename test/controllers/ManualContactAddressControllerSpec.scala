@@ -22,7 +22,7 @@ import org.mockito.Mockito.when
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import play.api.{inject, Application}
-import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector}
+import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.UserAnswersCache
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, KeyValue}
@@ -37,7 +37,7 @@ class ManualContactAddressControllerSpec extends BaseSpec {
 
   val mockGroupEnrolmentExtractor: GroupEnrolmentExtractor = mock[GroupEnrolmentExtractor]
 
-  private def groupEnrolment() =
+  val groupEnrolment =
     List(EnrolmentResponse("HMRC-ATAR-ORG", "Activated", List(KeyValue("EORINumber", "GB123456463324"))))
 
   override def application: Application = new GuiceApplicationBuilder().overrides(
@@ -129,7 +129,7 @@ class ManualContactAddressControllerSpec extends BaseSpec {
         status(result) shouldBe SEE_OTHER
         redirectLocation(
           result
-        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded().url
+        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactConfirmAddressController.onPageLoad().url
 
       }
     }
