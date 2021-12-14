@@ -34,18 +34,18 @@
         <div class="govuk-!-margin-top-2 govuk-!-margin-bottom-2">
             <p class="govuk-!-display-inline govuk-!-font-weight-bold govuk-body">@postcode</p> <p class="govuk-!-display-inline govuk-!-margin-left-2 govuk-!-font-weight-bold govuk-body">
                 @if(isPBEAddresLookupFailed){
-                    <a href="@uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEAddressLookupController.onPageLoad()" class="govuk-link" id="reenter-postcode-button">@messages("ecc.form.change")</a>
+                    <a href="@uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEAddressLookupController.onPageLoad()" class="govuk-link" id="reenter-pbe-postcode-button">@messages("ecc.form.change")</a>
                 }else {
-                    <a href="@uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressLookupController.onPageLoad()" class="govuk-link" id="reenter-postcode-button">@messages("ecc.form.change")</a>
+                    <a href="@uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactAddressLookupController.onPageLoad()" class="govuk-link" id="reenter-contact-postcode-button">@messages("ecc.form.change")</a>
                 }
             </p>
         </div>
 
         <div class="govuk-!-margin-bottom-4 govuk-!-margin-top-4">
             @if(isPBEAddresLookupFailed){
-                <a href="@uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.onPageLoad()" class="govuk-link" id="enter-manually-button">@messages("ecc.address-lookup.postcode.no-results.manual")</a>
+                <a href="@uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.onPageLoad()" class="govuk-link" id="enter-pbe-manually-button">@messages("ecc.address-lookup.postcode.no-results.manual")</a>
             }else {
-                <a href="@uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.onPageLoad()" class="govuk-link" id="enter-manually-button">@messages("ecc.address-lookup.postcode.no-results.manual")</a>
+                <a href="@uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualContactAddressController.onPageLoad()" class="govuk-link" id="enter-contact-manually-button">@messages("ecc.address-lookup.postcode.no-results.manual")</a>
             }
         </div>
 

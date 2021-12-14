@@ -482,3 +482,24 @@ contact-address-results.page.property-name.label= Property name or number
 contact-address-results.page.address.required= Select your address from the list
 contact-address-results.page.property-name.not-known= Not known
 contact-address-results.postcode.address.hint= Choose your address below
+
+#manual-contact-address
+manual-contact-address.page.title=What is your XI EORI application contact address?
+manual-contact-address.line1.label=Address line 1
+manual-contact-address.line2.label=Address line 2 (optional)
+manual-contact-address.town.label=Town or city
+manual-contact-address.region.label=Region or state (optional)
+manual-contact-address.postcode.label=Postcode (optional)
+manual-contact-address.country.label=Country
+manual-contact-address.line1.required=Enter Address line 1
+manual-contact-address.town.required=Enter town or city
+manual-contact-address.country.required=Select Country
+manual-contact-address.line1.error=The first line of the address must be 35 characters or less
+manual-contact-address.line2.long.error=The second line of the address must be 34 characters or less
+manual-contact-address.line1andline2.error=The first and second line of the address must be 70 characters or less
+manual-contact-address.town.error=Town or city must be 35 characters or less
+manual-contact-address.region.error=Region or state must be 35 characters or less
+manual-contact-address.postcode.format.invalid=Enter a valid postcode
+
+manual-contact-address.country-picker.no-results=No results found
+manual-contact-address.country-picker.hint.screen-reader=Start to type the name of the country and then use up and down arrows to review and enter to select a country

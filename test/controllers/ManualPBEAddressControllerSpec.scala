@@ -75,7 +75,7 @@ class ManualPBEAddressControllerSpec extends BaseSpec {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockUserAnswersCache.getAddressDetails()(any())).thenReturn(
-          Future.successful(Some(AddressViewModel("line1", "town", Some("BT11AA"), "GB")))
+          Future.successful(Some(AddressViewModel("line1", "town", Some("BT11AA"), "GB", Some(""), Some(""))))
         )
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualPBEAddressController.onPageLoad().url

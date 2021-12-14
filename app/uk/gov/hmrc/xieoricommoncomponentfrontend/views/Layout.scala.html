@@ -23,6 +23,7 @@
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcTimeoutDialog
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.timeoutdialog.TimeoutDialog
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.services.countries._
 
 @this(
         appConfig: AppConfig,
@@ -31,7 +32,7 @@
         standardBetaBanner: StandardBetaBanner,
         hmrcTimeoutDialog: HmrcTimeoutDialog
 )
-@(pageTitle: String, form: Option[Form[_]] = None, displayBackLink: Boolean = true)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
+@(pageTitle: String, form: Option[Form[_]] = None, displayBackLink: Boolean = true, countriesInCountryPicker: CountriesInCountryPicker = NoCountriesInCountryPicker)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
 
 @isLoggedIn = @{
     !request.session.isEmpty && request.session.get("authToken").isDefined
@@ -62,6 +63,20 @@
 @if(displayBackLink) {
     @govukBackLink(BackLink(href = "javascript:history.back()", content = Text(messages("ecc.navigation.back")), attributes = Map("id" -> "back-link")))
 }
+@if(countriesInCountryPicker != NoCountriesInCountryPicker) {
+<script type="text/javascript">
+            var countryPickerInputElements = document.getElementsByClassName('autocomplete__input');
+            var form = document.getElementsByTagName('form')[0];
+
+            form.addEventListener('submit', function () {
+                for (var i = 0; i < countryPickerInputElements.length; i++) {
+                    var input = countryPickerInputElements[i];
+                    var select = countryPickerInputElements[i].parentNode.parentNode.parentNode.querySelector('select');
+                    if (input.value.trim() == "") select.selectedIndex = 0
+                }
+            });
+    </script>
+}
 }
 
  @theHead = {
@@ -77,7 +92,9 @@
             signOutButtonText = Some(messages("ecc.timeout.sign-out-button")),
             message = Some(messages("ecc.timeout.message"))
         ))
+
     }
+@helpers.countrypickerscript(countriesInCountryPicker)
 }
 
 @hmrcLayout(

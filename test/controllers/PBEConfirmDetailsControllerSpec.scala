@@ -34,7 +34,7 @@ import scala.concurrent.Future
 
 class PBEConfirmDetailsControllerSpec extends BaseSpec {
 
-  val address: AddressViewModel = AddressViewModel("line1", "city", Some("postcode"), "GB")
+  val address: AddressViewModel = AddressViewModel("line1", "city", Some("postcode"), "GB", Some(""), Some(""))
   "PBEConfirmDetails controller" should {
     "return OK and the correct view for a GET" in {
 

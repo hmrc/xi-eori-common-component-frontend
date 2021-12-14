@@ -90,3 +90,7 @@ POST       /contact-postcode                     @uk.gov.hmrc.xieoricommoncompon
 #contact-address-results
 GET        /contact-address-match                             @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ContactAddressResultController.onPageLoad
 POST       /contact-address-match                             @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ContactAddressResultController.submit
+
+#contact-address
+GET        /contact-address                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ManualContactAddressController.onPageLoad
+POST       /contact-address                      @uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.ManualContactAddressController.submit

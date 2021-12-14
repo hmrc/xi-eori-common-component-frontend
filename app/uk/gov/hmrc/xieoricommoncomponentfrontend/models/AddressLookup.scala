@@ -27,7 +27,7 @@ case class AddressLookup(addressLine: String, city: String, postcode: String, co
 
   def dropDownView: String = List(addressLine, city, postcode).mkString(", ")
 
-  def toAddressViewModel: AddressViewModel = AddressViewModel(addressLine, city, Some(postcode), country)
+  def toAddressViewModel: AddressViewModel = AddressViewModel(addressLine, city, Some(postcode), country, None, None)
 
   def nonEmpty: Boolean = addressLine.nonEmpty
 }
