@@ -20,7 +20,7 @@ import common.pages.RegistrationPage
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.test.Helpers._
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.PBEConfirmAddress.{
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ConfirmAddress.{
   changeAddress,
   confirmedAddress,
   enterManually
@@ -41,7 +41,7 @@ class PBEConfirmDetailsControllerSpec extends BaseSpec {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockUserAnswersCache.getAddressDetails()(any())).thenReturn(Future.successful(Some(address)))
-        when(mockUserAnswersCache.getConfirmAddress()(any())).thenReturn(Future.successful(None))
+        when(mockUserAnswersCache.getConfirmPBEAddress()(any())).thenReturn(Future.successful(None))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEConfirmAddressController.onPageLoad().url
         )
@@ -58,7 +58,7 @@ class PBEConfirmDetailsControllerSpec extends BaseSpec {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockUserAnswersCache.getAddressDetails()(any())).thenReturn(Future.successful(Some(address)))
-        when(mockUserAnswersCache.getConfirmAddress()(any())).thenReturn(Future.successful(Some("changeAddress")))
+        when(mockUserAnswersCache.getConfirmPBEAddress()(any())).thenReturn(Future.successful(Some("changeAddress")))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEConfirmAddressController.onPageLoad().url
         )

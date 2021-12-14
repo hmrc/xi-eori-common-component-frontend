@@ -21,28 +21,28 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.RadioItem
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 
-sealed trait PBEConfirmAddress
+sealed trait ConfirmAddress
 
-object PBEConfirmAddress extends Enumerable.Implicits {
+object ConfirmAddress extends Enumerable.Implicits {
 
-  case object confirmedAddress extends WithName("confirmedAddress") with PBEConfirmAddress
-  case object changeAddress    extends WithName("changeAddress") with PBEConfirmAddress
-  case object enterManually    extends WithName("enterManually") with PBEConfirmAddress
+  case object confirmedAddress extends WithName("confirmedAddress") with ConfirmAddress
+  case object changeAddress    extends WithName("changeAddress") with ConfirmAddress
+  case object enterManually    extends WithName("enterManually") with ConfirmAddress
 
-  val values: Seq[PBEConfirmAddress] = Seq(confirmedAddress, changeAddress, enterManually)
+  val values: Seq[ConfirmAddress] = Seq(confirmedAddress, changeAddress, enterManually)
 
-  def mapValues(selectedValue: String): PBEConfirmAddress =
+  def mapValues(selectedValue: String): ConfirmAddress =
     selectedValue match {
       case "confirmedAddress" => confirmedAddress
       case "changeAddress"    => changeAddress
       case _                  => enterManually
     }
 
-  def transformString(confirmDetails: PBEConfirmAddress): String =
+  def transformString(confirmDetails: ConfirmAddress): String =
     confirmDetails match {
-      case PBEConfirmAddress.confirmedAddress => "confirmedAddress"
-      case PBEConfirmAddress.changeAddress    => "changeAddress"
-      case PBEConfirmAddress.enterManually    => "enterManually"
+      case ConfirmAddress.confirmedAddress => "confirmedAddress"
+      case ConfirmAddress.changeAddress    => "changeAddress"
+      case ConfirmAddress.enterManually    => "enterManually"
     }
 
   def options(form: Form[_])(implicit messages: Messages): Seq[RadioItem] = values.map {
@@ -54,7 +54,7 @@ object PBEConfirmAddress extends Enumerable.Implicits {
       )
   }
 
-  implicit val enumerable: Enumerable[PBEConfirmAddress] =
+  implicit val enumerable: Enumerable[ConfirmAddress] =
     Enumerable(values.map(v => v.toString -> v): _*)
 
 }

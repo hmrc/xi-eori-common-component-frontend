@@ -29,18 +29,21 @@
 formHelper: FormWithCSRF,
 govukButton: GovukButton,
 p: components.p,
+govukHint: GovukHint,
 errorSummary: components.errorSummary,
 govukInsetText : GovukInsetText,
 inputRadioGroup: components.inputRadioGroup,
 h1: components.h1)
 @(address: AddressViewModel,confirmAddressForm: Form[ConfirmAddress])(implicit messages: Messages, request: Request[_])
 @title = @{
-    messages("pbe-confirm-address.page.title")
+    messages("confirm-contact-address.page.title")
 }
 @addressHtml = {
     <div id="address" class="govuk-body">
         @p(Html(address.street),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0")
+        @address.line2.map( line2 => p(Html(line2),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0"))
         @p(Html(address.city),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0")
+        @address.region.map( region => p(Html(region),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0"))
         @address.postcode.map( postalCode => p(Html(postalCode),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0"))
         @p(Html(Some(messages("ecc.country.GB"))))
     </div>
@@ -49,18 +52,18 @@ h1: components.h1)
 
 @main_template(title) {
 
-    @formHelper(action = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEConfirmAddressController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactConfirmAddressController.submit(), 'autoComplete -> "off") {
 
         @errorSummary(confirmAddressForm.errors)
-        @h1(messages("pbe-confirm-address.page.title"))
-
+        @h1(messages("confirm-contact-address.page.title"),classes="govuk-!-margin-bottom-3")
+        @govukHint(Hint(content = Text(messages("confirm-contact-address.address.hint")),classes="govuk-!-margin-top-0 govuk-!-margin-bottom-5"))
         @govukInsetText(InsetText(
             content = HtmlContent(addressHtml)
         ))
 
         @inputRadioGroup(
             confirmAddressForm("value"),
-            legend = messages("pbe-confirm-address.page.address.title"),
+            legend = messages("confirm-contact-address.page.address.title"),
             items = ConfirmAddress.options(confirmAddressForm),
             classes = "govuk-fieldset__legend--m",
             legendAsHeading = false
