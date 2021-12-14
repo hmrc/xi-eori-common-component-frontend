@@ -21,11 +21,12 @@ import play.api.mvc._
 import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionCache
+import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.{SessionCache, UserAnswersCache}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{AuthAction, AuthRedirectSupport}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail.ContactInformation
-import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmContactDetailsViewModel
+import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.{AddressViewModel, ConfirmContactDetailsViewModel}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{confirm_contact_details, error_template}
 
 import javax.inject.Inject
@@ -38,7 +39,8 @@ class ConfirmContactDetailsController @Inject() (
   confirmContactDetailsView: confirm_contact_details,
   mcc: MessagesControllerComponents,
   errorTemplateView: error_template,
-  sessionCache: SessionCache
+  sessionCache: SessionCache,
+  userAnswersCache: UserAnswersCache
 )(implicit val ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with AuthRedirectSupport {
 
@@ -47,32 +49,38 @@ class ConfirmContactDetailsController @Inject() (
   def onPageLoad: Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
       implicit request => _: LoggedInUserWithEnrolments =>
-        sessionCache.subscriptionDisplay.flatMap {
-          case Some(subscriptionDisplay) =>
-            subscriptionDisplay.contactInformation.map(populateView(_))
-              .getOrElse {
-                val errorMessage = "No subscription details could be retrieved";
-                logger.warn(errorMessage)
-                Future.successful(InternalServerError(errorTemplateView()))
-              }
-          case None =>
-            Future.successful(
-              Redirect(
-                uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.displayTimeOutPage()
-              ).withNewSession
-            )
+        for{
+          subscriptionDisplay <- sessionCache.subscriptionDisplay
+          contactAddressDetails <- userAnswersCache.getContactAddressDetails
+        }yield{
+          subscriptionDisplay match {
+            case Some(subscriptionDisplay) =>
+              userAnswersCache.getContactAddressDetails
+              subscriptionDisplay.contactInformation.map(populateView(_))
+                .getOrElse {
+                  val errorMessage = "No subscription details could be retrieved";
+                  logger.warn(errorMessage)
+                  InternalServerError(errorTemplateView())
+                }
+            case None =>
+
+                Redirect(
+                  uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.displayTimeOutPage()
+                ).withNewSession
+
+          }
         }
     }
 
   def populateView(
     contactInformation: ContactInformation
-  )(implicit hc: HeaderCarrier, request: Request[AnyContent]): Future[Result] = {
+  )(implicit hc: HeaderCarrier, request: Request[AnyContent]): Result = {
     val viewModel: Option[ConfirmContactDetailsViewModel] =
       ConfirmContactDetailsViewModel.fromContactInformation(contactInformation)
-    viewModel.map(v => Future.successful(Ok(confirmContactDetailsView(v)))).getOrElse {
+    viewModel.map(v => (Ok(confirmContactDetailsView(v)))).getOrElse {
       val errorMessage = "Subscription details contact info has missing details";
       logger.warn(errorMessage)
-      Future.successful(InternalServerError(errorTemplateView()))
+      InternalServerError(errorTemplateView())
     }
   }
 
