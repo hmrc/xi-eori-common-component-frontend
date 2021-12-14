@@ -67,7 +67,7 @@ object SubscriptionDisplayResponseDetail {
     streetAndNumber: Option[String],
     city: Option[String],
     postalCode: Option[String],
-    countryCode: Option[String]
+    countryCode: Option[String],
   )
 
   implicit val addressFormat: OFormat[EstablishmentAddress]          = Json.format[EstablishmentAddress]

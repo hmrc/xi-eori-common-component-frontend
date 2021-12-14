@@ -16,33 +16,33 @@
 
 package uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels
 
-import org.apache.commons.lang3.StringUtils
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail.ContactInformation
 
 case class ConfirmContactDetailsViewModel(
   fullName: String,
   telephoneNumber: String,
   email: String,
-  contactAddressViewModel: ContactAddressViewModel
+  contactAddressViewModel: AddressViewModel
 )
 
-case class ContactAddressViewModel(streetAndNumber: String, city: String, postalCode: String, countryCode: String)
 
 object ConfirmContactDetailsViewModel {
 
-  def fromContactInformation(contactInformation: ContactInformation): Option[ConfirmContactDetailsViewModel] =
+  def fromContactInformation(contactInformation: ContactInformation, addressViewModel: Option[AddressViewModel]): Option[ConfirmContactDetailsViewModel] =
     for {
       personOfContact <- contactInformation.personOfContact if personOfContact.trim.nonEmpty
       telephoneNumber <- contactInformation.telephoneNumber if telephoneNumber.trim.nonEmpty
       emailAddress    <- contactInformation.emailAddress if emailAddress.trim.nonEmpty
       streetAndNumber <- contactInformation.streetAndNumber if streetAndNumber.trim.nonEmpty
     } yield {
-      val address = ContactAddressViewModel(
+      val address = addressViewModel.getOrElse(AddressViewModel(
         streetAndNumber,
         contactInformation.city.getOrElse(""),
-        contactInformation.postalCode.getOrElse(""),
-        contactInformation.countryCode.getOrElse("")
-      )
+        contactInformation.postalCode,
+        contactInformation.countryCode.getOrElse(""),
+        None,
+        None
+      ))
       ConfirmContactDetailsViewModel(personOfContact, telephoneNumber, emailAddress, address)
     }
 

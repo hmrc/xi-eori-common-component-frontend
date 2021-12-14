@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.play.language.LanguageUtils
 @import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html._
 @import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmContactDetailsViewModel
-@import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ContactAddressViewModel
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.AddressViewModel
 
 @this(govukSummaryList : GovukSummaryList,
 h2:components.h2,
@@ -46,10 +46,12 @@ languageUtils: LanguageUtils
         case _ => None
     }
 }
-@addressHtml(address: ContactAddressViewModel) = {
-  @p(Html(address.streetAndNumber),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0 address-street")
+@addressHtml(address: AddressViewModel) = {
+  @p(Html(address.street),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0 address-street")
+  @address.line2.map( line2 => p(Html(line2),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0 address-line2"))
   @p(Html(address.city),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0 address-city")
-  @p(Html(address.postalCode),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0 address-post-code")
+  @address.region.map( region => p(Html(region),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0 address-region"))
+  @address.postcode.map( postalCode => p(Html(postalCode),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0 address-post-code"))
   @p(Html(transformCountryCodeToOptionalLabel(Some(address.countryCode))),classes="address-country")
 }
 
