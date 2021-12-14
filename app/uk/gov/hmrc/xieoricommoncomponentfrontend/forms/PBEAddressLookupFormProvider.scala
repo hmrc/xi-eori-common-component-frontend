@@ -20,13 +20,11 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, optional}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.mappings.Mappings
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.{PBEAddressLookup, StopOnFirstFail}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.util.Constants
 
 import javax.inject.Inject
 
-class PBEAddressLookupFormProvider @Inject() extends Mappings {
-
-  val postcodeRegex: String =
-    "^(?i)(GIR 0AA)|((([A-Z][0-9][0-9]?)|(([A-Z][A-HJ-Y][0-9][0-9]?)|(([A-Z][0-9][A-Z])|([A-Z][A-HJ-Y][0-9]?[A-Z])))) ?[0-9][A-Z]{2})$"
+class PBEAddressLookupFormProvider @Inject() extends Mappings with Constants {
 
   def apply(): Form[PBEAddressLookup] =
     Form(
@@ -34,7 +32,7 @@ class PBEAddressLookupFormProvider @Inject() extends Mappings {
         "postcode" -> text("pbe-address-lookup.postcode.required")
           .verifying(
             StopOnFirstFail(
-              regexp(postcodeRegex, "pbe-address-lookup.postcode.format.invalid"),
+              regexp(Constants.postcodeRegex, "pbe-address-lookup.postcode.format.invalid"),
               btPostcode("pbe-address-lookup.postcode.bt.format")
             )
           ),

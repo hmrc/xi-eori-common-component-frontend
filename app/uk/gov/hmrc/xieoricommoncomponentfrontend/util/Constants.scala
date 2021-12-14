@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.xieoricommoncomponentfrontend.models
+package uk.gov.hmrc.xieoricommoncomponentfrontend.util
 
-import play.api.libs.json.Json
+trait Constants
 
-case class AddressDetails(
-  street: String,
-  city: String,
-  postcode: Option[String],
-  countryCode: String,
-  line2: Option[String],
-  region: Option[String]
-)
+object Constants {
 
-object AddressDetails {
-  implicit val jsonFormat = Json.format[AddressDetails]
+  val postcodeRegex: String =
+    "^(?i)(GIR 0AA)|((([A-Z][0-9][0-9]?)|(([A-Z][A-HJ-Y][0-9][0-9]?)|(([A-Z][0-9][A-Z])|([A-Z][A-HJ-Y][0-9]?[A-Z])))) ?[0-9][A-Z]{2})$"
+
 }

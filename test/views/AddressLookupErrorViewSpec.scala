@@ -68,7 +68,7 @@ class AddressLookupErrorViewSpec extends ViewSpec {
 
     "display enter manually address link" in {
 
-      val enterManuallyAddressLink = doc.body().getElementById("enter-manually-button")
+      val enterManuallyAddressLink = doc.body().getElementById("enter-pbe-manually-button")
 
       enterManuallyAddressLink.text() mustBe "I want to enter my address manually."
       enterManuallyAddressLink.attr("href") mustBe "/xi-customs-registration-services/pbe-company-address"

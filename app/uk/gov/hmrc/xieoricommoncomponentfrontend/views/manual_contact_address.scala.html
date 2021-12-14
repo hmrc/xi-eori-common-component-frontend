@@ -1,0 +1,104 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.services.countries._
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html._
+@import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ManualContactAddress
+
+@this(main_template: Layout,
+inputSelect : components.inputSelect,
+rowCountryField: helpers.RowCountryField,
+formHelper: FormWithCSRF,
+govukButton: GovukButton,
+inputText: components.inputText,
+errorSummary: components.errorSummary,
+fieldSet: components.fieldSet)
+@(manualContactAddressForm: Form[ManualContactAddress], countries: List[Country], countriesInCountryPicker: CountriesInCountryPicker)(implicit messages: Messages, request: Request[_])
+@title = @{
+    messages("manual-contact-address.page.title")
+}
+
+@displayROWCountryField = {
+    @defining(Seq('_plainLabel -> true)) { args =>
+        @rowCountryField(manualContactAddressForm, "countryCode", "manual-contact-address.country.label", countries, args: _*)
+    }
+}
+@main_template(title, form = Some(manualContactAddressForm), true, countriesInCountryPicker) {
+
+    @formHelper(action = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualContactAddressController.submit(), 'autoComplete -> "off") {
+
+        @errorSummary(manualContactAddressForm.errors)
+
+        @fieldSet(title) {
+            <div class="govuk-!-margin-top-0 govuk-!-margin-bottom-5"></div>
+
+            @inputText(
+                form = manualContactAddressForm,
+                id = "line1",
+                name = "line1",
+                label = "manual-contact-address.line1.label",
+                isPageHeading = false,
+                classes = Some("govuk-!-width-one-half"),
+                labelClasses = Some("line1")
+            )
+            @inputText(
+                form = manualContactAddressForm,
+                id = "line2",
+                name = "line2",
+                label = "manual-contact-address.line2.label",
+                isPageHeading = false,
+                classes = Some("govuk-!-width-one-half"),
+                labelClasses = Some("line2")
+            )
+            @inputText(
+                form = manualContactAddressForm,
+                id = "townOrCity",
+                name = "townOrCity",
+                label = "manual-contact-address.town.label",
+                isPageHeading = false,
+                classes = Some("govuk-!-width-one-half"),
+                labelClasses = Some("town")
+            )
+            @inputText(
+                form = manualContactAddressForm,
+                id = "regionOrState",
+                name = "regionOrState",
+                label = "manual-contact-address.region.label",
+                isPageHeading = false,
+                classes = Some("govuk-!-width-one-half"),
+                labelClasses = Some("region")
+            )
+            @inputText(
+                form = manualContactAddressForm,
+                id = "postcode",
+                name = "postcode",
+                label = "manual-contact-address.postcode.label",
+                isPageHeading = false,
+                classes = Some("govuk-!-width-one-half"),
+                labelClasses = Some("postcode")
+            )
+
+        @displayROWCountryField
+
+        }
+        @govukButton(Button(
+            content = Text(messages("ecc.navigation.continue"))
+        ))
+
+        @helpers.helpAndSupport()
+    }
+}

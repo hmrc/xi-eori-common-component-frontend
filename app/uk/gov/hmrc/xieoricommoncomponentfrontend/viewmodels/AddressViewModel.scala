@@ -18,15 +18,40 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels
 
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.AddressDetails
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ManualContactAddress
 
-case class AddressViewModel(street: String, city: String, postcode: Option[String], countryCode: String) {
-  val addressDetails: AddressDetails = AddressDetails(street, city, postcode, countryCode)
+case class AddressViewModel(
+  street: String,
+  city: String,
+  postcode: Option[String],
+  countryCode: String,
+  line2: Option[String],
+  region: Option[String]
+) {
+  val addressDetails: AddressDetails = AddressDetails(street, city, postcode, countryCode, line2, region)
 }
 
 object AddressViewModel {
   implicit val jsonFormat: OFormat[AddressViewModel] = Json.format[AddressViewModel]
 
-  def apply(street: String, city: String, postcode: Option[String], countryCode: String): AddressViewModel =
-    new AddressViewModel(street.trim, city.trim, postcode.map(_.trim), countryCode)
+  def apply(
+    street: String,
+    city: String,
+    postcode: Option[String],
+    countryCode: String,
+    line2: Option[String],
+    region: Option[String]
+  ): AddressViewModel =
+    new AddressViewModel(street.trim, city.trim, postcode.map(_.trim), countryCode, line2, region)
+
+  def apply(validContactAddressParams: ManualContactAddress): AddressViewModel = {
+    val line1       = validContactAddressParams.line1
+    val townCity    = validContactAddressParams.townOrCity
+    val postCode    = validContactAddressParams.postcode
+    val countryCode = validContactAddressParams.country
+    val line2       = validContactAddressParams.line2
+    val regionState = validContactAddressParams.regionOrState
+    AddressViewModel(line1, townCity, postCode, countryCode, line2, regionState)
+  }
 
 }

@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.xieoricommoncomponentfrontend.models
+package util
 
-import play.api.libs.json.Json
+import org.scalatest.{MustMatchers, WordSpec}
 
-case class AddressDetails(
-  street: String,
-  city: String,
-  postcode: Option[String],
-  countryCode: String,
-  line2: Option[String],
-  region: Option[String]
-)
+import uk.gov.hmrc.xieoricommoncomponentfrontend.util.Constants
 
-object AddressDetails {
-  implicit val jsonFormat = Json.format[AddressDetails]
+class ConstantsSpec extends WordSpec with MustMatchers with Constants {
+
+  "regexp" must {
+
+    "return Valid for an input that matches the expression" in {
+      val result = Constants.postcodeRegex
+      result mustEqual "^(?i)(GIR 0AA)|((([A-Z][0-9][0-9]?)|(([A-Z][A-HJ-Y][0-9][0-9]?)|(([A-Z][0-9][A-Z])|([A-Z][A-HJ-Y][0-9]?[A-Z])))) ?[0-9][A-Z]{2})$"
+    }
+
+  }
 }
