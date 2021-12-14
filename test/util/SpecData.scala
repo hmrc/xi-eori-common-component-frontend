@@ -24,6 +24,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
   SubscriptionInfoVatId,
   XiSubscription
 }
+import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.AddressViewModel
 
 import java.time.LocalDate
 
@@ -50,9 +51,12 @@ trait SpecData {
       emailAddress = Some("test@example.com"),
       streetAndNumber = Some("line 1"),
       city = Some("Newcastle"),
-      postalCode = Some("AA1 1AA"),
-      countryCode = Some("GB")
+      postalCode = Some("AA1 1AB"),
+      countryCode = Some("DE")
     )
+
+  def addressViewModel: AddressViewModel =
+    AddressViewModel("some line1", "some city", Some("AA1 1AA"), "GB", Some("some line2"), Some("some region"))
 
   def xiSubscription: XiSubscription = XiSubscription("XI8989989797", Some("999999"))
 

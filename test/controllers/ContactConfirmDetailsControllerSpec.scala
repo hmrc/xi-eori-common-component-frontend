@@ -124,7 +124,7 @@ class ContactConfirmDetailsControllerSpec extends BaseSpec {
           status(result) shouldBe SEE_OTHER
           redirectLocation(
             result
-          ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.onPageLoad().url
+          ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmContactDetailsController.onPageLoad().url
         }
       }
       "redirect to the Contact Address Lookup when user selects No and wants to change address" in {

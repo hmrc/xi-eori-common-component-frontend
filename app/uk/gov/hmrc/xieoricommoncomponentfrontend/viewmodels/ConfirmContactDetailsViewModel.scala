@@ -25,24 +25,28 @@ case class ConfirmContactDetailsViewModel(
   contactAddressViewModel: AddressViewModel
 )
 
-
 object ConfirmContactDetailsViewModel {
 
-  def fromContactInformation(contactInformation: ContactInformation, addressViewModel: Option[AddressViewModel]): Option[ConfirmContactDetailsViewModel] =
+  def fromContactInformation(
+    contactInformation: ContactInformation,
+    addressViewModel: Option[AddressViewModel]
+  ): Option[ConfirmContactDetailsViewModel] =
     for {
       personOfContact <- contactInformation.personOfContact if personOfContact.trim.nonEmpty
       telephoneNumber <- contactInformation.telephoneNumber if telephoneNumber.trim.nonEmpty
       emailAddress    <- contactInformation.emailAddress if emailAddress.trim.nonEmpty
       streetAndNumber <- contactInformation.streetAndNumber if streetAndNumber.trim.nonEmpty
     } yield {
-      val address = addressViewModel.getOrElse(AddressViewModel(
-        streetAndNumber,
-        contactInformation.city.getOrElse(""),
-        contactInformation.postalCode,
-        contactInformation.countryCode.getOrElse(""),
-        None,
-        None
-      ))
+      val address = addressViewModel.getOrElse(
+        AddressViewModel(
+          streetAndNumber,
+          contactInformation.city.getOrElse(""),
+          contactInformation.postalCode,
+          contactInformation.countryCode.getOrElse(""),
+          None,
+          None
+        )
+      )
       ConfirmContactDetailsViewModel(personOfContact, telephoneNumber, emailAddress, address)
     }
 

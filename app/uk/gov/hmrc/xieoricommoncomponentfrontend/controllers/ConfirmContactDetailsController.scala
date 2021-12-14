@@ -49,36 +49,34 @@ class ConfirmContactDetailsController @Inject() (
   def onPageLoad: Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction {
       implicit request => _: LoggedInUserWithEnrolments =>
-        for{
-          subscriptionDisplay <- sessionCache.subscriptionDisplay
+        for {
+          subscriptionDisplay   <- sessionCache.subscriptionDisplay
           contactAddressDetails <- userAnswersCache.getContactAddressDetails
-        }yield{
-          subscriptionDisplay match {
-            case Some(subscriptionDisplay) =>
-              subscriptionDisplay.contactInformation.map(populateView(_,contactAddressDetails))
-                .getOrElse {
-                  val errorMessage = "No subscription details could be retrieved";
-                  logger.warn(errorMessage)
-                  InternalServerError(errorTemplateView())
-                }
-            case None =>
-                Redirect(
-                  uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.displayTimeOutPage()
-                ).withNewSession
+        } yield subscriptionDisplay match {
+          case Some(subscriptionDisplay) =>
+            subscriptionDisplay.contactInformation.map(populateView(_, contactAddressDetails))
+              .getOrElse {
+                val errorMessage = "No subscription details could be retrieved"
+                logger.warn(errorMessage)
+                InternalServerError(errorTemplateView())
+              }
+          case None =>
+            Redirect(
+              uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.displayTimeOutPage()
+            ).withNewSession
 
-          }
         }
     }
 
-  def populateView(
-    contactInformation: ContactInformation,
-    addressViewModel: Option[AddressViewModel]
-  )(implicit hc: HeaderCarrier, request: Request[AnyContent]): Result = {
+  def populateView(contactInformation: ContactInformation, addressViewModel: Option[AddressViewModel])(implicit
+    hc: HeaderCarrier,
+    request: Request[AnyContent]
+  ): Result = {
 
     val viewModel: Option[ConfirmContactDetailsViewModel] =
       ConfirmContactDetailsViewModel.fromContactInformation(contactInformation, addressViewModel)
-    viewModel.map(v => (Ok(confirmContactDetailsView(v)))).getOrElse {
-      val errorMessage = "Subscription details contact info has missing details";
+    viewModel.map(v => Ok(confirmContactDetailsView(v))).getOrElse {
+      val errorMessage = "Subscription details contact info has missing details"
       logger.warn(errorMessage)
       InternalServerError(errorTemplateView())
     }

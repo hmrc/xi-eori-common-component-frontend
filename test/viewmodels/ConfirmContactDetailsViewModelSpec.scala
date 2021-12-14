@@ -17,7 +17,7 @@
 package viewmodels
 
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail.ContactInformation
-import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.{ConfirmContactDetailsViewModel, ContactAddressViewModel}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.{AddressViewModel, ConfirmContactDetailsViewModel}
 import util.{BaseSpec, SpecData}
 
 class ConfirmContactDetailsViewModelSpec extends BaseSpec with SpecData {
@@ -27,19 +27,29 @@ class ConfirmContactDetailsViewModelSpec extends BaseSpec with SpecData {
     "create a view model successfully from a CaseInformation class" when {
       "all the fields are empty" in {
         val emptyContactInformation = ContactInformation(None, None, None, None, None, None, None)
-        val viewModel               = ConfirmContactDetailsViewModel.fromContactInformation(emptyContactInformation)
+        val viewModel =
+          ConfirmContactDetailsViewModel.fromContactInformation(emptyContactInformation, None)
 
         viewModel shouldBe None
       }
-      "all the fields provided" in {
-        val viewModel = ConfirmContactDetailsViewModel.fromContactInformation(contactInformation)
+      "all the fields provided with AddressViewModel" in {
+        val viewModel =
+          ConfirmContactDetailsViewModel.fromContactInformation(contactInformation, Some(addressViewModel))
+
+        viewModel shouldBe Some(
+          ConfirmContactDetailsViewModel("FirstName LastName", "1234567890", "test@example.com", addressViewModel)
+        )
+      }
+      "all the fields provided without AddressViewModel" in {
+        val viewModel =
+          ConfirmContactDetailsViewModel.fromContactInformation(contactInformation, None)
 
         viewModel shouldBe Some(
           ConfirmContactDetailsViewModel(
             "FirstName LastName",
             "1234567890",
             "test@example.com",
-            ContactAddressViewModel("line 1", "Newcastle", "AA1 1AA", "GB")
+            AddressViewModel("line 1", "Newcastle", Some("AA1 1AB"), "DE", None, None)
           )
         )
       }

@@ -27,7 +27,9 @@ class ConfirmContactDetailsViewSpec extends ViewBehaviours with SpecData {
 
   private implicit val request: Request[AnyContentAsEmpty.type] = withFakeCSRF(fakeRegisterRequest)
 
-  private val viewModel                   = ConfirmContactDetailsViewModel.fromContactInformation(contactInformation).get
+  private val viewModel =
+    ConfirmContactDetailsViewModel.fromContactInformation(contactInformation, Some(addressViewModel)).get
+
   private val view                        = instanceOf[confirm_contact_details].apply(viewModel)
   private implicit lazy val doc: Document = asDocument(view)
 
@@ -63,10 +65,12 @@ class ConfirmContactDetailsViewSpec extends ViewBehaviours with SpecData {
       assertEqualsHtml(doc, ".email-value", "test@example.com")
       assertEqualsHtml(doc, ".phone-value", "1234567890")
 
-      assertEqualsHtml(doc, ".address-street", "line 1")
-      assertEqualsHtml(doc, ".address-city", "Newcastle")
+      assertEqualsHtml(doc, ".address-street", "some line1")
+      assertEqualsHtml(doc, ".address-city", "some city")
       assertEqualsHtml(doc, ".address-post-code", "AA1 1AA")
       assertEqualsHtml(doc, ".address-country", "United Kingdom")
+      assertEqualsHtml(doc, ".address-line2", "some line2")
+      assertEqualsHtml(doc, ".address-region", "some region")
     }
 
     "show correct contact details table change buttons" in {

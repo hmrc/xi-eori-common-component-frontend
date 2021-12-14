@@ -53,6 +53,7 @@ class ConfirmContactDetailsControllerSpec extends BaseSpec with SpecData {
         when(mockSessionCache.subscriptionDisplay(any())).thenReturn(
           Future.successful(Some(subscriptionDisplayResponse))
         )
+        when(mockUserAnswersCache.getContactAddressDetails()(any())).thenReturn(Future.successful(None))
         val request = SessionBuilder.buildRequestWithSessionAndPath(ConfirmContactDetailsController.onPageLoad().url)
 
         val result = route(application, request).get
