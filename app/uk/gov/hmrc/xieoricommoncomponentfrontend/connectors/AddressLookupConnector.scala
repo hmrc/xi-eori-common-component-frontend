@@ -20,13 +20,7 @@ import play.api.Logger
 import play.mvc.Http.Status._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
-  AddressLookup,
-  AddressLookupFailure,
-  AddressLookupResponse,
-  AddressLookupSuccess,
-  AddressRequestBody
-}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

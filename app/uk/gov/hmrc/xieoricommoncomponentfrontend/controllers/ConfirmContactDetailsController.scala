@@ -24,13 +24,12 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.{SessionCache, UserAnswersCache}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.{AuthAction, AuthRedirectSupport}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.LoggedInUserWithEnrolments
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail.ContactInformation
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.{AddressViewModel, ConfirmContactDetailsViewModel}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{confirm_contact_details, error_template}
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class ConfirmContactDetailsController @Inject() (
   override val config: Configuration,
@@ -61,9 +60,7 @@ class ConfirmContactDetailsController @Inject() (
                 InternalServerError(errorTemplateView())
               }
           case None =>
-            Redirect(
-              uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.displayTimeOutPage()
-            ).withNewSession
+            Redirect(routes.LogoutController.displayTimeOutPage()).withNewSession
 
         }
     }

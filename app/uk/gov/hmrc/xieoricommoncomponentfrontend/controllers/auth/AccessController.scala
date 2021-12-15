@@ -22,6 +22,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Organisation}
 import uk.gov.hmrc.auth.core.{AffinityGroup, CredentialRole, User}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes
+
 import scala.concurrent.{ExecutionContext, Future}
 
 trait AccessController extends EnrolmentExtractor {

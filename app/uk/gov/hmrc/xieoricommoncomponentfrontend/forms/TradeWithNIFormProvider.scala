@@ -18,8 +18,9 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.forms
 
 import play.api.data.Form
 import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.mappings.Mappings
-import javax.inject.Inject
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.TradeWithNI
+
+import javax.inject.Inject
 
 class TradeWithNIFormProvider @Inject() extends Mappings {
 
