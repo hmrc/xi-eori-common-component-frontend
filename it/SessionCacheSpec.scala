@@ -54,7 +54,7 @@ class SessionCacheSpec extends IntegrationTestSpec with MockitoSugar with MongoS
     Some(LocalDate.of(1963, 4, 1)),
     Some(xiSubscription)
   )
-  val userAnswers: UserAnswers = UserAnswers(Some(true),Some(true),None,None,None,Some("99976"),Some(true),None)
+  val userAnswers: UserAnswers = UserAnswers(Some(true),Some(true),None,None,None,None,Some("99976"),Some(true),None,None)
 
 
   val addressLookupParams: PBEAddressLookup = PBEAddressLookup("SE28 1AA", None)

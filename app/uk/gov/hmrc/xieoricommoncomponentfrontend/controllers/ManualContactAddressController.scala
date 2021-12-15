@@ -58,7 +58,7 @@ class ManualContactAddressController @Inject() (
     }
 
   def submit: Action[AnyContent] =
-    authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => loggedInUser: LoggedInUserWithEnrolments =>
+    authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => _: LoggedInUserWithEnrolments =>
       form.bindFromRequest.fold(
         invalidForm => Future.successful(BadRequest(manualContactAddressView(invalidForm, countries, picker))),
         validContactAddressParams =>
@@ -66,7 +66,7 @@ class ManualContactAddressController @Inject() (
             _ <- userAnswersCache.cacheContactAddressDetails(AddressViewModel.apply(validContactAddressParams))
             _ <- sessionCache.clearContactAddressParams
           } yield Redirect(
-            uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiEoriNotNeededController.eoriNotNeeded()
+            uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactConfirmAddressController.onPageLoad()
           )
       )
     }
