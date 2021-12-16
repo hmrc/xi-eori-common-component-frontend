@@ -18,6 +18,7 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.models
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail.ContactInformation
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.SubscriptionDisplayMongo
 
 import java.time.LocalDate
@@ -37,6 +38,7 @@ case class SubscriptionDisplayResponseDetail(
   EORINo: Option[String],
   CDSFullName: String,
   CDSEstablishmentAddress: EstablishmentAddress,
+  contactInformation: Option[ContactInformation],
   VATIDs: Option[List[SubscriptionInfoVatId]],
   shortName: Option[String],
   dateOfEstablishment: Option[LocalDate] = None,
@@ -47,6 +49,7 @@ case class SubscriptionDisplayResponseDetail(
     EORINo,
     CDSFullName,
     CDSEstablishmentAddress,
+    contactInformation,
     VATIDs,
     shortName,
     dateOfEstablishment,
@@ -56,15 +59,30 @@ case class SubscriptionDisplayResponseDetail(
 }
 
 object SubscriptionDisplayResponseDetail {
-  implicit val addressFormat: OFormat[EstablishmentAddress]  = Json.format[EstablishmentAddress]
-  implicit val vatFormat: OFormat[SubscriptionInfoVatId]     = Json.format[SubscriptionInfoVatId]
-  implicit val xiSubscriptionFormat: OFormat[XiSubscription] = Json.format[XiSubscription]
+
+  case class ContactInformation(
+    personOfContact: Option[String],
+    telephoneNumber: Option[String],
+    emailAddress: Option[String],
+    streetAndNumber: Option[String],
+    city: Option[String],
+    postalCode: Option[String],
+    countryCode: Option[String]
+  )
+
+  implicit val addressFormat: OFormat[EstablishmentAddress]          = Json.format[EstablishmentAddress]
+  implicit val vatFormat: OFormat[SubscriptionInfoVatId]             = Json.format[SubscriptionInfoVatId]
+  implicit val xiSubscriptionFormat: OFormat[XiSubscription]         = Json.format[XiSubscription]
+  implicit val contactInformationFormat: OFormat[ContactInformation] = Json.format[ContactInformation]
 
   implicit val subscriptionDisplayReads: Reads[SubscriptionDisplayResponseDetail] = (
     (JsPath \ "subscriptionDisplayResponse" \ "responseDetail" \ "EORINo").readNullable[String] and
       (JsPath \ "subscriptionDisplayResponse" \ "responseDetail" \ "CDSFullName").read[String] and
       (JsPath \ "subscriptionDisplayResponse" \ "responseDetail" \ "CDSEstablishmentAddress").read[
         EstablishmentAddress
+      ] and
+      (JsPath \ "subscriptionDisplayResponse" \ "responseDetail" \ "contactInformation").readNullable[
+        ContactInformation
       ] and
       (JsPath \ "subscriptionDisplayResponse" \ "responseDetail" \ "VATIDs").readNullable[
         List[SubscriptionInfoVatId]

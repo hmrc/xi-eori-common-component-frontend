@@ -78,10 +78,8 @@ class ContactConfirmDetailsControllerSpec extends BaseSpec {
         running(application) {
           withAuthorisedUser(defaultUserId, mockAuthConnector)
           when(mockUserAnswersCache.getContactAddressDetails()(any())).thenReturn(Future.successful(None))
-          val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-            "POST",
+          val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
             uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactConfirmAddressController.onPageLoad().url,
-            defaultUserId,
             Map("value" -> "")
           )
 
@@ -100,10 +98,8 @@ class ContactConfirmDetailsControllerSpec extends BaseSpec {
         running(application) {
           withAuthorisedUser(defaultUserId, mockAuthConnector)
           when(mockUserAnswersCache.getContactAddressDetails()(any())).thenReturn(Future.successful(Some(address)))
-          val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-            "POST",
+          val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
             uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactConfirmAddressController.submit().url,
-            defaultUserId,
             Map("value" -> "")
           )
 
@@ -119,10 +115,8 @@ class ContactConfirmDetailsControllerSpec extends BaseSpec {
           withAuthorisedUser(defaultUserId, mockAuthConnector)
           when(mockUserAnswersCache.getContactAddressDetails()(any())).thenReturn(Future.successful(Some(address)))
           when(mockUserAnswersCache.cacheContactConfirmAddress(any())(any())).thenReturn(Future.successful(true))
-          val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-            "POST",
+          val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
             uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactConfirmAddressController.submit().url,
-            defaultUserId,
             Map("value" -> confirmedAddress.toString)
           )
 
@@ -130,7 +124,7 @@ class ContactConfirmDetailsControllerSpec extends BaseSpec {
           status(result) shouldBe SEE_OTHER
           redirectLocation(
             result
-          ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.onPageLoad().url
+          ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmContactDetailsController.onPageLoad().url
         }
       }
       "redirect to the Contact Address Lookup when user selects No and wants to change address" in {
@@ -138,10 +132,8 @@ class ContactConfirmDetailsControllerSpec extends BaseSpec {
           withAuthorisedUser(defaultUserId, mockAuthConnector)
           when(mockUserAnswersCache.getContactAddressDetails()(any())).thenReturn(Future.successful(Some(address)))
           when(mockUserAnswersCache.cacheContactConfirmAddress(any())(any())).thenReturn(Future.successful(true))
-          val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-            "POST",
+          val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
             uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactConfirmAddressController.submit().url,
-            defaultUserId,
             Map("value" -> changeAddress.toString)
           )
 
@@ -157,10 +149,8 @@ class ContactConfirmDetailsControllerSpec extends BaseSpec {
           withAuthorisedUser(defaultUserId, mockAuthConnector)
           when(mockUserAnswersCache.getContactAddressDetails()(any())).thenReturn(Future.successful(Some(address)))
           when(mockUserAnswersCache.cacheContactConfirmAddress(any())(any())).thenReturn(Future.successful(true))
-          val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-            "POST",
+          val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
             uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ContactConfirmAddressController.submit().url,
-            defaultUserId,
             Map("value" -> enterManually.toString)
           )
 

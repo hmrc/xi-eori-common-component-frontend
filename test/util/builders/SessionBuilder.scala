@@ -23,6 +23,8 @@ import uk.gov.hmrc.http.SessionKeys
 
 object SessionBuilder {
 
+  val defaultUserId: String = s"user-${UUID.randomUUID}"
+
   def sessionMap(authToken: String): List[(String, String)] = {
     val sessionId = s"session-${UUID.randomUUID}"
     List(SessionKeys.sessionId -> sessionId, SessionKeys.authToken -> authToken)
@@ -63,15 +65,13 @@ object SessionBuilder {
     FakeRequest(method, path).withSession(SessionKeys.sessionId -> sessionId, "visited-uk-page" -> "true")
   }
 
-  def buildRequestWithSessionAndPath(path: String, authToken: String, method: String = "GET") =
+  def buildRequestWithSessionAndPath(path: String, authToken: String = defaultUserId, method: String = "GET") =
     addToken(FakeRequest(method, path)).withSession(sessionMap(authToken): _*)
 
-  def buildRequestWithSessionAndPathAndFormValues(
-    method: String,
+  def buildPostRequestWithSessionAndPathAndFormValues(
     path: String,
-    authToken: String,
     form: Map[String, String]
   ): FakeRequest[AnyContentAsFormUrlEncoded] =
-    FakeRequest(method, path).withSession(sessionMap(authToken): _*).withFormUrlEncodedBody(form.toList: _*)
+    FakeRequest("POST", path).withSession(sessionMap(defaultUserId): _*).withFormUrlEncodedBody(form.toList: _*)
 
 }

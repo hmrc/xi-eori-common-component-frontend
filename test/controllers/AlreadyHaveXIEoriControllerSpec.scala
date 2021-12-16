@@ -20,38 +20,13 @@ import common.pages.RegistrationPage
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.test.Helpers._
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
-  EstablishmentAddress,
-  SubscriptionDisplayResponseDetail,
-  XiSubscription
-}
-import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
+import util.{BaseSpec, SpecData}
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
-class AlreadyHaveXIEoriControllerSpec extends BaseSpec {
-
-  val establishmentAddress: EstablishmentAddress = EstablishmentAddress(
-    streetAndNumber = "line1",
-    city = "City name",
-    postalCode = Some("SE28 1AA"),
-    countryCode = "GB"
-  )
-
-  val xiSubscription: XiSubscription = XiSubscription("XI8989989797", None)
-
-  val subscriptionDisplayResponse: SubscriptionDisplayResponseDetail = SubscriptionDisplayResponseDetail(
-    EORINo = Some("GB123456789012"),
-    CDSFullName = "FirstName LastName",
-    CDSEstablishmentAddress = establishmentAddress,
-    VATIDs = None,
-    shortName = Some("Short Name"),
-    dateOfEstablishment = Some(LocalDate.now()),
-    XI_Subscription = Some(xiSubscription)
-  )
+class AlreadyHaveXIEoriControllerSpec extends BaseSpec with SpecData {
 
   "AlreadyHaveXIEori controller" should {
     "return OK and the correct view for a GET" in {
@@ -62,8 +37,7 @@ class AlreadyHaveXIEoriControllerSpec extends BaseSpec {
           Future.successful(Some(subscriptionDisplayResponse))
         )
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AlreadyHaveXIEoriController.xiEoriAlreadyExists().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AlreadyHaveXIEoriController.xiEoriAlreadyExists().url
         )
 
         val result = route(application, request).get
@@ -82,8 +56,7 @@ class AlreadyHaveXIEoriControllerSpec extends BaseSpec {
           Future.successful(Some(subscriptionDisplayResponse))
         )
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AlreadyHaveXIEoriController.xiEoriAlreadyExists().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AlreadyHaveXIEoriController.xiEoriAlreadyExists().url
         )
 
         val result = route(application, request).get

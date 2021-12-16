@@ -55,8 +55,7 @@ class AddressLookupErrorControllerSpec extends BaseSpec {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AddressLookupErrorController.displayErrorPage().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AddressLookupErrorController.displayErrorPage().url
         )
         val result = route(application, request).get
         status(result) shouldBe OK
@@ -76,8 +75,7 @@ class AddressLookupErrorControllerSpec extends BaseSpec {
         when(mockSessionCache.addressLookupParams(any())).thenReturn(Future.successful(Some(addressLookupParams)))
 
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AddressLookupErrorController.displayNoResultsPage().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.AddressLookupErrorController.displayNoResultsPage().url
         )
         val result = route(application, request).get
         status(result) shouldBe OK

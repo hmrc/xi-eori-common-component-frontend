@@ -15,12 +15,11 @@ lazy val scoverageSettings = {
     // Semicolon-separated list of regexs matching classes to exclude
     ScoverageKeys.coverageExcludedPackages := List("<empty>",
       "Reverse.*",
-      "uk\\.gov\\.hmrc\\.xieoricommoncomponentfrontend\\.views.*",
       "uk\\.gov\\.hmrc\\.xieoricommoncomponentfrontend\\.config.*",
       "uk\\.gov\\.hmrc\\.xieoricommoncomponentfrontend\\.models.audit.*",
       "logger.*\\(.*\\)",
       ".*(AuthService|BuildInfo|Routes|TestOnly).*").mkString(";"),
-    ScoverageKeys.coverageMinimum := 80,
+    ScoverageKeys.coverageMinimum := 90,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true,
     parallelExecution in Test := false

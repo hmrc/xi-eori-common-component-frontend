@@ -32,8 +32,7 @@ class YouCannotUseServiceControllerSpec extends BaseSpec {
 
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.YouCannotUseServiceController.page().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.YouCannotUseServiceController.page().url
         )
         val result = route(application, request).get
         status(result) shouldBe UNAUTHORIZED
@@ -49,8 +48,7 @@ class YouCannotUseServiceControllerSpec extends BaseSpec {
     "redirect to the unauthorized page if the user is not authorized" in {
       running(application) {
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.YouCannotUseServiceController.unauthorisedPage().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.YouCannotUseServiceController.unauthorisedPage().url
         )
         val result = route(application, request).get
         status(result) shouldBe UNAUTHORIZED

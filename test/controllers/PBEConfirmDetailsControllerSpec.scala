@@ -43,8 +43,7 @@ class PBEConfirmDetailsControllerSpec extends BaseSpec {
         when(mockUserAnswersCache.getAddressDetails()(any())).thenReturn(Future.successful(Some(address)))
         when(mockUserAnswersCache.getConfirmPBEAddress()(any())).thenReturn(Future.successful(None))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEConfirmAddressController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEConfirmAddressController.onPageLoad().url
         )
 
         val result = route(application, request).get
@@ -61,8 +60,7 @@ class PBEConfirmDetailsControllerSpec extends BaseSpec {
         when(mockUserAnswersCache.getAddressDetails()(any())).thenReturn(Future.successful(Some(address)))
         when(mockUserAnswersCache.getConfirmPBEAddress()(any())).thenReturn(Future.successful(Some("changeAddress")))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEConfirmAddressController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEConfirmAddressController.onPageLoad().url
         )
 
         val result = route(application, request).get
@@ -77,10 +75,8 @@ class PBEConfirmDetailsControllerSpec extends BaseSpec {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEConfirmAddressController.submit().url,
-          defaultUserId,
           Map("value" -> "")
         )
 
@@ -96,10 +92,8 @@ class PBEConfirmDetailsControllerSpec extends BaseSpec {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockUserAnswersCache.getAddressDetails()(any())).thenReturn(Future.successful(None))
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEConfirmAddressController.onPageLoad().url,
-          defaultUserId,
           Map("value" -> "")
         )
 
@@ -117,10 +111,8 @@ class PBEConfirmDetailsControllerSpec extends BaseSpec {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockUserAnswersCache.getAddressDetails()(any())).thenReturn(Future.successful(Some(address)))
         when(mockUserAnswersCache.cacheConfirmAddress(any())(any())).thenReturn(Future.successful(true))
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEConfirmAddressController.submit().url,
-          defaultUserId,
           Map("value" -> confirmedAddress.toString)
         )
 
@@ -128,7 +120,7 @@ class PBEConfirmDetailsControllerSpec extends BaseSpec {
         status(result) shouldBe SEE_OTHER
         redirectLocation(
           result
-        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.onPageLoad().url
+        ).get shouldBe uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmContactDetailsController.onPageLoad().url
       }
     }
 
@@ -137,10 +129,8 @@ class PBEConfirmDetailsControllerSpec extends BaseSpec {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockUserAnswersCache.getAddressDetails()(any())).thenReturn(Future.successful(Some(address)))
         when(mockUserAnswersCache.cacheConfirmAddress(any())(any())).thenReturn(Future.successful(true))
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEConfirmAddressController.submit().url,
-          defaultUserId,
           Map("value" -> changeAddress.toString)
         )
 
@@ -157,10 +147,8 @@ class PBEConfirmDetailsControllerSpec extends BaseSpec {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockUserAnswersCache.getAddressDetails()(any())).thenReturn(Future.successful(Some(address)))
         when(mockUserAnswersCache.cacheConfirmAddress(any())(any())).thenReturn(Future.successful(true))
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEConfirmAddressController.submit().url,
-          defaultUserId,
           Map("value" -> enterManually.toString)
         )
 

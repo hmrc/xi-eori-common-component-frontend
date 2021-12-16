@@ -18,6 +18,7 @@ package models
 
 import org.scalatest.{MustMatchers, WordSpec}
 import play.api.libs.json.Json
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail.ContactInformation
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
   EstablishmentAddress,
   SubscriptionDisplayResponseDetail,
@@ -63,14 +64,13 @@ class SubscriptionDisplayResponseDetailSpec extends WordSpec with MustMatchers {
                                                               |      "establishmentInTheCustomsTerritoryOfTheUnion": "0",
                                                               |      "typeOfLegalEntity": "0001",
                                                               |      "contactInformation": {
-                                                              |        "personOfContact": "John Doe",
-                                                              |        "streetAndNumber": "Line 1",
-                                                              |        "city": "city name",
-                                                              |        "postalCode": "SE28 1AA",
-                                                              |        "countryCode": "ZZ",
-                                                              |        "telephoneNumber": "01632961234",
-                                                              |        "faxNumber": "01632961235",
-                                                              |        "emailAddress": "john.doe@example.com"
+                                                              |        "personOfContact": "FirstName LastName",
+                                                              |        "streetAndNumber": "line 1",
+                                                              |        "city": "Newcastle",
+                                                              |        "postalCode": "AA1 1AA",
+                                                              |        "countryCode": "GB",
+                                                              |        "telephoneNumber": "1234567890",
+                                                              |        "emailAddress": "test@example.com"
                                                               |      },
                                                               |      "VATIDs": [
                                                               |        {
@@ -106,6 +106,17 @@ class SubscriptionDisplayResponseDetailSpec extends WordSpec with MustMatchers {
         Some("EN123456789012345"),
         "John Doe",
         EstablishmentAddress("house no Line 1", "city name", Some("SE28 1AA"), "ZZ"),
+        Some(
+          ContactInformation(
+            personOfContact = Some("FirstName LastName"),
+            telephoneNumber = Some("1234567890"),
+            emailAddress = Some("test@example.com"),
+            streetAndNumber = Some("line 1"),
+            city = Some("Newcastle"),
+            postalCode = Some("AA1 1AA"),
+            countryCode = Some("GB")
+          )
+        ),
         Some(
           List(SubscriptionInfoVatId(Some("GB"), Some("999999")), SubscriptionInfoVatId(Some("ES"), Some("888888")))
         ),

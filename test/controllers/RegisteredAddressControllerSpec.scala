@@ -62,8 +62,7 @@ class RegisteredAddressControllerSpec extends BaseSpec with BeforeAndAfterEach {
         when(mockAddressLookupConnector.lookup(any(), any())(any()))
           .thenReturn(Future.successful(AddressLookupSuccess(Seq(addressLookup))))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.RegisteredAddressController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.RegisteredAddressController.onPageLoad().url
         )
 
         val result = route(application, request).get
@@ -81,10 +80,8 @@ class RegisteredAddressControllerSpec extends BaseSpec with BeforeAndAfterEach {
         when(mockSessionCache.addressLookupParams(any())).thenReturn(Future.successful(Some(addressLookupParams)))
         when(mockAddressLookupConnector.lookup(any(), any())(any()))
           .thenReturn(Future.successful(AddressLookupSuccess(Seq(addressLookup))))
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.RegisteredAddressController.submit().url,
-          defaultUserId,
           Map("address" -> "")
         )
 
@@ -104,10 +101,8 @@ class RegisteredAddressControllerSpec extends BaseSpec with BeforeAndAfterEach {
         when(mockUserAnswersCache.cacheAddressDetails(any())(any())).thenReturn(Future.successful(true))
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.RegisteredAddressController.submit().url,
-          defaultUserId,
           Map("address" -> addressLookup.dropDownView)
         )
 
@@ -130,8 +125,7 @@ class RegisteredAddressControllerSpec extends BaseSpec with BeforeAndAfterEach {
         when(mockUserAnswersCache.cacheAddressDetails(any())(any())).thenReturn(Future.successful(true))
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.RegisteredAddressController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.RegisteredAddressController.onPageLoad().url
         )
         val result = route(application, request).get
         status(result) shouldBe OK
@@ -148,8 +142,7 @@ class RegisteredAddressControllerSpec extends BaseSpec with BeforeAndAfterEach {
 
         when(mockSessionCache.addressLookupParams(any())).thenReturn(Future.successful(None))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.RegisteredAddressController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.RegisteredAddressController.onPageLoad().url
         )
 
         val result = route(application, request).get
@@ -171,10 +164,8 @@ class RegisteredAddressControllerSpec extends BaseSpec with BeforeAndAfterEach {
 
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.RegisteredAddressController.submit().url,
-          defaultUserId,
           Map("address" -> addressLookup.dropDownView)
         )
 
@@ -197,8 +188,7 @@ class RegisteredAddressControllerSpec extends BaseSpec with BeforeAndAfterEach {
         when(mockUserAnswersCache.cacheAddressDetails(any())(any())).thenReturn(Future.successful(true))
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.RegisteredAddressController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.RegisteredAddressController.onPageLoad().url
         )
         val result = route(application, request).get
         status(result) shouldBe SEE_OTHER
@@ -220,8 +210,7 @@ class RegisteredAddressControllerSpec extends BaseSpec with BeforeAndAfterEach {
         when(mockUserAnswersCache.cacheAddressDetails(any())(any())).thenReturn(Future.successful(true))
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.RegisteredAddressController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.RegisteredAddressController.onPageLoad().url
         )
         val result = route(application, request).get
         status(result) shouldBe SEE_OTHER

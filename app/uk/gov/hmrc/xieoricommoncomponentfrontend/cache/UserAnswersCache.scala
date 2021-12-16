@@ -19,14 +19,7 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.cache
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.cache.UserAnswers
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.TradeWithNI.toBoolean
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.{
-  ConfirmAddress,
-  ConfirmDetails,
-  DisclosePersonalDetails,
-  HaveEUEori,
-  HavePBE,
-  TradeWithNI
-}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms._
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.AddressViewModel
 
 import javax.inject.{Inject, Singleton}

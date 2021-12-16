@@ -49,8 +49,7 @@ class HaveEUEoriControllerSpec extends BaseSpec {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockUserAnswersCache.getHaveEUEori()(any())).thenReturn(Future.successful(None))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.onPageLoad().url
         )
 
         val result = route(application, request).get
@@ -67,8 +66,7 @@ class HaveEUEoriControllerSpec extends BaseSpec {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockUserAnswersCache.getHaveEUEori()(any())).thenReturn(Future.successful(Some(true)))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.onPageLoad().url
         )
         val result = route(application, request).get
         val page   = RegistrationPage(contentAsString(result))
@@ -79,10 +77,8 @@ class HaveEUEoriControllerSpec extends BaseSpec {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockUserAnswersCache.cacheHaveEUEori(any())(any())).thenReturn(Future.successful(true))
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.submit().url,
-          defaultUserId,
           Map("value" -> Yes.toString)
         )
 
@@ -109,10 +105,8 @@ class HaveEUEoriControllerSpec extends BaseSpec {
         when(mockGroupEnrolmentExtractor.getEori(any())(any()))
           .thenReturn(Future.successful(existingEori))
         when(mockUserAnswersCache.cacheHaveEUEori(any())(any())).thenReturn(Future.successful(true))
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.submit().url,
-          defaultUserId,
           Map("value" -> No.toString)
         )
 
@@ -130,10 +124,8 @@ class HaveEUEoriControllerSpec extends BaseSpec {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.HaveEUEoriController.submit().url,
-          defaultUserId,
           Map("value" -> "")
         )
 

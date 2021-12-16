@@ -25,49 +25,18 @@ import play.api.{inject, Application}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.{SessionCache, UserAnswersCache}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.auth.GroupEnrolmentExtractor
-import uk.gov.hmrc.xieoricommoncomponentfrontend.domain.{EnrolmentResponse, KeyValue}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ConfirmDetails._
-import uk.gov.hmrc.xieoricommoncomponentfrontend.models.{
-  EstablishmentAddress,
-  SubscriptionDisplayResponseDetail,
-  XiSubscription
-}
 import uk.gov.hmrc.xieoricommoncomponentfrontend.services.SubscriptionDisplayService
-import util.BaseSpec
 import util.builders.AuthBuilder.withAuthorisedUser
 import util.builders.SessionBuilder
+import util.{BaseSpec, SpecData}
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
-class ConfirmDetailsControllerSpec extends BaseSpec {
+class ConfirmDetailsControllerSpec extends BaseSpec with SpecData {
 
   val subscriptionDisplayService: SubscriptionDisplayService = mock[SubscriptionDisplayService]
   val mockGroupEnrolmentExtractor: GroupEnrolmentExtractor   = mock[GroupEnrolmentExtractor]
-
-  val establishmentAddress: EstablishmentAddress = EstablishmentAddress(
-    streetAndNumber = "line1",
-    city = "City name",
-    postalCode = Some("SE28 1AA"),
-    countryCode = "GB"
-  )
-
-  val xiSubscription: XiSubscription = XiSubscription("XI8989989797", None)
-
-  val subscriptionDisplayResponse: SubscriptionDisplayResponseDetail = SubscriptionDisplayResponseDetail(
-    EORINo = Some("GB123456789012"),
-    CDSFullName = "FirstName LastName",
-    CDSEstablishmentAddress = establishmentAddress,
-    VATIDs = None,
-    shortName = Some("Short Name"),
-    dateOfEstablishment = Some(LocalDate.now()),
-    XI_Subscription = Some(xiSubscription)
-  )
-
-  val groupEnrolment =
-    List(EnrolmentResponse("HMRC-ATAR-ORG", "Activated", List(KeyValue("EORINumber", "GB123456463324"))))
-
-  val existingEori: Option[String] = Some("XIE9XSDF10BCKEYAX")
 
   override def application: Application = new GuiceApplicationBuilder().overrides(
     inject.bind[AuthConnector].to(mockAuthConnector),
@@ -86,8 +55,7 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
         )
         when(mockUserAnswersCache.getConfirmDetails()(any())).thenReturn(Future.successful(None))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad().url
         )
 
         val result = route(application, request).get
@@ -103,8 +71,7 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockUserAnswersCache.getConfirmDetails()(any())).thenReturn(Future.successful(Some("changeDetails")))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad().url
         )
 
         val result = route(application, request).get
@@ -119,8 +86,7 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockSessionCache.subscriptionDisplay(any())).thenReturn(Future.successful(None))
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad().url
         )
 
         val result = route(application, request).get
@@ -136,10 +102,8 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockSessionCache.subscriptionDisplay(any())).thenReturn(Future.successful(None))
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.submit().url,
-          defaultUserId,
           Map("value" -> "")
         )
 
@@ -158,10 +122,8 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
         when(mockSessionCache.subscriptionDisplay(any())).thenReturn(
           Future.successful(Some(subscriptionDisplayResponse))
         )
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.submit().url,
-          defaultUserId,
           Map("value" -> "")
         )
 
@@ -177,10 +139,8 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockUserAnswersCache.cacheConfirmDetails(any())(any())).thenReturn(Future.successful(true))
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.submit().url,
-          defaultUserId,
           Map("value" -> confirmedDetails.toString)
         )
 
@@ -193,15 +153,16 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
     }
 
     "redirect to the XiVatRegister page when user clicks on XI Vat register link" in {
+      val subscriptionDisplayResponseWithoutXIVatId =
+        subscriptionDisplayResponse.copy(XI_Subscription = Some(xiSubscription.copy(XI_VATNumber = None)))
 
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockSessionCache.subscriptionDisplay(any())).thenReturn(
-          Future.successful(Some(subscriptionDisplayResponse))
+          Future.successful(Some(subscriptionDisplayResponseWithoutXIVatId))
         )
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.onPageLoad().url
         )
 
         val result = route(application, request).get
@@ -216,10 +177,8 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockUserAnswersCache.cacheConfirmDetails(any())(any())).thenReturn(Future.successful(true))
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.submit().url,
-          defaultUserId,
           Map("value" -> changeCredentials.toString)
         )
 
@@ -233,10 +192,8 @@ class ConfirmDetailsControllerSpec extends BaseSpec {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
         when(mockUserAnswersCache.cacheConfirmDetails(any())(any())).thenReturn(Future.successful(true))
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.submit().url,
-          defaultUserId,
           Map("value" -> changeDetails.toString)
         )
 

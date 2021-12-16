@@ -43,8 +43,7 @@ class LogoutControllerSpec extends WordSpec with Matchers {
     "return 303 when logout button is clicked" in {
       withAuthorisedUser(defaultUserId, mockAuthConnector)
       val request = SessionBuilder.buildRequestWithSessionAndPath(
-        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.logout().url,
-        defaultUserId
+        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.logout().url
       )
       val result = route(application, request).get
 
@@ -56,8 +55,7 @@ class LogoutControllerSpec extends WordSpec with Matchers {
     "redirect to start page when user logout" in {
       withAuthorisedUser(defaultUserId, mockAuthConnector)
       val request = SessionBuilder.buildRequestWithSessionAndPath(
-        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.logout().url,
-        defaultUserId
+        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.logout().url
       )
       val result = route(application, request).get
       redirectLocation(result) shouldBe Some("http://localhost:9553/bas-gateway/sign-out-without-state")
@@ -67,8 +65,7 @@ class LogoutControllerSpec extends WordSpec with Matchers {
     "return Ok 303 when signOut method is requested" in {
       withAuthorisedUser(defaultUserId, mockAuthConnector)
       val request = SessionBuilder.buildRequestWithSessionAndPath(
-        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.timeout().url,
-        defaultUserId
+        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.timeout().url
       )
       val result = route(application, request).get
       status(result) shouldBe SEE_OTHER
@@ -79,8 +76,7 @@ class LogoutControllerSpec extends WordSpec with Matchers {
 
       withAuthorisedUser(defaultUserId, mockAuthConnector)
       val request = SessionBuilder.buildRequestWithSessionAndPath(
-        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.displayTimeOutPage().url,
-        defaultUserId
+        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.LogoutController.displayTimeOutPage().url
       )
       val result = route(application, request).get
       val page   = RegistrationPage(contentAsString(result))

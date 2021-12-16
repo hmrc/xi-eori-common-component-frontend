@@ -18,8 +18,6 @@ package uk.gov.hmrc.xieoricommoncomponentfrontend.config
 
 import play.api.Logger
 import play.api.http.Status._
-
-import javax.inject.{Inject, Singleton}
 import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
@@ -28,6 +26,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import uk.gov.hmrc.xieoricommoncomponentfrontend.cache.SessionTimeOutException
 import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{client_error_template, error_template, notFound}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton

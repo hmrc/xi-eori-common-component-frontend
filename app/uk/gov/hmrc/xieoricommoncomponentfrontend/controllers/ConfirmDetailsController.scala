@@ -30,7 +30,7 @@ import uk.gov.hmrc.xieoricommoncomponentfrontend.forms.ConfirmDetailsFormProvide
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.SubscriptionDisplayResponseDetail
 import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ConfirmDetails
 import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewModel
-import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.{confirm_details, error_template}
+import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html.confirm_details
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

@@ -30,8 +30,7 @@ class XiVatRegisterControllerSpec extends BaseSpec {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
         val request = SessionBuilder.buildRequestWithSessionAndPath(
-          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiVatRegisterController.onPageLoad().url,
-          defaultUserId
+          uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiVatRegisterController.onPageLoad().url
         )
         val result = route(application, request).get
         status(result) shouldBe OK
@@ -48,8 +47,7 @@ class XiVatRegisterControllerSpec extends BaseSpec {
 
       withAuthorisedUser(defaultUserId, mockAuthConnector)
       val request = SessionBuilder.buildRequestWithSessionAndPath(
-        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiVatRegisterController.onPageLoad().url,
-        defaultUserId
+        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.XiVatRegisterController.onPageLoad().url
       )
       val result = route(application, request).get
 

@@ -40,7 +40,7 @@ class AuthActionSpec extends BaseSpec with AuthActionMock {
   class Harness(authAction: AuthAction) {
 
     def onPageLoad() = authAction.ggAuthorisedUserWithEnrolmentsAction {
-      implicit request => _: LoggedInUserWithEnrolments =>
+      _ => _: LoggedInUserWithEnrolments =>
         Future.successful(Results.Ok)
     }
 

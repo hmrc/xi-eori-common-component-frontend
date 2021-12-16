@@ -88,10 +88,8 @@ class ManualContactAddressControllerSpec extends BaseSpec {
       running(application) {
         withAuthorisedUser(defaultUserId, mockAuthConnector)
 
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualContactAddressController.submit().url,
-          defaultUserId,
           Map("line1" -> "", "townOrCity" -> "test", "postcode" -> "BT11AA")
         )
 
@@ -111,10 +109,8 @@ class ManualContactAddressControllerSpec extends BaseSpec {
           .thenReturn(Future.successful(groupEnrolment))
         when(mockUserAnswersCache.cacheContactAddressDetails(any())(any())).thenReturn(Future.successful(true))
 
-        val request = SessionBuilder.buildRequestWithSessionAndPathAndFormValues(
-          "POST",
+        val request = SessionBuilder.buildPostRequestWithSessionAndPathAndFormValues(
           uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ManualContactAddressController.submit().url,
-          defaultUserId,
           Map(
             "line1"         -> "Abc",
             "townOrCity"    -> "test",

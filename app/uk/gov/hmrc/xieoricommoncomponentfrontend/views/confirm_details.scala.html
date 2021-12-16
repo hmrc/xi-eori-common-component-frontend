@@ -17,7 +17,6 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.xieoricommoncomponentfrontend.config.AppConfig
 @import uk.gov.hmrc.xieoricommoncomponentfrontend.models.forms.ConfirmDetails
-@import uk.gov.hmrc.xieoricommoncomponentfrontend.views.html._
 @import uk.gov.hmrc.auth.core.AffinityGroup
 @import uk.gov.hmrc.xieoricommoncomponentfrontend.viewmodels.ConfirmDetailsViewModel
 
@@ -38,7 +37,7 @@ vatDetails: components.vat_details
 }
 
 @main_template(title,form = Some(confirmDetailsForm)) {
-    @h1("confirmDetails.page.title")
+    @h1(title)
     @companyDetails(model)
     @if(model.affinityGroup == AffinityGroup.Organisation){ @vatDetails(model,xiVatNo)}
     @formHelper(action = uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmDetailsController.submit, 'autoComplete -> "off") {

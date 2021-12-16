@@ -38,6 +38,24 @@ h1: components.h1)
 @title = @{
     messages("confirm-contact-address.page.title")
 }
+@country(countryCode: String) = @{
+    messages(messageKeyForEUCountryCode(countryCode))
+}
+
+@messageKeyForEUCountryCode(countryCode: String) = @{
+    s"ecc.country.$countryCode"
+}
+
+@isCountryCodeDefined(countryCode: String) = @{
+    messages.isDefinedAt(messageKeyForEUCountryCode(countryCode))
+}
+@transformCountryCodeToOptionalLabel(code: Option[String]) = @{
+    code match {
+        case Some("GB") => Some(messages("ecc.country.GB"))
+        case Some(c) if isCountryCodeDefined(c) => Some(country(c))
+        case _ => None
+    }
+}
 @addressHtml = {
     <div id="address" class="govuk-body">
         @p(Html(address.street),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0")
@@ -45,7 +63,7 @@ h1: components.h1)
         @p(Html(address.city),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0")
         @address.region.map( region => p(Html(region),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0"))
         @address.postcode.map( postalCode => p(Html(postalCode),classes="govuk-!-margin-bottom-0 govuk-!-margin-top-0"))
-        @p(Html(Some(messages("ecc.country.GB"))))
+        @p(Html(transformCountryCodeToOptionalLabel(Some(address.countryCode))))
     </div>
 }
 

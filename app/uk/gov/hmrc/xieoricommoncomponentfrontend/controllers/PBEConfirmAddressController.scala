@@ -81,7 +81,7 @@ class PBEConfirmAddressController @Inject() (
   private def destinationsByAnswer(confirmDetails: ConfirmAddress): Result = confirmDetails match {
     case ConfirmAddress.confirmedAddress =>
       Redirect(
-        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.DisclosePersonalDetailsController.onPageLoad()
+        uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.ConfirmContactDetailsController.onPageLoad()
       )
     case ConfirmAddress.changeAddress =>
       Redirect(uk.gov.hmrc.xieoricommoncomponentfrontend.controllers.routes.PBEAddressLookupController.onPageLoad())
